@@ -1,541 +1,510 @@
 # FloodNet
 
-FloodNet is a cloud-based flood reporting, early warning and evacuation coordination system.
+## Cloud-Based Flood Reporting, Early Warning and Evacuation Coordination System
 
-The project is being developed in two evolutionary stages:
+FloodNet is a role-based emergency-information platform for communities affected by flooding. It connects resident observations, operational review, official alerts and evacuation-centre information in one coherent workflow.
 
-- **Task 1:** React, Express, PostgreSQL on Amazon RDS, private S3 evidence storage and AWS Elastic Beanstalk.
-- **Task 2:** API Gateway, Lambda, private S3 evidence storage, SNS notifications and CloudWatch monitoring.
+`
+Observe -> Report -> Review -> Verify -> Warn -> Coordinate -> Inform -> Monitor
+`
 
+The application is being developed in two evolutionary stages:
 
-
-DEPLOYMENT ARCHITECTURE REQUIREMENT FOR FLOODNET
-
-We are currently developing FloodNet using:
-
-Frontend:
-- React
-- Vite
-- Bootstrap
-
-Backend:
-- Node.js
-- Express.js
-
-Database:
-- PostgreSQL
-- Amazon RDS for production
-
-CURRENT TASK 1 DEPLOYMENT PLAN
-
-For the initial AWS deployment, the React frontend and Express backend will be deployed together in ONE AWS Elastic Beanstalk application.
-
-Local development should still remain separated:
-
-React + Vite:
-http://localhost:5173
-
-Node.js + Express:
-http://localhost:3000
-
-PostgreSQL:
-localhost:5432
-
-For production:
-
-1. Build the React application using Vite.
-2. Generate the production frontend inside the Vite dist directory.
-3. Configure Express to serve the built React static files.
-4. Express must also expose all backend REST APIs under /api.
-5. Deploy the resulting application as one Node.js Elastic Beanstalk application.
-6. The Express backend must connect to Amazon RDS PostgreSQL using environment variables.
-
-Conceptual initial production architecture:
-
-User Browser
-      ↓
-AWS Elastic Beanstalk
-      ↓
-Node.js + Express
-   /             \
-React Build       REST API
-                   ↓
-              Amazon RDS
-
-
-IMPORTANT: FUTURE DEPLOYMENT PORTABILITY
-
-Although frontend and backend are initially deployed together, the system MUST be designed so they can later be deployed independently without major application rewriting.
-
-For example, the future architecture may become:
-
-Frontend Hosting
-React + Vite
-      ↓
-HTTPS REST API
-      ↓
-Backend Hosting
-Node.js + Express
-      ↓
-Amazon RDS
-
-Therefore follow these rules from the beginning.
-
-
-1. KEEP FRONTEND AND BACKEND PHYSICALLY SEPARATE
-
-Use a structure similar to:
-
-FloodNet/
-├── client/
-│   └── React + Vite frontend
-│
-├── server/
-│   └── Node.js + Express backend
-│
-├── microservices/
-│   └── Task 2 services later
-│
-├── docs/
-├── .gitignore
-└── README.md
-
-Do not mix React source files with backend source files.
-
-
-2. FRONTEND AND BACKEND MUST COMMUNICATE ONLY THROUGH REST APIs
-
-All backend application endpoints must use /api.
-
-Examples:
-
-/api/auth/login
-/api/auth/logout
-
-/api/reports
-/api/reports/:id
-/api/reports/:id/review
-
-/api/alerts
-/api/centres
-/api/zones
-
-/api/admin/users
-/api/admin/roles
-
-The React frontend must never directly access:
-- PostgreSQL
-- backend database functions
-- server files
-- backend credentials
-
-
-3. DO NOT HARD-CODE BACKEND URLS
-
-Do NOT scatter URLs such as:
-
-http://localhost:3000/api/reports
-
-through React components.
-
-Create a centralized frontend API configuration.
-
-Use:
-
-VITE_API_BASE_URL
-
-Example development configuration:
-
-VITE_API_BASE_URL=http://localhost:3000
-
-If deployed together later, allow configuration such as:
-
-VITE_API_BASE_URL=
-
-so React can call:
-
-/api/reports
-
-If frontend and backend are separated later, we should only need to change:
-
-VITE_API_BASE_URL=https://api.example.com
-
-without rewriting React components.
-
-
-4. CREATE A CENTRALIZED API SERVICE
-
-Do not place raw fetch requests randomly throughout the application.
-
-Use something similar to:
-
-client/src/services/
-├── apiClient.js
-├── authApi.js
-├── reportApi.js
-├── alertApi.js
-├── evacuationApi.js
-└── adminApi.js
-
-The base URL must come from configuration.
-
-All React pages/components should use these API services.
-
-
-5. KEEP EXPRESS INDEPENDENT OF REACT
-
-The Express backend must be capable of running perfectly even if React is hosted somewhere else.
-
-React static-file serving should be treated as a production deployment feature, NOT a core backend dependency.
-
-For example:
-
-Server responsibilities:
-- authentication
-- authorization
-- REST APIs
-- business logic
-- database access
-- AWS service integration
-- validation
-- auditing
-
-Optional production responsibility:
-- serve React dist files
-
-If frontend hosting is separated later, disabling React static-file serving must not break the REST API.
-
-
-6. EXPRESS STATIC SERVING FOR INITIAL DEPLOYMENT
-
-For the initial combined Elastic Beanstalk deployment, Express should serve the Vite production build.
-
-Conceptually:
-
-if NODE_ENV === "production":
-
-serve client/dist as static files
-
-API routes must remain under:
-
-/api/*
-
-For non-API React routes such as:
-
-/resident/dashboard
-/officer/reports
-/evacuation/centres
-/admin/users
-
-configure an SPA fallback so refreshing those pages does not produce a 404.
-
-IMPORTANT:
-The React SPA fallback must never intercept /api routes.
-
-
-7. LOCAL DEVELOPMENT
-
-Keep React and Express as separate development processes.
-
-Terminal 1:
-
-cd client
-npm run dev
-
-Terminal 2:
-
-cd server
-npm run dev
-
-React:
-localhost:5173
-
-Express:
-localhost:3000
-
-Configure Vite proxying if appropriate so development API calls can remain simple.
-
-Example:
-
-/api/* → http://localhost:3000
-
-
-8. ENVIRONMENT VARIABLES
-
-Do not hard-code environment-specific values.
-
-Frontend may contain NON-SECRET variables such as:
-
-VITE_API_BASE_URL
-
-Backend variables may include:
-
-NODE_ENV
-PORT
-
-DB_HOST
-DB_PORT
-DB_NAME
-DB_USER
-DB_PASSWORD
-
-JWT/session secrets
-
-AWS region
-S3 bucket names
-
-Never expose:
-
-DB_PASSWORD
-AWS secret keys
-authentication secrets
-
-through VITE_* variables because Vite frontend variables are visible to the browser.
-
-
-9. DATABASE INDEPENDENCE
-
-The PostgreSQL database must only be accessed by the backend.
-
-Local development:
-
-Express
-↓
-Local PostgreSQL
-
-Production:
-
-Express / Elastic Beanstalk
-↓
-Amazon RDS PostgreSQL
-
-Changing between local PostgreSQL and RDS should require only environment configuration changes, not application-code rewriting.
-
-
-10. CORS MUST BE CONFIGURABLE
-
-For the initial combined production deployment, frontend and backend will normally use the same origin.
-
-Therefore CORS complexity should be minimal.
-
-However, prepare Express so that if we later deploy frontend separately, the allowed frontend origin can be configured through an environment variable such as:
-
-CLIENT_ORIGIN=https://frontend.example.com
-
-Do not hard-code a permanent origin.
-
-Only trusted configured origins should be allowed in production.
-
-
-11. AUTHENTICATION MUST SUPPORT FUTURE SEPARATION
-
-Design authentication carefully so it works with:
-
-A. same-origin combined deployment
-
-and later:
-
-B. independently hosted frontend/backend
-
-Do not rely on assumptions that permanently require React and Express to share the same host.
-
-Keep authentication configuration environment-driven.
-
-If secure HttpOnly cookies are used, make Secure, SameSite, CORS and credentials behaviour configurable appropriately for production.
-
-
-12. FILE STORAGE
-
-Do not store important persistent files permanently inside the Elastic Beanstalk application filesystem.
-
-Flood evidence/photos should use Amazon S3.
-
-Do not create architecture that permanently depends on:
-
-server/uploads/
-
-for production evidence storage.
-
-This also ensures the backend can later move independently without losing uploaded evidence.
-
-
-13. NO FRONTEND DEPENDENCY ON EXPRESS FILE PATHS
-
-React must never reference paths such as:
-
-../server/uploads/
-../server/files/
-C:\FloodNet\...
-
-Files must be accessed through proper application/API mechanisms or authorized cloud URLs.
-
-
-14. BUILD PROCESS
-
-The React application must independently support:
-
-cd client
-npm run build
-
-which should create:
-
-client/dist/
-
-The Express application must independently support:
-
-cd server
-npm start
-
-or the appropriate production start command.
-
-For initial deployment, provide a clear build/deployment process that:
-
-1. installs frontend dependencies
-2. builds React
-3. installs backend dependencies
-4. launches Express
-5. Express serves client/dist
-6. API routes remain available
-
-
-15. ELASTIC BEANSTALK REQUIREMENTS
-
-The final combined deployment must work with the AWS Elastic Beanstalk Node.js platform.
-
-Express must use:
-
-process.env.PORT || 3000
-
-Do not permanently hard-code port 3000 for production.
-
-The application must expose an endpoint such as:
-
-GET /api/health
-
-Example:
-
-{
-  "success": true,
-  "message": "FloodNet API is running"
-}
-
-Also provide a database health endpoint for controlled development/deployment testing.
-
-
-16. FUTURE SEPARATION MUST REQUIRE MINIMAL CHANGES
-
-Later, if frontend and backend are deployed separately, the expected changes should mainly be:
-
-- deploy React dist separately
-- set VITE_API_BASE_URL to backend URL
-- configure backend CORS
-- adjust cookie/authentication production settings if needed
-- configure frontend SPA routing
-- stop Express serving client/dist
-
-The following should NOT require rewriting:
-
-- React pages
-- React components
-- business logic
-- REST APIs
-- Express controllers
-- Express services
-- repositories
-- database queries
-- PostgreSQL schema
-- RDS
-- role-based access control
-
-
-17. DO NOT OVERENGINEER NOW
-
-Do NOT create two Elastic Beanstalk environments now.
-
-Do NOT introduce CloudFront solely for frontend hosting now.
-
-Do NOT create additional servers merely to demonstrate separation.
-
-Initial deployment remains:
-
-React production build
-+
-Express API
-↓
-ONE Elastic Beanstalk environment
-↓
-Amazon RDS
-
-But code architecture must remain deployment-independent.
-
-
-18. DOCUMENT THE DECISION
-
-Add a short architecture note to the project documentation explaining:
-
-"FloodNet initially uses a combined Elastic Beanstalk deployment to reduce deployment complexity while retaining strict logical separation between the React frontend and Express REST backend. Environment-based API configuration and independent client/server code structures allow the frontend and backend to be deployed separately in the future without significant application restructuring."
-
-
-IMPORTANT
-
-Do not unnecessarily rewrite existing working functionality.
-
-Review the current FloodNet project first.
-
-If the project already follows some of these principles, preserve the existing implementation.
-
-Only make architectural changes necessary to ensure:
-
-1. current combined Elastic Beanstalk deployment works cleanly, and
-2. future frontend/backend separation remains easy.
-
-Before making major structural changes, explain:
-- what currently exists
-- what needs to change
-- why the change is necessary
-- whether it affects existing functionality.
+- **Task 1:** a complete server-based application using React, Express, PostgreSQL/RDS, private Amazon S3 evidence storage and Elastic Beanstalk.
+- **Task 2:** an architectural evolution that moves selected responsibilities to API Gateway, Lambda, S3, SNS and CloudWatch without replacing the main FloodNet application.
 
 ## Current status
 
-**Task 1 is feature-complete and verified against a real PostgreSQL database.**
+The Task 1 application functionality is implemented across all four roles and has been tested against a real PostgreSQL database. The application is prepared for cloud deployment, but the final Elastic Beanstalk/RDS deployment walkthrough is still a separate step.
 
-All four role modules are implemented end to end: Resident reporting, Flood
-Monitoring Officer review and alerting, Evacuation Officer centre management and
-System Administrator governance. Photo evidence is stored in a private Amazon S3
-bucket with only metadata in PostgreSQL.
+| Area | Status |
+|---|---|
+| React/Vite frontend and responsive UI | Implemented |
+| Express REST API and health checks | Implemented |
+| Authentication and refresh-session handling | Implemented |
+| Server-side role-based access control | Implemented |
+| Resident reporting and report lifecycle | Implemented |
+| Flood Monitoring Officer review and alerting | Implemented |
+| Evacuation Officer centre management | Implemented |
+| System Administrator governance and audit | Implemented |
+| Task 1 private S3 photo evidence | Implemented and live-tested |
+| Elastic Beanstalk and RDS deployment | Prepared, not yet fully validated in AWS |
+| Task 2 Evidence Service | Scaffolded, not yet deployed |
+| Task 2 Notification Service with SNS | Not started |
 
-Task 2 (API Gateway, Lambda, SNS, CloudWatch) has not been started.
+Latest local verification recorded during this development cycle:
 
-## Local prerequisites
+- `npm run build`: passed;
+- `npm audit --omit=dev --audit-level=high`: 0 vulnerabilities;
+- `npm test`: 122 passed, 1 known failure in the concurrent refresh-token test.
 
-- Node.js 20 or newer
-- PostgreSQL 15 or newer
-- npm
+The known test failure must be resolved before calling the project fully verified for final deployment.
 
-## Setup
+## Product roles
 
-```powershell
-Copy-Item .env.example .env
+| Role | Main responsibilities |
+|---|---|
+| **Resident** | Create and manage personal flood reports, attach optional evidence, view report history and read public flood and evacuation information. |
+| **Flood Monitoring Officer** | Review reports, inspect evidence, verify/reject/request information, publish alerts and monitor the live situation dashboard. |
+| **Evacuation Officer** | Manage evacuation centres, capacity, occupancy, operational status and facilities. |
+| **System Administrator** | Manage users, staff roles, zones, facility master data and audit records. Administrators do not make operational flood decisions. |
+
+Public visitors can read safe public information through unauthenticated public endpoints. They never receive resident identity, private officer notes, evidence metadata or audit information.
+
+The system deliberately distinguishes:
+
+`
+Community report != Verified incident != Published official alert
+`
+
+A resident report never automatically creates an emergency alert. Verification and alert publishing are separate authorized actions.
+
+## Architecture
+
+### Task 1: server-based application
+
+During local development, Vite and Express run as separate processes. In the initial cloud deployment, the Vite production build and Express API are deployed together in one Elastic Beanstalk Node.js environment.
+
+`
+Browser
+   |
+   v
+React/Vite production build
+   |
+   v
+Node.js + Express on Elastic Beanstalk
+   |                              \
+   v                               v
+Amazon RDS PostgreSQL       Private Amazon S3
+structured data             evidence image files
+                            |
+                            v
+                     RDS evidence metadata only
+`
+
+The frontend and backend remain logically separated in the repository. Express serves the built frontend and the `/api` REST API in production.
+
+### Task 1 photo evidence boundary
+
+`
+React/Vite -> Express Evidence functionality -> private S3
+                                      \-> RDS evidence metadata
+`
+
+The browser never receives AWS credentials. Express authorizes access, validates the image and manages the private S3 object using the local AWS provider chain or the Elastic Beanstalk instance role.
+
+### Task 2: serverless evolution
+
+`
+React -> API Gateway -> Lambda Evidence Service -> existing private S3
+
+Main FloodNet application -> Express on Elastic Beanstalk -> RDS PostgreSQL
+                                      |
+                                      +-> API Gateway -> Notification Lambda -> SNS
+                                                               |
+                                                               +-> CloudWatch
+`
+
+Task 2 moves evidence-management responsibility from Express to an independent Evidence Service. It does not introduce S3 for the first time, replace the main application or create a second evidence data model. The main report workflow continues to use Express and RDS.
+
+## Implemented functionality
+
+### Resident module
+
+- registration, login, logout and session refresh;
+- profile viewing and editing;
+- resident dashboard;
+- flood report creation with zone, location, severity, road condition, description and observation time;
+- generated report references;
+- personal report list, filtering, details and status history;
+- additional-information workflow when an officer requests more information;
+- optional Task 1 photo evidence upload;
+- active alerts, verified incidents, evacuation-centre directory and preparedness information.
+
+Report states are:
+
+`
+PENDING_REVIEW
+MORE_INFORMATION_REQUIRED
+VERIFIED
+REJECTED
+CLOSED
+`
+
+Residents can never set their own report status or review their own report.
+
+### Flood Monitoring Officer module
+
+- live operational dashboard;
+- report review queue with filtering, sorting and pagination;
+- report details, review history and evidence inspection;
+- verify, reject or request more information;
+- mandatory review notes for rejection and information requests;
+- reviewer and timestamp history;
+- alert creation and zone targeting;
+- draft, publish, edit, expire and cancel alert workflow;
+- alert status and zone filtering;
+- database-backed statistics and charts.
+
+### Evacuation Officer module
+
+- evacuation dashboard;
+- centre creation, editing and archiving;
+- zone, location and contact information;
+- maximum capacity and current occupancy;
+- calculated available space;
+- occupancy validation and threshold-based operational status;
+- manual status changes and closed-centre safeguards;
+- centre facilities and public availability data.
+
+Supported centre statuses:
+
+`
+OPEN
+NEAR_CAPACITY
+FULL
+CLOSED
+`
+
+The database prevents negative capacity, negative occupancy and occupancy greater than capacity.
+
+### System Administrator module
+
+- administrator overview dashboard;
+- user search and filtering;
+- authorized staff account creation;
+- account activation and deactivation;
+- role assignment with privilege safeguards;
+- flood-zone creation and update;
+- facility master-data management;
+- audit-log filtering and action lookup;
+- protection against deactivating the last active administrator;
+- protection against self-deactivation and self-role changes.
+
+## Task 1 photo evidence
+
+Residents may optionally attach flood evidence photographs when submitting a report. The implementation keeps evidence responsibility modular so it can move to Task 2 later.
+
+### Rules and limits
+
+- accepted types: JPEG, PNG and WebP;
+- maximum five images per report;
+- maximum 5 MB per image;
+- MIME type and image-signature validation;
+- SHA-256 checksum recorded as metadata;
+- safe random report-scoped S3 object keys;
+- upload allowed only while a report is awaiting review;
+- resident access limited to the resident's own report;
+- Flood Monitoring Officers access evidence through an officer-only route;
+- public endpoints never expose evidence;
+- access is returned through a short-lived presigned URL.
+
+### Storage boundary
+
+- `multer.memoryStorage()` handles the request without writing to disk;
+- image bytes are stored only in the private S3 bucket;
+- PostgreSQL stores the report reference, uploader, object key, filename, type, size, checksum and upload status;
+- no `server/uploads` directory is used;
+- PostgreSQL does not contain a binary image column;
+- if the metadata transaction fails after an upload, the service removes the uploaded objects to prevent storage drift.
+
+Object keys use this pattern:
+
+`
+reports/{residentId}/{reportId}/{uuid}.{extension}
+`
+
+The original filename is metadata only and is never used to construct the key.
+
+Detailed evidence documentation is available in [docs/deployment/evidence-s3.md](docs/deployment/evidence-s3.md) and [docs/architecture/evidence-upload.md](docs/architecture/evidence-upload.md).
+
+## Technology stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Vite, Bootstrap 5, custom CSS and React Router |
+| Charts | Chart.js |
+| Backend | Node.js 20+ and Express.js |
+| Database | PostgreSQL locally and Amazon RDS for production |
+| Database access | `pg` with parameterized SQL |
+| Task 1 compute | AWS Elastic Beanstalk Node.js platform |
+| Task 1 object storage | Private Amazon S3 |
+| Task 2 services | API Gateway, AWS Lambda and Amazon SNS |
+| Observability | CloudWatch for Task 2 logs and metrics |
+
+FloodNet does not require an external flood-data API to function. Additional AWS services must have a clear business and architectural justification before they are added.
+
+## Repository structure
+
+`
+FloodNet/
+├── client/
+│   ├── src/
+│   │   ├── components/       # reusable UI components
+│   │   ├── context/          # authentication state
+│   │   ├── hooks/            # reusable React hooks
+│   │   ├── layouts/          # authenticated application layout
+│   │   ├── pages/            # public and role-specific pages
+│   │   ├── routes/           # role-based route boundaries
+│   │   ├── services/         # API clients and evidence paths
+│   │   └── utils/            # enums and formatting helpers
+│   ├── package.json
+│   └── vite.config.js
+├── server/
+│   ├── config/               # environment and evidence configuration
+│   ├── controllers/          # HTTP handlers
+│   ├── db/                   # pool, migrations, seeds and AWS preflight
+│   ├── middleware/           # authentication and upload handling
+│   ├── repositories/         # PostgreSQL access
+│   ├── routes/               # Express route modules
+│   ├── services/             # business logic and S3 integration
+│   ├── utils/                # errors, audit and shared validation
+│   └── validators/           # server-side request validation
+├── microservices/
+│   └── evidence-service/     # Task 2 Lambda authorizer and handler
+├── tests/                    # Node test suite and isolated test harness
+├── docs/
+│   ├── api/
+│   ├── architecture/
+│   ├── database/
+│   ├── deployment/
+│   └── workload/
+├── .ebignore
+├── .env.example
+├── Procfile
+├── package.json
+└── README.md
+`
+
+## Database design
+
+The database is normalized PostgreSQL accessed through `pg`. Migrations are applied in filename order:
+
+`
+001_initial_schema.sql
+002_auth_session_indexes.sql
+003_module_indexes.sql
+004_refresh_token_rotation_grace.sql
+`
+
+Important table groups:
+
+| Group | Tables |
+|---|---|
+| Identity | `roles`, `users`, `user_profiles`, `auth_sessions` |
+| Geography | `flood_zones` |
+| Reporting | `flood_reports`, `flood_report_reviews`, `flood_report_status_history` |
+| Alerts | `flood_alerts`, `alert_zones` |
+| Evacuation | `evacuation_centres`, `centre_facility_types`, `centre_facilities` |
+| Notifications | `notification_preferences`, `notification_logs` |
+| Evidence | `flood_evidence_metadata` |
+| Governance | `audit_logs` |
+
+Important database rules include:
+
+- new reports start as `PENDING_REVIEW`;
+- reports must reference active zones;
+- review notes are required for rejection and information requests;
+- alert expiry must be later than its start time;
+- occupancy cannot exceed capacity;
+- available space is generated from capacity and occupancy;
+- lower-case email values are unique;
+- important state changes are auditable.
+
+## API overview
+
+All API responses use a consistent envelope:
+
+`json
+{
+  "success": true,
+  "data": {},
+  "message": "Readable result message"
+}
+`
+
+Errors use:
+
+`json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Readable error message"
+  }
+}
+`
+
+### Public and platform endpoints
+
+`
+GET  /api/health
+GET  /api/health/db
+
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/logout
+GET  /api/auth/me
+PATCH /api/auth/me
+
+GET  /api/public/zones
+GET  /api/public/alerts
+GET  /api/public/incidents
+GET  /api/public/centres
+`
+
+### Resident report and evidence endpoints
+
+`
+POST  /api/reports
+GET   /api/reports/mine
+GET   /api/reports/:id
+GET   /api/reports/:id/history
+PATCH /api/reports/:id
+
+POST /api/reports/:id/evidence
+POST /api/reports/:id/evidence/session
+POST /api/reports/:id/evidence/complete
+GET  /api/reports/:id/evidence
+GET  /api/reports/:id/evidence/:evidenceId/url
+`
+
+### Flood Monitoring Officer endpoints
+
+`
+GET   /api/officer/dashboard
+GET   /api/officer/reports
+GET   /api/officer/reports/:id
+POST  /api/officer/reports/:id/review
+GET   /api/officer/reports/:id/evidence/:evidenceId/url
+
+GET   /api/officer/alerts
+POST  /api/officer/alerts
+GET   /api/officer/alerts/:id
+PATCH /api/officer/alerts/:id
+POST  /api/officer/alerts/:id/publish
+POST  /api/officer/alerts/:id/expire
+POST  /api/officer/alerts/:id/cancel
+`
+
+### Evacuation Officer and centre endpoints
+
+`
+GET   /api/centres
+GET   /api/centres/:id
+GET   /api/centres/dashboard
+GET   /api/centres/facility-types
+POST  /api/centres
+PATCH /api/centres/:id
+POST  /api/centres/:id/occupancy
+POST  /api/centres/:id/status
+POST  /api/centres/:id/archive
+`
+
+### Administrator endpoints
+
+`
+GET   /api/admin/overview
+GET   /api/admin/users
+POST  /api/admin/users
+GET   /api/admin/users/:id
+PATCH /api/admin/users/:id/status
+PATCH /api/admin/users/:id/role
+GET   /api/admin/roles
+GET   /api/admin/zones
+POST  /api/admin/zones
+PATCH /api/admin/zones/:id
+GET   /api/admin/facility-types
+POST  /api/admin/facility-types
+GET   /api/admin/audit
+GET   /api/admin/audit/actions
+`
+
+Protected routes enforce authorization in Express. React route protection is a user-experience boundary, not the security boundary.
+
+Detailed request and response contracts are in [docs/api/README.md](docs/api/README.md), [docs/api/authentication.md](docs/api/authentication.md) and [docs/api/resident-reports.md](docs/api/resident-reports.md).
+
+## Security model
+
+- Passwords are hashed with bcrypt.
+- Access and refresh tokens are validated server-side.
+- Refresh sessions can be revoked and role changes revoke affected sessions.
+- Every protected route authenticates the caller and applies role checks where required.
+- Residents can access only their own reports and evidence.
+- Officers cannot review their own submitted report.
+- Administrators cannot use governance routes to review reports or publish alerts.
+- PostgreSQL queries are parameterized.
+- Helmet, Content Security Policy, CORS, rate limiting and centralized error handling are enabled.
+- Client-side validation is supplemented by server-side validation.
+- Public responses exclude private operational information.
+- S3 Block Public Access must remain enabled.
+- AWS credentials are never placed in React or any `VITE_` variable.
+- Local secrets stay in `.env`; production secrets belong in Elastic Beanstalk environment configuration or managed AWS secret mechanisms.
+
+## Local development
+
+### Prerequisites
+
+- Node.js 20 or newer;
+- npm;
+- PostgreSQL 15 or newer;
+- Git;
+- AWS CLI when testing the real S3 integration locally.
+
+### Install
+
+`powershell
+git clone https://github.com/deepakshrestha23-lgtm/FloodNet-G6.git
+Set-Location FloodNet-G6
 npm install
-```
+Copy-Item .env.example .env
+`
 
-Set at least `DB_PASSWORD`, `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` in `.env`.
+Create a local PostgreSQL database named `floodnet`, then edit `.env` with:
 
-## Database
+`env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=floodnet
+DB_USER=postgres
+DB_PASSWORD=your-private-password
+DB_SSL=false
+JWT_ACCESS_SECRET=long-random-local-secret
+JWT_REFRESH_SECRET=another-long-random-secret
+`
 
-Create a PostgreSQL database named `floodnet`, configure `.env`, then run:
+Do not commit `.env` or any real credentials. Windows PostgreSQL guidance is in [docs/deployment/local-postgresql.md](docs/deployment/local-postgresql.md).
 
-```powershell
+### Configure Task 1 S3 locally
+
+For the real evidence path, set the bucket region and private bucket in `.env`:
+
+`env
+AWS_REGION=us-east-1
+EVIDENCE_BUCKET_NAME=floodnet-report-evidence-g6-2026
+EVIDENCE_STORAGE_MODE=s3
+EVIDENCE_URL_EXPIRES_SECONDS=300
+VITE_EVIDENCE_ENABLED=true
+VITE_TASK2_EVIDENCE_ENABLED=false
+`
+
+The bucket name is configuration, not an application secret. If the bucket is recreated, change only the private local environment value. `EVIDENCE_STORAGE_MODE=mock` is available for automated tests and does not call AWS; production must use `s3`.
+
+### Migrate and seed
+
+`powershell
 npm run db:migrate
 npm run db:seed
-```
+`
 
-`db:seed` loads reference data (roles, zones, facility types). It additionally
-creates demonstration accounts and sample operational data when `DEMO_PASSWORD`
-is set in `.env`; without it the demo seed is skipped. The seed refuses to run
-against `NODE_ENV=production` unless `ALLOW_DEMO_SEED=true`.
+The SQL seed creates roles, flood zones and facility types. To create demonstration accounts and sample centres, reports and alerts, set a private local password first:
 
-Demonstration accounts, all using `DEMO_PASSWORD`:
+`env
+DEMO_PASSWORD=private-local-demo-password
+`
+
+Then run `npm run db:seed` again. Demo accounts are:
 
 | Email | Role |
 |---|---|
@@ -544,55 +513,221 @@ Demonstration accounts, all using `DEMO_PASSWORD`:
 | `evacuation@floodnet.local` | Evacuation Officer |
 | `admin@floodnet.local` | System Administrator |
 
-## Running locally
+The demo seed skips itself when `DEMO_PASSWORD` is empty and refuses to run in production unless `ALLOW_DEMO_SEED=true` is explicitly set.
 
-```powershell
+### Start the application
+
+Run both development processes with one command:
+
+`powershell
 npm run dev
-```
+`
 
-The frontend runs on `http://localhost:5173` and the API on `http://localhost:5000`.
-Vite proxies `/api` to the Express server, so the two processes stay separate in
-development while sharing one origin in production.
+The local URLs are:
 
-## Tests
+- React/Vite: `http://localhost:5173`
+- Express API: `http://localhost:5000`
+- PostgreSQL: `localhost:5432`
 
-```powershell
-npm test
-```
+Vite proxies `/api` requests to Express. If you prefer two terminals:
 
-The suite runs against a dedicated `floodnet_test` database, which is created
-automatically, so development data is never touched. It covers authentication,
-role-based access control, report and alert state transitions, evacuation
-capacity rules, administrative safeguards, auditing and the evidence pipeline.
+`powershell
+# Terminal 1
+npm run dev:server
 
-## Production build
+# Terminal 2
+npm run dev:client
+`
 
-```powershell
+Verify the health pipeline with:
+
+`powershell
+Invoke-RestMethod http://localhost:5000/api/health
+Invoke-RestMethod http://localhost:5000/api/health/db
+`
+
+### Production-style local run
+
+Elastic Beanstalk does not build the Vite frontend for this application. Build the client before starting Express:
+
+`powershell
 npm run build
-```
+npm start
+`
 
-This produces `client/dist`, which Express serves in production alongside `/api`.
-The Elastic Beanstalk instance installs production dependencies only and cannot
-run Vite, so the build must be produced before deploying and shipped in the
-bundle. `.ebignore` is configured to include `client/dist` for this reason.
+The generated `client/dist` directory is served by Express alongside `/api`. `npm run build:deploy` is a convenience command that builds the client and confirms that the deployment bundle is ready.
 
-## Evidence storage check
+## Environment variables
 
-```powershell
+The complete template is [.env.example](.env.example).
+
+| Variable | Purpose |
+|---|---|
+| `NODE_ENV` | Runtime mode; production requires S3 evidence storage and production secrets. |
+| `PORT` | Express port; defaults to `5000`. |
+| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_SSL` | PostgreSQL connection. |
+| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` | Server-only token signing secrets. |
+| `CLIENT_ORIGIN` | Allowed browser origin for credentialed API requests. |
+| `AWS_REGION` | Region containing the evidence bucket; the current Learner Lab configuration is `us-east-1`. |
+| `EVIDENCE_BUCKET_NAME` | Private S3 bucket name. |
+| `EVIDENCE_STORAGE_MODE` | `s3` for Task 1/production; `mock` only for local tests. |
+| `EVIDENCE_URL_EXPIRES_SECONDS` | Presigned URL lifetime, constrained by the service. |
+| `EVIDENCE_UPLOAD_SECRET` | Server-only signing secret for the Task 2 upload-session path. |
+| `VITE_EVIDENCE_ENABLED` | Enables the Task 1 evidence UI; not a secret. |
+| `VITE_TASK2_EVIDENCE_ENABLED` | Selects the Task 2 client path when the API Gateway URL exists. |
+| `VITE_EVIDENCE_API_URL` | Task 2 API Gateway base URL. |
+| `DEMO_PASSWORD` | Optional private password for local demonstration accounts. |
+
+Only variables beginning with `VITE_` are exposed to browser code. Never put AWS credentials, database passwords or JWT secrets in a `VITE_` variable.
+
+## AWS Academy Learner Lab
+
+The current AWS environment is an AWS Academy Learner Lab, which changes the deployment procedure:
+
+- credentials are temporary and expire when the lab session ends;
+- the session token is required in addition to the access key and secret key;
+- IAM user/role creation may be unavailable;
+- the lab normally uses `us-east-1`;
+- the lab has a fixed budget and can be reset.
+
+At the start of a lab session, use the helper script:
+
+`powershell
+npm run aws:login
 npm run aws:check
-```
+`
 
-Verifies that AWS credentials are valid, the evidence bucket is reachable from
-the configured region, the bucket is private, and that objects can be written and
-read back through a presigned URL. Run this before the first AWS deployment.
+The helper prompts for the three temporary AWS CLI values and writes them to the default local AWS profile. Never commit them and never place temporary keys in Elastic Beanstalk environment variables.
 
-## Documentation
+The S3 preflight checks credentials, region, bucket reachability, Block Public Access, a write/read cycle through a presigned URL and rejection of an unsigned read:
 
-- [Architecture](docs/architecture/README.md)
+`powershell
+npm run aws:check
+`
+
+The evidence bucket must remain private. The current development bucket is `floodnet-report-evidence-g6-2026` in `us-east-1`.
+
+## Task 1 deployment preparation
+
+The intended production deployment is one Elastic Beanstalk Node.js environment:
+
+`
+React build + Express API
+          -> Elastic Beanstalk
+          -> Amazon RDS PostgreSQL
+          -> private Amazon S3 evidence bucket
+`
+
+Before deployment:
+
+1. Create or select the RDS PostgreSQL database in `us-east-1`.
+2. Restrict the RDS security group so only the approved Elastic Beanstalk runtime can connect.
+3. Build the frontend with `npm run build`.
+4. Deploy the bundle containing `client/dist`, server code and production dependencies.
+5. Configure production environment values in Elastic Beanstalk, including database values, fresh JWT secrets, `AWS_REGION`, `EVIDENCE_BUCKET_NAME`, `EVIDENCE_STORAGE_MODE=s3` and `CLIENT_ORIGIN`.
+6. Use the existing Learner Lab roles, normally `LabRole` and `LabInstanceProfile`, rather than asking Elastic Beanstalk to create roles.
+7. Grant only the required S3 evidence-prefix permissions: `s3:PutObject`, `s3:GetObject` and `s3:DeleteObject` where deletion is implemented.
+8. Run migrations against RDS through a controlled process.
+9. Verify health, authentication, each role, report review, alerts, centre capacity and private evidence access.
+
+The application reads AWS credentials through the default AWS provider chain. In Elastic Beanstalk, the instance profile supplies them. Do not use long-lived or temporary AWS access keys as application environment variables.
+
+See [docs/deployment/aws-learner-lab.md](docs/deployment/aws-learner-lab.md) and [docs/deployment/evidence-s3.md](docs/deployment/evidence-s3.md) for the detailed checklist.
+
+## Task 2 evolution
+
+Task 2 preserves the working Task 1 application and changes service ownership:
+
+| Capability | Task 1 | Task 2 |
+|---|---|---|
+| Main report workflow | Express on Elastic Beanstalk | Remains Express on Elastic Beanstalk |
+| Structured data | RDS through Express | RDS through Express |
+| Evidence upload responsibility | Express evidence modules | API Gateway and Lambda Evidence Service |
+| Evidence files | Private S3 | Same private S3 bucket |
+| Notifications | Application foundation only | Notification Lambda and SNS |
+| Observability | Application logs | CloudWatch logs and metrics for serverless paths |
+
+The `microservices/evidence-service` directory contains the Task 2 Lambda authorizer and presigned-upload handler. It is not yet a deployed API Gateway/Lambda service. The future Task 2 path is:
+
+1. Express creates a short-lived report-specific upload session.
+2. API Gateway and the Lambda authorizer validate the session.
+3. Evidence Lambda validates the request and returns a presigned S3 PUT URL.
+4. React uploads to the existing private bucket.
+5. Express records compatible evidence metadata in RDS.
+
+Notification Lambda, SNS integration, CloudWatch metrics and the final Task 2 deployment evidence remain future work. See [docs/deployment/task1-task2-features.md](docs/deployment/task1-task2-features.md) and [microservices/evidence-service/README.md](microservices/evidence-service/README.md).
+
+## Testing and quality checks
+
+Run from the repository root:
+
+`powershell
+npm test
+npm run build
+npm audit --omit=dev --audit-level=high
+git diff --check
+`
+
+The test suite uses a dedicated `floodnet_test` database so normal development data is not used. It covers:
+
+- authentication and token handling;
+- role-based access control;
+- resident reports and state transitions;
+- officer review and alert transitions;
+- evacuation capacity rules;
+- administrator safeguards and audit logs;
+- evidence validation, authorization and private access.
+
+Expected negative-test log lines such as `FORBIDDEN`, `VALIDATION_ERROR` and `NOT_FOUND` are intentional. They demonstrate rejected requests; they are not test failures by themselves.
+
+Current known issue: one concurrent refresh-token test still fails because one parallel refresh request is rejected instead of all requests succeeding during the rotation grace window. This must be fixed before final release verification.
+
+The production build currently emits a bundle-size warning because the main JavaScript chunk is larger than 500 kB. This is not a build failure, but code-splitting is a sensible polish task after correctness is complete.
+
+## Useful documentation
+
+- [Architecture overview](docs/architecture/README.md)
+- [Evidence architecture](docs/architecture/evidence-upload.md)
 - [Database design](docs/database/README.md)
 - [API contract](docs/api/README.md)
-- [Workload ownership](docs/workload/README.md)
+- [Authentication API](docs/api/authentication.md)
+- [Resident reports API](docs/api/resident-reports.md)
 - [Local PostgreSQL setup](docs/deployment/local-postgresql.md)
-- [Evidence S3 deployment](docs/deployment/evidence-s3.md)
-- [AWS Academy Learner Lab deployment](docs/deployment/aws-learner-lab.md)
-- [Task 1 and Task 2 feature boundary](docs/deployment/task1-task2-features.md)
+- [AWS Learner Lab deployment](docs/deployment/aws-learner-lab.md)
+- [Private S3 checklist](docs/deployment/evidence-s3.md)
+- [Task 1/Task 2 evidence boundary](docs/deployment/task1-task2-features.md)
+- [Workload ownership](docs/workload/README.md)
+- [Task 2 Evidence Service](microservices/evidence-service/README.md)
+
+## Git workflow
+
+Keep major changes on feature branches and keep commits focused:
+
+`powershell
+git switch -c feature/<module-name>
+git status
+git add <files>
+git commit -m "feat: describe the completed change"
+git push -u origin feature/<module-name>
+`
+
+For the current branch, push existing commits with:
+
+`powershell
+git push origin feature/officer-review
+`
+
+Never commit `.env`, AWS credentials, PostgreSQL passwords, generated private evidence files or other secrets.
+
+## Engineering principles
+
+- Keep verification separate from alert publishing.
+- Treat resident reports as community observations, not scientific measurements.
+- Keep public-safe data separate from private operational data.
+- Enforce authorization on the server, not only in React.
+- Use real database data for dashboards and statistics.
+- Store files in private S3 and metadata in PostgreSQL.
+- Do not depend on permanent local filesystem storage in the deployed application.
+- Do not add AWS services without a demonstrable business purpose.
+- Do not replace working functionality merely to change the architecture.
+- Keep the code understandable enough for every team member to explain their contribution.
