@@ -110,6 +110,26 @@ npm run build
 
 `.ebignore` is configured to include `client/dist` for exactly this reason.
 
+## Create the first production administrator
+
+Do not set `DEMO_PASSWORD` or `ALLOW_DEMO_SEED=true` in the deployed
+environment. Demo accounts are only for local development and walkthroughs.
+
+After the production database has been migrated and the reference seed has
+created the roles, run this command once from a trusted environment with access
+to the RDS database:
+
+```powershell
+npm run db:bootstrap-admin
+```
+
+The command prompts for the real administrator details and hides the password.
+It refuses to create a second administrator, serializes competing bootstrap
+attempts and writes an `ADMIN_BOOTSTRAPPED` audit event. After the first
+administrator signs in, create the Flood Monitoring Officer and Evacuation
+Officer accounts from the Administrator panel. Do not place these passwords in
+the React build, Git, or a public document.
+
 ## Collect evidence while the lab is running
 
 Because the lab can be reset, capture screenshots of the working deployment,

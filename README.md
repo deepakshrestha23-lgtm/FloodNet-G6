@@ -513,6 +513,29 @@ Then run `npm run db:seed` again. Demo accounts are:
 
 The demo seed skips itself when `DEMO_PASSWORD` is empty and refuses to run in production unless `ALLOW_DEMO_SEED=true` is explicitly set.
 
+### Production account provisioning
+
+Production must not use the demo password, demo accounts or `ALLOW_DEMO_SEED=true`.
+After the production database has been migrated and the reference data has been
+seeded, run the following command from a trusted environment that can reach the
+RDS database:
+
+```powershell
+npm run db:bootstrap-admin
+```
+
+The command asks for the first administrator's real email, name, optional phone
+and password. The password is entered invisibly, is validated for minimum
+strength and is never printed or stored in source code. A database lock prevents
+two terminals from creating competing first administrators, and the command
+refuses to run if an administrator already exists. It also records the
+bootstrap event in the audit log.
+
+After signing in with that administrator account, use the Administrator panel
+to create the Flood Monitoring Officer and Evacuation Officer accounts. This
+keeps production credentials separate from local demonstration data and makes
+the normal account-governance workflow available from the first login.
+
 ### Start the application
 
 Run both development processes with one command:
