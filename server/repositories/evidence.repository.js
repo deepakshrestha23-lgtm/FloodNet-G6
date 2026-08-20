@@ -147,6 +147,24 @@ async function findEvidenceForResident(evidenceId, reportId, uploadedBy) {
   return result.rows[0] ? mapEvidence(result.rows[0]) : null;
 }
 
+/**
+ * Officer-scoped lookup. A Flood Monitoring Officer reviews reports submitted by
+ * any resident, so this is deliberately not filtered by uploader. Authorization
+ * is enforced by the officer-only route that reaches it.
+ */
+async function findEvidenceForReport(evidenceId, reportId) {
+  const result = await getPool().query(
+    `
+      SELECT id, report_id, object_key, original_filename, content_type, size_bytes, upload_status, checksum, created_at
+      FROM flood_evidence_metadata
+      WHERE id = $1 AND report_id = $2 AND upload_status = 'UPLOADED'
+    `,
+    [evidenceId, reportId]
+  );
+
+  return result.rows[0] ? mapEvidence(result.rows[0]) : null;
+}
+
 function mapEvidence(row) {
   return {
     id: row.id,
@@ -154,7 +172,8 @@ function mapEvidence(row) {
     objectKey: row.object_key,
     originalFilename: row.original_filename,
     contentType: row.content_type,
-    sizeBytes: row.size_bytes,
+    // size_bytes is BIGINT, which node-postgres returns as a string.
+    sizeBytes: Number(row.size_bytes),
     uploadStatus: row.upload_status,
     checksum: row.checksum,
     createdAt: row.created_at
@@ -166,5 +185,6 @@ module.exports = {
   createEvidenceMetadata,
   createEvidenceMetadataBatch,
   findEvidenceForResident,
+  findEvidenceForReport,
   listEvidenceForReport
 };

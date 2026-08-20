@@ -10,11 +10,43 @@ const authRoutes = require('./routes/auth.routes');
 const reportRoutes = require('./routes/report.routes');
 const publicRoutes = require('./routes/public.routes');
 const evidenceRoutes = require('./routes/evidence.routes');
+const officerRoutes = require('./routes/officer.routes');
+const centreRoutes = require('./routes/centre.routes');
+const adminRoutes = require('./routes/admin.routes');
 const { AppError } = require('./utils/http-error');
 
 const app = express();
 
-app.use(helmet());
+// Elastic Beanstalk terminates TLS at a load balancer, so the client IP used by
+// rate limiting and audit logging comes from the first proxy hop.
+app.set('trust proxy', 1);
+
+/*
+ * Evidence photographs are held in a private S3 bucket and delivered to the
+ * browser through short-lived presigned URLs, which are a different origin from
+ * the application. Helmet's default policy is `img-src 'self' data:`, so the
+ * bucket origin has to be allowed explicitly or every evidence image is blocked
+ * by the browser even though the API returned a valid URL. Only the configured
+ * bucket is allowed, and only when one is configured.
+ */
+const evidenceOrigins = env.evidenceBucketName
+  ? [
+      `https://${env.evidenceBucketName}.s3.${env.awsRegion}.amazonaws.com`,
+      `https://${env.evidenceBucketName}.s3.amazonaws.com`
+    ]
+  : [];
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      'img-src': ["'self'", 'data:', ...evidenceOrigins],
+      // connect-src covers the Task 2 browser-to-S3 presigned upload without
+      // changing the Task 1 upload path, which still goes through Express.
+      'connect-src': ["'self'", ...evidenceOrigins]
+    }
+  }
+}));
 app.use(cors({ origin: env.clientOrigin, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
@@ -24,6 +56,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/reports', evidenceRoutes);
+app.use('/api/officer', officerRoutes);
+app.use('/api/centres', centreRoutes);
+app.use('/api/admin', adminRoutes);
 
 const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
 const clientIndexPath = path.join(clientDistPath, 'index.html');

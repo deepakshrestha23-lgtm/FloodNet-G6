@@ -1,6 +1,6 @@
 const express = require('express');
 const { asyncHandler } = require('../utils/async-handler');
-const { authenticate } = require('../middleware/auth.middleware');
+const { authenticate, requireRoles } = require('../middleware/auth.middleware');
 const {
   validateEvidenceComplete,
   validateEvidenceReportId,
@@ -12,6 +12,7 @@ const { uploadEvidenceFiles } = require('../middleware/evidence-upload.middlewar
 const router = express.Router();
 
 router.use(authenticate);
+router.use(requireRoles('RESIDENT'));
 router.post('/:id/evidence', validateEvidenceReportId, uploadEvidenceFiles, asyncHandler(evidenceController.upload));
 router.post('/:id/evidence/session', validateEvidenceReportId, asyncHandler(evidenceController.session));
 router.get('/:id/evidence/:evidenceId/url', validateEvidenceReportId, validateEvidenceId, asyncHandler(evidenceController.access));

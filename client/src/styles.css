@@ -1,24 +1,81 @@
 :root {
+  --fn-ink: #123047;
+  --fn-ink-soft: #4a6b7c;
+  --fn-surface: #f3f8fb;
+  --fn-panel: #ffffff;
+  --fn-border: #d4e8ee;
+  --fn-accent: #087f8c;
+  --fn-accent-dark: #05606a;
+
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #123047;
-  background: #f3f8fb;
+  color: var(--fn-ink);
+  background: var(--fn-surface);
 }
 
 body {
   min-width: 320px;
   margin: 0;
-  background: #f3f8fb;
+  background: var(--fn-surface);
+  color: var(--fn-ink);
 }
 
 .app-shell {
   min-height: 100vh;
 }
 
-.hero-panel {
-  max-width: 850px;
-  margin: 10vh auto 0;
-  background: linear-gradient(135deg, #ffffff 0%, #e4f3f7 100%);
-  border: 1px solid #d4e8ee;
+/* ---------------------------------------------------------------- layout */
+
+.app-navbar {
+  background: var(--fn-panel);
+  border-bottom: 1px solid var(--fn-border);
+}
+
+.app-navbar .navbar-brand {
+  color: var(--fn-ink);
+  letter-spacing: -0.02em;
+}
+
+.brand-accent {
+  color: var(--fn-accent);
+}
+
+.app-navbar .nav-link {
+  color: #4a6b7c;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  padding-inline: 0.75rem;
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus {
+  color: var(--fn-accent-dark);
+  background: #eaf4f7;
+}
+
+.app-navbar .nav-link.active {
+  color: var(--fn-accent-dark);
+  background: #dcedf2;
+  font-weight: 600;
+}
+
+.app-footer {
+  background: var(--fn-panel);
+  border-top: 1px solid var(--fn-border);
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 1080;
+  margin: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--fn-panel);
+  border: 2px solid var(--fn-accent);
+  border-radius: 0.5rem;
+}
+
+.page-header {
+  border-bottom: 1px solid var(--fn-border);
+  padding-bottom: 1rem;
 }
 
 .page-narrow {
@@ -29,18 +86,283 @@ body {
   max-width: 850px;
 }
 
+.eyebrow {
+  color: var(--fn-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- panels */
+
+.panel-card {
+  background: var(--fn-panel);
+  border: 1px solid var(--fn-border);
+}
+
+.filter-bar {
+  background: var(--fn-panel);
+  border: 1px solid var(--fn-border);
+}
+
 .empty-state {
   border: 1px dashed #bdd5dc;
   border-radius: 0.75rem;
-  background: #ffffff;
+  background: var(--fn-panel);
 }
 
-.evidence-preview {
-  max-height: 420px;
-  width: 100%;
-  object-fit: contain;
-  background: #eef6f8;
+.preserve-lines {
+  white-space: pre-line;
 }
+
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------ stat cards */
+
+.stat-card {
+  background: var(--fn-panel);
+  border: 1px solid var(--fn-border);
+  border-left: 4px solid #9dc4d0;
+}
+
+.stat-card-success { border-left-color: #198754; }
+.stat-card-warning { border-left-color: #fd7e14; }
+.stat-card-danger { border-left-color: #dc3545; }
+
+.stat-card-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5b7686;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-card-value {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.stat-card-hint {
+  font-size: 0.8rem;
+  color: #6c8593;
+}
+
+/* ---------------------------------------------------------------- badges */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.status-badge-symbol {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------- tables */
+
+.data-table {
+  --bs-table-bg: var(--fn-panel);
+  margin-bottom: 0;
+}
+
+.data-table thead th {
+  background: #eef6f9;
+  color: #4a6b7c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--fn-border);
+  white-space: nowrap;
+}
+
+.data-table-row-clickable {
+  cursor: pointer;
+}
+
+.data-table-row-clickable:hover,
+.data-table-row-clickable:focus-visible {
+  background: #f2f9fb;
+}
+
+/*
+ * Below the large breakpoint each table row becomes a stacked card and every
+ * cell is labelled by its column heading, so tables stay usable on a phone.
+ */
+@media (max-width: 991.98px) {
+  .table-responsive-cards .data-table thead {
+    display: none;
+  }
+
+  .table-responsive-cards .data-table,
+  .table-responsive-cards .data-table tbody,
+  .table-responsive-cards .data-table tr,
+  .table-responsive-cards .data-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table-responsive-cards .data-table tr {
+    border: 1px solid var(--fn-border);
+    border-radius: 0.75rem;
+    margin: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--fn-panel);
+  }
+
+  .table-responsive-cards .data-table td {
+    border: 0;
+    padding: 0.4rem 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .table-responsive-cards .data-table td::before {
+    content: attr(data-label);
+    flex: 0 0 40%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #5b7686;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .table-responsive-cards .data-table td > * {
+    text-align: right;
+  }
+}
+
+/* ---------------------------------------------------------------- alerts */
+
+.alert-card {
+  background: var(--fn-panel);
+  border: 1px solid var(--fn-border);
+  border-left: 6px solid #6c757d;
+}
+
+.alert-card-advisory { border-left-color: #0dcaf0; }
+.alert-card-watch { border-left-color: #0d6efd; }
+.alert-card-warning { border-left-color: #fd7e14; }
+
+.alert-card-emergency {
+  border-left-color: #dc3545;
+  background: #fff7f7;
+}
+
+/* -------------------------------------------------------------- capacity */
+
+.capacity-meter {
+  height: 0.6rem;
+  background: #e4eef2;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.capacity-meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #198754;
+  transition: width 0.2s ease;
+}
+
+.capacity-near_capacity { background: #fd7e14; }
+.capacity-full { background: #dc3545; }
+.capacity-closed { background: #6c757d; }
+
+/* ----------------------------------------------------------------- forms */
+
+.severity-option,
+.facility-option {
+  border: 1px solid var(--fn-border);
+  background: var(--fn-panel);
+  cursor: pointer;
+}
+
+.severity-option-selected {
+  border-color: var(--fn-accent);
+  background: #eaf6f8;
+}
+
+.form-label {
+  color: #2a4a5c;
+}
+
+/* -------------------------------------------------------------- guidance */
+
+.guidance-card {
+  border-top: 4px solid #9dc4d0;
+}
+
+.guidance-card-info { border-top-color: #0dcaf0; }
+.guidance-card-danger { border-top-color: #dc3545; }
+.guidance-card-success { border-top-color: #198754; }
+
+.guidance-list {
+  padding-left: 1.1rem;
+  margin-bottom: 0;
+}
+
+.guidance-list li {
+  margin-bottom: 0.6rem;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- public */
+
+.public-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.public-hero {
+  background: linear-gradient(135deg, #0b4a63 0%, #087f8c 100%);
+  color: #ffffff;
+}
+
+.public-hero .eyebrow {
+  color: #a8e5ee;
+}
+
+.public-hero-lead {
+  max-width: 46rem;
+  color: #dff1f5;
+}
+
+.public-stat {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  min-width: 11rem;
+}
+
+.public-stat-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.public-stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #cfeaf0;
+}
+
+/* -------------------------------------------------------------- timeline */
 
 .timeline-item {
   padding: 0 0 1rem 1rem;
@@ -51,12 +373,20 @@ body {
   padding-top: 1rem;
 }
 
-.eyebrow {
-  color: #087f8c;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.evidence-preview {
+  max-height: 420px;
+  width: 100%;
+  object-fit: contain;
+  background: #eef6f8;
+}
+
+/* --------------------------------------------------- legacy home/status */
+
+.hero-panel {
+  max-width: 850px;
+  margin: 10vh auto 0;
+  background: linear-gradient(135deg, #ffffff 0%, #e4f3f7 100%);
+  border: 1px solid var(--fn-border);
 }
 
 .status-card {
@@ -64,7 +394,7 @@ body {
   min-width: 220px;
   padding: 0.85rem 1rem;
   background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #d4e8ee;
+  border: 1px solid var(--fn-border);
   border-radius: 0.75rem;
 }
 
@@ -75,14 +405,61 @@ body {
   background: #f0ad4e;
 }
 
-.status-ok {
-  background: #198754;
+.status-ok { background: #198754; }
+.status-unavailable { background: #dc3545; }
+.status-checking { background: #f0ad4e; }
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-.status-unavailable {
-  background: #dc3545;
+/* ------------------------------------------------------------ auth screens */
+
+.auth-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, #dff1f5 0%, transparent 60%),
+    var(--fn-surface);
 }
 
-.status-checking {
-  background: #f0ad4e;
+.auth-card {
+  max-width: 30rem;
+}
+
+.auth-card-wide {
+  max-width: 44rem;
+}
+
+/* ----------------------------------------------------------- account link */
+
+.account-link {
+  color: var(--fn-ink);
+  display: block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.account-link:hover,
+.account-link:focus-visible {
+  background: #eaf4f7;
+  color: var(--fn-accent-dark);
+}
+
+.account-link-active {
+  background: #dcedf2;
+}
+
+/* Give every focusable control a clearly visible focus ring. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--fn-accent);
+  outline-offset: 2px;
 }

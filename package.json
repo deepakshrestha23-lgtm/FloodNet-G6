@@ -11,11 +11,14 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "node --watch server/server.js",
     "dev:client": "npm run dev --workspace client",
-    "prestart": "npm run build",
     "start": "node server/server.js",
     "build": "npm run build --workspace client",
     "db:migrate": "node server/db/run-migrations.js",
-    "db:seed": "node server/db/run-seeds.js"
+    "db:seed": "node server/db/run-seeds.js",
+    "build:deploy": "npm run build && echo Client build ready in client/dist",
+    "aws:check": "node server/db/aws-preflight.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "aws:login": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-aws-credentials.ps1"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.823.0",

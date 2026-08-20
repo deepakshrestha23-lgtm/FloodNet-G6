@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   apiRequest,
   clearAccessToken,
+  refreshSession,
   setAccessToken
 } from '../services/api';
 
@@ -12,14 +13,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiRequest('/api/auth/refresh', { method: 'POST' }, false)
-      .then((payload) => {
-        setAccessToken(payload.data.accessToken);
-        setUser(payload.data.user);
-      })
-      .catch(() => {
-        clearAccessToken();
-        setUser(null);
+    // Uses the shared single-flight refresh so React's development double-mount
+    // and any concurrent request cannot race each other into a false logout.
+    refreshSession()
+      .then((session) => {
+        if (session) {
+          setUser(session.user);
+        } else {
+          clearAccessToken();
+          setUser(null);
+        }
       })
       .finally(() => setLoading(false));
   }, []);
@@ -48,13 +51,21 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  /** Re-reads the signed-in account so profile edits appear across the app. */
+  async function refreshUser() {
+    const payload = await apiRequest('/api/auth/me');
+    setUser(payload.data.user);
+    return payload.data.user;
+  }
+
   const value = useMemo(() => ({
     user,
     loading,
     isAuthenticated: Boolean(user),
     login,
     register,
-    logout
+    logout,
+    refreshUser
   }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

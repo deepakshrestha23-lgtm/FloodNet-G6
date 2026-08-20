@@ -198,10 +198,37 @@ async function getDownloadUrl(residentId, reportId, evidenceId) {
   };
 }
 
+/**
+ * Evidence access for a reviewing Flood Monitoring Officer. Officers review
+ * reports from every resident, so this is not ownership-scoped; the officer-only
+ * route is what authorizes it. The image itself is never proxied through the
+ * API: the caller receives a short-lived presigned URL to the private bucket.
+ */
+async function getDownloadUrlForOfficer(reportId, evidenceId) {
+  const evidence = await evidenceRepository.findEvidenceForReport(evidenceId, reportId);
+
+  if (!evidence) {
+    throw new AppError(404, 'EVIDENCE_NOT_FOUND', 'The requested evidence file was not found');
+  }
+
+  const downloadUrl = await createEvidenceDownloadUrl({
+    objectKey: evidence.objectKey,
+    contentType: evidence.contentType,
+    originalFilename: evidence.originalFilename
+  });
+
+  return {
+    downloadUrl,
+    expiresIn: env.evidenceUrlExpiresSeconds,
+    evidence
+  };
+}
+
 module.exports = {
   createUploadSession,
   completeUpload,
   uploadMultipartFiles,
   listForResident,
-  getDownloadUrl
+  getDownloadUrl,
+  getDownloadUrlForOfficer
 };
