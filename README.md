@@ -497,7 +497,14 @@ Before making major structural changes, explain:
 
 ## Current status
 
-Phase 0 foundation is in progress. The repository currently contains the agreed project structure, initial database migration, documentation contracts and a minimal application health check.
+**Task 1 is feature-complete and verified against a real PostgreSQL database.**
+
+All four role modules are implemented end to end: Resident reporting, Flood
+Monitoring Officer review and alerting, Evacuation Officer centre management and
+System Administrator governance. Photo evidence is stored in a private Amazon S3
+bucket with only metadata in PostgreSQL.
+
+Task 2 (API Gateway, Lambda, SNS, CloudWatch) has not been started.
 
 ## Local prerequisites
 
@@ -510,10 +517,9 @@ Phase 0 foundation is in progress. The repository currently contains the agreed 
 ```powershell
 Copy-Item .env.example .env
 npm install
-npm run dev
 ```
 
-The frontend runs on `http://localhost:5173` and the API runs on `http://localhost:5000`.
+Set at least `DB_PASSWORD`, `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` in `.env`.
 
 ## Database
 
@@ -524,6 +530,62 @@ npm run db:migrate
 npm run db:seed
 ```
 
+`db:seed` loads reference data (roles, zones, facility types). It additionally
+creates demonstration accounts and sample operational data when `DEMO_PASSWORD`
+is set in `.env`; without it the demo seed is skipped. The seed refuses to run
+against `NODE_ENV=production` unless `ALLOW_DEMO_SEED=true`.
+
+Demonstration accounts, all using `DEMO_PASSWORD`:
+
+| Email | Role |
+|---|---|
+| `resident@floodnet.local` | Resident |
+| `officer@floodnet.local` | Flood Monitoring Officer |
+| `evacuation@floodnet.local` | Evacuation Officer |
+| `admin@floodnet.local` | System Administrator |
+
+## Running locally
+
+```powershell
+npm run dev
+```
+
+The frontend runs on `http://localhost:5173` and the API on `http://localhost:5000`.
+Vite proxies `/api` to the Express server, so the two processes stay separate in
+development while sharing one origin in production.
+
+## Tests
+
+```powershell
+npm test
+```
+
+The suite runs against a dedicated `floodnet_test` database, which is created
+automatically, so development data is never touched. It covers authentication,
+role-based access control, report and alert state transitions, evacuation
+capacity rules, administrative safeguards, auditing and the evidence pipeline.
+
+## Production build
+
+```powershell
+npm run build
+```
+
+This produces `client/dist`, which Express serves in production alongside `/api`.
+The Elastic Beanstalk instance installs production dependencies only and cannot
+run Vite, so the build must be produced before deploying and shipped in the
+bundle. `.ebignore` is configured to include `client/dist` for this reason.
+
+## Evidence storage check
+
+```powershell
+npm run aws:check
+```
+
+Verifies that AWS credentials are valid, the evidence bucket is reachable from
+the configured region, the bucket is private, and that objects can be written and
+read back through a presigned URL. Run this before the first AWS deployment.
+
 ## Documentation
 
 - [Architecture](docs/architecture/README.md)
@@ -532,4 +594,5 @@ npm run db:seed
 - [Workload ownership](docs/workload/README.md)
 - [Local PostgreSQL setup](docs/deployment/local-postgresql.md)
 - [Evidence S3 deployment](docs/deployment/evidence-s3.md)
+- [AWS Academy Learner Lab deployment](docs/deployment/aws-learner-lab.md)
 - [Task 1 and Task 2 feature boundary](docs/deployment/task1-task2-features.md)

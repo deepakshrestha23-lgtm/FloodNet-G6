@@ -130,7 +130,10 @@ async function refresh(refreshToken) {
   await sessionRepository.rotateSession(
     payload.sid,
     hashToken(newRefreshToken),
-    expiresAt
+    expiresAt,
+    // Preserve the grace token when this request arrived with it, so several
+    // simultaneous refreshes from the same client all succeed.
+    { keepPreviousToken: session.matchedPrevious === true }
   );
 
   return {

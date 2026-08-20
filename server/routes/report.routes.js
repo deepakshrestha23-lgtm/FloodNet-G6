@@ -1,6 +1,6 @@
 const express = require('express');
 const { asyncHandler } = require('../utils/async-handler');
-const { authenticate } = require('../middleware/auth.middleware');
+const { authenticate, requireRoles } = require('../middleware/auth.middleware');
 const {
   validateCreateReport,
   validateUpdateReport,
@@ -12,6 +12,7 @@ const reportController = require('../controllers/report.controller');
 const router = express.Router();
 
 router.use(authenticate);
+router.use(requireRoles('RESIDENT'));
 router.post('/', validateCreateReport, asyncHandler(reportController.create));
 router.get('/mine', validateReportListQuery, asyncHandler(reportController.listMine));
 router.get('/:id/history', validateReportId, asyncHandler(reportController.getHistory));

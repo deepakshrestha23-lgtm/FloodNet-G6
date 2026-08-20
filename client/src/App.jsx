@@ -1,63 +1,50 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
-import DashboardPage from './pages/DashboardPage';
-import ForbiddenPage from './pages/ForbiddenPage';
+import { roleHomePath } from './routes/roleHome';
+import AppLayout from './layouts/AppLayout';
+
+import PublicHomePage from './pages/public/PublicHomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ReportsPage from './pages/ReportsPage';
-import ReportFormPage from './pages/ReportFormPage';
-import ReportDetailPage from './pages/ReportDetailPage';
+import ForbiddenPage from './pages/ForbiddenPage';
+import ProfilePage from './pages/ProfilePage';
 
-function PublicHomePage() {
-  const { isAuthenticated, user } = useAuth();
-  const [healthStatus, setHealthStatus] = useState('checking');
+import ResidentDashboardPage from './pages/resident/ResidentDashboardPage';
+import ReportsPage from './pages/resident/ReportsPage';
+import ReportFormPage from './pages/resident/ReportFormPage';
+import ReportDetailPage from './pages/resident/ReportDetailPage';
+import ResidentAlertsPage from './pages/resident/ResidentAlertsPage';
+import CentreDirectoryPage from './pages/resident/CentreDirectoryPage';
+import PreparednessPage from './pages/resident/PreparednessPage';
 
-  useEffect(() => {
-    fetch('/api/health')
-      .then((response) => {
-        if (!response.ok) throw new Error('Health check failed');
-        return response.json();
-      })
-      .then(() => setHealthStatus('ok'))
-      .catch(() => setHealthStatus('unavailable'));
-  }, []);
+import OfficerDashboardPage from './pages/officer/OfficerDashboardPage';
+import ReviewQueuePage from './pages/officer/ReviewQueuePage';
+import ReviewReportPage from './pages/officer/ReviewReportPage';
+import AlertsPage from './pages/officer/AlertsPage';
+import AlertFormPage from './pages/officer/AlertFormPage';
 
-  return (
-    <main className="app-shell container py-5">
-      <div className="hero-panel p-4 p-md-5 rounded-4 shadow-sm">
-        <div className="d-flex justify-content-between align-items-start gap-3">
-          <span className="eyebrow">FloodNet</span>
-          {isAuthenticated ? (
-            <Link className="btn btn-outline-primary btn-sm" to="/dashboard">My dashboard</Link>
-          ) : (
-            <Link className="btn btn-primary btn-sm" to="/login">Sign in</Link>
-          )}
-        </div>
-        <h1 className="display-5 fw-bold mt-4">Flood information people can trust.</h1>
-        <p className="lead mb-4">
-          A coordinated platform for community reports, verified incidents,
-          official alerts and evacuation-centre information.
-        </p>
-        <div className="status-card d-flex align-items-center gap-3">
-          <span className={`status-dot status-${healthStatus}`} aria-hidden="true" />
-          <div>
-            <div className="fw-semibold">Application status</div>
-            <div className="text-secondary">
-              {healthStatus === 'ok' ? 'Application running' : healthStatus === 'checking' ? 'Checking...' : 'Unavailable'}
-            </div>
-          </div>
-        </div>
-        {!isAuthenticated && (
-          <p className="mt-4 mb-0 text-secondary">
-            Residents can <Link to="/register">create an account</Link> to prepare for reporting features.
-          </p>
-        )}
-        {isAuthenticated && <p className="mt-4 mb-0 text-secondary">Signed in as {user.email}.</p>}
-      </div>
-    </main>
-  );
+import EvacuationDashboardPage from './pages/evacuation/EvacuationDashboardPage';
+import CentreListPage from './pages/evacuation/CentreListPage';
+import CentreFormPage from './pages/evacuation/CentreFormPage';
+
+import AdminOverviewPage from './pages/admin/AdminOverviewPage';
+import UserManagementPage from './pages/admin/UserManagementPage';
+import ZoneManagementPage from './pages/admin/ZoneManagementPage';
+import MasterDataPage from './pages/admin/MasterDataPage';
+import AuditLogPage from './pages/admin/AuditLogPage';
+
+/**
+ * Sends a signed-in user to the dashboard for their role. Used by the legacy
+ * /dashboard path so existing links keep working.
+ */
+function RoleHomeRedirect() {
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="container py-5">Checking your session...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+
+  return <Navigate to={roleHomePath(user)} replace />;
 }
 
 function App() {
@@ -68,15 +55,58 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forbidden" element={<ForbiddenPage />} />
+        <Route path="/dashboard" element={<RoleHomeRedirect />} />
+
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route element={<AppLayout />}>
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
         </Route>
+
         <Route element={<ProtectedRoute allowedRoles={['RESIDENT']} />}>
-          <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/reports/new" element={<ReportFormPage />} />
-          <Route path="/reports/:id" element={<ReportDetailPage />} />
-          <Route path="/reports/:id/edit" element={<ReportFormPage />} />
+          <Route element={<AppLayout />}>
+            <Route path="/resident" element={<ResidentDashboardPage />} />
+            <Route path="/resident/reports" element={<ReportsPage />} />
+            <Route path="/resident/reports/new" element={<ReportFormPage />} />
+            <Route path="/resident/reports/:id" element={<ReportDetailPage />} />
+            <Route path="/resident/reports/:id/edit" element={<ReportFormPage />} />
+            <Route path="/resident/alerts" element={<ResidentAlertsPage />} />
+            <Route path="/resident/centres" element={<CentreDirectoryPage />} />
+            <Route path="/resident/preparedness" element={<PreparednessPage />} />
+          </Route>
         </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['FLOOD_MONITORING_OFFICER']} />}>
+          <Route element={<AppLayout />}>
+            <Route path="/officer" element={<OfficerDashboardPage />} />
+            <Route path="/officer/reports" element={<ReviewQueuePage />} />
+            <Route path="/officer/reports/:id" element={<ReviewReportPage />} />
+            <Route path="/officer/alerts" element={<AlertsPage />} />
+            <Route path="/officer/alerts/new" element={<AlertFormPage />} />
+            <Route path="/officer/alerts/:id/edit" element={<AlertFormPage />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['EVACUATION_OFFICER']} />}>
+          <Route element={<AppLayout />}>
+            <Route path="/evacuation" element={<EvacuationDashboardPage />} />
+            <Route path="/evacuation/centres" element={<CentreListPage />} />
+            <Route path="/evacuation/centres/new" element={<CentreFormPage />} />
+            <Route path="/evacuation/centres/:id/edit" element={<CentreFormPage />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['ADMINISTRATOR']} />}>
+          <Route element={<AppLayout />}>
+            <Route path="/admin" element={<AdminOverviewPage />} />
+            <Route path="/admin/users" element={<UserManagementPage />} />
+            <Route path="/admin/zones" element={<ZoneManagementPage />} />
+            <Route path="/admin/master-data" element={<MasterDataPage />} />
+            <Route path="/admin/audit" element={<AuditLogPage />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

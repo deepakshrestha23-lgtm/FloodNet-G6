@@ -17,6 +17,23 @@ function assertStorageConfigured() {
   }
 }
 
+/**
+ * Records why an S3 call failed. The operator needs the AWS error name and
+ * status to distinguish an expired credential, a wrong region and a missing
+ * bucket, none of which are safe to describe to the browser.
+ */
+function logStorageFailure(operation, error) {
+  console.error('[EvidenceStorage]', {
+    operation,
+    bucket: env.evidenceBucketName,
+    region: env.awsRegion,
+    name: error.name,
+    code: error.Code || error.code,
+    httpStatus: error.$metadata ? error.$metadata.httpStatusCode : undefined,
+    message: error.message
+  });
+}
+
 async function putEvidenceObject({ objectKey, body, contentType }) {
   if (env.evidenceStorageMode === 'mock') {
     return {
@@ -42,7 +59,8 @@ async function putEvidenceObject({ objectKey, body, contentType }) {
       contentLength: body.length,
       etag: result.ETag || null
     };
-  } catch (_error) {
+  } catch (error) {
+    logStorageFailure('PutObject', error);
     throw new AppError(502, 'EVIDENCE_STORAGE_ERROR', 'Evidence image could not be stored');
   }
 }
@@ -59,6 +77,13 @@ async function deleteEvidenceObjects(objectKeys) {
 }
 
 async function createEvidenceDownloadUrl({ objectKey, contentType, originalFilename }) {
+  // Mock mode exists so the evidence workflow can be exercised locally and in
+  // automated tests without AWS credentials. `config/env.js` refuses to start
+  // in production unless the mode is s3, so this can never serve real traffic.
+  if (env.evidenceStorageMode === 'mock') {
+    return `https://evidence.mock.local/${objectKey}?mock=1`;
+  }
+
   assertStorageConfigured();
 
   const safeFilename = originalFilename.replace(/[\r\n"]+/g, '_');
@@ -71,7 +96,8 @@ async function createEvidenceDownloadUrl({ objectKey, contentType, originalFilen
 
   try {
     return await getSignedUrl(s3Client, command, { expiresIn: env.evidenceUrlExpiresSeconds });
-  } catch (_error) {
+  } catch (error) {
+    logStorageFailure('GetObject presign', error);
     throw new AppError(502, 'EVIDENCE_STORAGE_ERROR', 'Evidence access could not be generated');
   }
 }
@@ -98,6 +124,7 @@ async function verifyUploadedObject(objectKey) {
       throw new AppError(400, 'EVIDENCE_OBJECT_NOT_FOUND', 'The uploaded evidence object could not be found');
     }
 
+    logStorageFailure('HeadObject', error);
     throw new AppError(502, 'EVIDENCE_STORAGE_ERROR', 'Evidence storage could not be verified');
   }
 }
