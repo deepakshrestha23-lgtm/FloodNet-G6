@@ -108,9 +108,13 @@ async function refresh(refreshToken) {
     throw new AppError(401, 'INVALID_REFRESH_TOKEN', 'The refresh token is invalid');
   }
 
-  const session = await sessionRepository.findValidSession(
+  const newRefreshToken = createRefreshToken(payload.sub, payload.sid);
+  const expiresAt = new Date(Date.now() + REFRESH_TOKEN_MAX_AGE_MS);
+  const session = await sessionRepository.rotateSessionAtomically(
     payload.sid,
-    hashToken(refreshToken)
+    hashToken(refreshToken),
+    hashToken(newRefreshToken),
+    expiresAt
   );
 
   if (!session || session.user_id !== payload.sub) {
@@ -124,21 +128,12 @@ async function refresh(refreshToken) {
     throw new AppError(401, 'ACCOUNT_INACTIVE', 'This account is inactive');
   }
 
-  const newRefreshToken = createRefreshToken(user.id, payload.sid);
-  const expiresAt = new Date(Date.now() + REFRESH_TOKEN_MAX_AGE_MS);
-
-  await sessionRepository.rotateSession(
-    payload.sid,
-    hashToken(newRefreshToken),
-    expiresAt,
-    // Preserve the grace token when this request arrived with it, so several
-    // simultaneous refreshes from the same client all succeed.
-    { keepPreviousToken: session.matchedPrevious === true }
-  );
-
   return {
     accessToken: createAccessToken(user),
-    refreshToken: newRefreshToken,
+    // Only the request that performed the rotation sets a new cookie. A
+    // concurrent request accepted through the grace window must not overwrite
+    // that cookie with an older token.
+    refreshToken: session.matchedPrevious ? null : newRefreshToken,
     user: toPublicUser(user)
   };
 }

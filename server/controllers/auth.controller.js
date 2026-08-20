@@ -52,7 +52,9 @@ async function login(request, response) {
 
 async function refresh(request, response) {
   const result = await authService.refresh(request.cookies[REFRESH_COOKIE_NAME]);
-  setRefreshCookie(response, result.refreshToken);
+  if (result.refreshToken) {
+    setRefreshCookie(response, result.refreshToken);
+  }
 
   response.status(200).json({
     success: true,

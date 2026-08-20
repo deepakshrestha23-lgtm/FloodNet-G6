@@ -36,9 +36,7 @@ Latest local verification recorded during this development cycle:
 
 - `npm run build`: passed;
 - `npm audit --omit=dev --audit-level=high`: 0 vulnerabilities;
-- `npm test`: 122 passed, 1 known failure in the concurrent refresh-token test.
-
-The known test failure must be resolved before calling the project fully verified for final deployment.
+- `npm test`: 123 passed, 0 failures.
 
 ## Product roles
 
@@ -680,7 +678,7 @@ The test suite uses a dedicated `floodnet_test` database so normal development d
 
 Expected negative-test log lines such as `FORBIDDEN`, `VALIDATION_ERROR` and `NOT_FOUND` are intentional. They demonstrate rejected requests; they are not test failures by themselves.
 
-Current known issue: one concurrent refresh-token test still fails because one parallel refresh request is rejected instead of all requests succeeding during the rotation grace window. This must be fixed before final release verification.
+The concurrent refresh-token test verifies that parallel browser refreshes are serialized safely and all in-flight requests remain usable.
 
 The production build currently emits a bundle-size warning because the main JavaScript chunk is larger than 500 kB. This is not a build failure, but code-splitting is a sensible polish task after correctness is complete.
 
