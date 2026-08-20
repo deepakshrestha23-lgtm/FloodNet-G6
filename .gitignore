@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+coverage/
+.DS_Store
+npm-debug.log*
+
+# Local AWS and deployment output
+.elasticbeanstalk/
+eb-cli-output.log
+
+# IDE files
+.vscode/
+.idea/
