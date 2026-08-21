@@ -182,3 +182,80 @@ test('server errors never leak a stack trace to the browser', async () => {
   assert.ok(!JSON.stringify(result.body).includes('at Object'));
   assert.ok(!JSON.stringify(result.body).toLowerCase().includes('select'));
 });
+
+/**
+ * The home ward is the official administrative location a resident's alerts
+ * and evacuation centres are scoped to, so it must survive registration and
+ * stay editable afterwards.
+ */
+async function firstWardId() {
+  const provinces = await request(createClient(), 'GET', '/api/geography/provinces');
+  const districts = await request(createClient(), 'GET', `/api/geography/districts?provinceId=${provinces.body.data.provinces[0].id}`);
+  const localLevels = await request(createClient(), 'GET', `/api/geography/local-levels?districtId=${districts.body.data.districts[0].id}`);
+  const wards = await request(createClient(), 'GET', `/api/geography/wards?localLevelId=${localLevels.body.data.localLevels[0].id}`);
+  return wards.body.data.wards[0].id;
+}
+
+test('a resident can register with a home ward and it is returned on their profile', async () => {
+  const wardId = await firstWardId();
+  const email = `ward-resident-${Date.now()}@test.local`;
+
+  const registered = await request(createClient(), 'POST', '/api/auth/register', {
+    email,
+    password: 'BrandNewPass1',
+    firstName: 'Ward',
+    lastName: 'Resident',
+    homeWardId: wardId
+  });
+  assert.equal(registered.status, 201);
+  assert.equal(registered.body.data.user.profile.homeWardId, wardId);
+
+  const client = await signIn(email, 'BrandNewPass1');
+  assert.equal(client.user.profile.homeWardId, wardId);
+  // The ancestors travel with the ward so the profile form can repopulate.
+  assert.ok(client.user.profile.homeWard.province.name, 'the home ward must carry its province');
+  assert.ok(client.user.profile.homeWard.district.name, 'the home ward must carry its district');
+});
+
+test('registration rejects an unknown home ward', async () => {
+  const result = await request(createClient(), 'POST', '/api/auth/register', {
+    email: `bad-ward-${Date.now()}@test.local`,
+    password: 'BrandNewPass1',
+    firstName: 'Bad',
+    lastName: 'Ward',
+    homeWardId: '11111111-1111-4111-8111-111111111111'
+  });
+
+  assert.equal(result.status, 400);
+  assert.equal(result.body.error.code, 'INVALID_HOME_WARD');
+});
+
+test('a resident can set and clear their home ward from their profile', async () => {
+  const wardId = await firstWardId();
+  const client = await signIn('resident2@test.local');
+
+  const assigned = await request(client, 'PATCH', '/api/auth/me', {
+    firstName: 'Sam',
+    lastName: 'Second',
+    homeWardId: wardId
+  });
+  assert.equal(assigned.status, 200);
+  assert.equal(assigned.body.data.user.profile.homeWardId, wardId);
+
+  const cleared = await request(client, 'PATCH', '/api/auth/me', {
+    firstName: 'Sam',
+    lastName: 'Second',
+    homeWardId: null
+  });
+  assert.equal(cleared.status, 200);
+  assert.equal(cleared.body.data.user.profile.homeWardId, null);
+  assert.equal(cleared.body.data.user.profile.homeWard, null);
+
+  const rejected = await request(client, 'PATCH', '/api/auth/me', {
+    firstName: 'Sam',
+    lastName: 'Second',
+    homeWardId: '11111111-1111-4111-8111-111111111111'
+  });
+  assert.equal(rejected.status, 400);
+  assert.equal(rejected.body.error.code, 'INVALID_HOME_WARD');
+});

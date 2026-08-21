@@ -1,7 +1,8 @@
 const env = require('../config/env');
 const authService = require('../services/auth.service');
 const {
-  REFRESH_TOKEN_MAX_AGE_MS
+  REFRESH_TOKEN_MAX_AGE_MS,
+  verifyRefreshToken
 } = require('../utils/jwt');
 
 const REFRESH_COOKIE_NAME = 'floodnet_refresh_token';
@@ -95,4 +96,37 @@ async function updateMe(request, response) {
   });
 }
 
-module.exports = { register, login, refresh, logout, me, updateMe };
+/**
+ * The refresh cookie is scoped to /api/auth, so it reaches this route and
+ * identifies which session the caller is using. That session is preserved
+ * while every other one is revoked. If the cookie is missing or unreadable no
+ * session is preserved, which signs the caller out everywhere: the safe
+ * outcome rather than leaving unknown sessions alive.
+ */
+function currentSessionId(request) {
+  const token = request.cookies[REFRESH_COOKIE_NAME];
+  if (!token) return null;
+
+  try {
+    const payload = verifyRefreshToken(token);
+    return payload.type === 'refresh' && payload.sub === request.user.id ? payload.sid : null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+async function changePassword(request, response) {
+  await authService.changeOwnPassword(
+    request.user.id,
+    request.passwordChangeInput,
+    currentSessionId(request)
+  );
+
+  response.status(200).json({
+    success: true,
+    data: null,
+    message: 'Password changed successfully. Any other signed-in devices have been signed out.'
+  });
+}
+
+module.exports = { register, login, refresh, logout, me, updateMe, changePassword };

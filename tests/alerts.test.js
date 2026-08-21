@@ -199,3 +199,42 @@ test('an unknown alert id returns 404', async () => {
   const result = await request(officer, 'GET', '/api/officer/alerts/00000000-0000-4000-8000-000000000000');
   assert.equal(result.status, 404);
 });
+
+/**
+ * The delivery path a resident actually depends on: an officer targets a ward,
+ * and the resident whose home ward that is sees the alert. This is the reason
+ * user_profiles.home_ward_id exists, so it is covered end to end.
+ */
+test('a ward-targeted alert reaches the ward it names and not another ward', async () => {
+  const provinces = await request(createClient(), 'GET', '/api/geography/provinces');
+  const districts = await request(createClient(), 'GET', `/api/geography/districts?provinceId=${provinces.body.data.provinces[0].id}`);
+  const localLevels = await request(createClient(), 'GET', `/api/geography/local-levels?districtId=${districts.body.data.districts[0].id}`);
+  const wards = await request(createClient(), 'GET', `/api/geography/wards?localLevelId=${localLevels.body.data.localLevels[0].id}`);
+
+  const targetWard = wards.body.data.wards[0];
+  const otherWard = wards.body.data.wards[1];
+  assert.ok(otherWard, 'the harness must seed more than one ward');
+
+  const alert = await createDraft({ zoneIds: [], wardIds: [targetWard.id] });
+  const published = await request(officer, 'POST', `/api/officer/alerts/${alert.id}/publish`);
+  assert.equal(published.status, 200, JSON.stringify(published.body));
+
+  const forTargetWard = await request(createClient(), 'GET', `/api/public/alerts?wardId=${targetWard.id}`);
+  assert.equal(forTargetWard.status, 200);
+  assert.ok(
+    forTargetWard.body.data.alerts.some((a) => a.id === alert.id),
+    'a resident whose home ward is targeted must see the alert'
+  );
+
+  const forOtherWard = await request(createClient(), 'GET', `/api/public/alerts?wardId=${otherWard.id}`);
+  assert.ok(
+    !forOtherWard.body.data.alerts.some((a) => a.id === alert.id),
+    'a resident in an untargeted ward must not see it'
+  );
+
+  const unfiltered = await request(createClient(), 'GET', '/api/public/alerts');
+  assert.ok(
+    unfiltered.body.data.alerts.some((a) => a.id === alert.id),
+    'an unfiltered reader still sees every published alert'
+  );
+});

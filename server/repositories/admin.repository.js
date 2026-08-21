@@ -28,16 +28,16 @@ const adminUserSelect = `
     z.id AS home_zone_id,
     z.name AS home_zone_name,
     uj.scope_level,
-    uj.province_id,
+    gp.id AS province_id,
     gp.code AS province_code,
     gp.name AS province_name,
-    uj.district_id,
+    gd.id AS district_id,
     gd.code AS district_code,
     gd.name AS district_name,
-    uj.local_level_id,
+    gll.id AS local_level_id,
     gll.code AS local_level_code,
     gll.name AS local_level_name,
-    uj.ward_id,
+    gw.id AS ward_id,
     gw.ward_number,
     gw.name AS ward_name
   FROM users u
@@ -45,10 +45,10 @@ const adminUserSelect = `
   LEFT JOIN user_profiles p ON p.user_id = u.id
   LEFT JOIN flood_zones z ON z.id = p.home_zone_id
   LEFT JOIN user_jurisdictions uj ON uj.user_id = u.id
-  LEFT JOIN geo_provinces gp ON gp.id = uj.province_id
-  LEFT JOIN geo_districts gd ON gd.id = uj.district_id
-  LEFT JOIN geo_local_levels gll ON gll.id = uj.local_level_id
   LEFT JOIN geo_wards gw ON gw.id = uj.ward_id
+  LEFT JOIN geo_local_levels gll ON gll.id = COALESCE(uj.local_level_id, gw.local_level_id)
+  LEFT JOIN geo_districts gd ON gd.id = COALESCE(uj.district_id, gll.district_id)
+  LEFT JOIN geo_provinces gp ON gp.id = COALESCE(uj.province_id, gd.province_id)
 `;
 
 function mapAdminUser(row) {
@@ -205,6 +205,55 @@ async function createStaffUser({
 
     await client.query('COMMIT');
     return { outcome: 'CREATED', userId };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+/**
+ * An administrator replaces the password of another account. Every session the
+ * account has open is ended, so the holder must sign in again with the new
+ * credential and no older token survives the reset.
+ */
+async function resetUserPassword({ actorId, userId, passwordHash }) {
+  const client = await getPool().connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const result = await client.query(
+      `
+        UPDATE users
+        SET password_hash = $2, updated_at = NOW()
+        WHERE id = $1
+        RETURNING id
+      `,
+      [userId, passwordHash]
+    );
+
+    if (result.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return false;
+    }
+
+    const revoked = await client.query(
+      'UPDATE auth_sessions SET revoked_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL RETURNING id',
+      [userId]
+    );
+
+    await insertAuditLog(client, {
+      actorId,
+      action: 'USER_PASSWORD_RESET',
+      entityType: 'USER',
+      entityId: userId,
+      metadata: { revokedSessions: revoked.rowCount }
+    });
+
+    await client.query('COMMIT');
+    return true;
   } catch (error) {
     await client.query('ROLLBACK');
     throw error;
@@ -718,6 +767,7 @@ module.exports = {
   createStaffUser,
   updateUserStatus,
   updateUserRole,
+  resetUserPassword,
   updateUserJurisdiction,
   countActiveAdministrators,
   listRoles,

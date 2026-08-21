@@ -38,6 +38,13 @@ export function updateUserJurisdiction(userId, jurisdiction) {
   });
 }
 
+export function resetUserPassword(userId, newPassword) {
+  return apiRequest(`/api/admin/users/${userId}/password-reset`, {
+    method: 'POST',
+    body: { newPassword }
+  });
+}
+
 export function fetchRoles() {
   return apiRequest('/api/admin/roles');
 }

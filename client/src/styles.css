@@ -15,14 +15,14 @@
 /* ------------------------------------------------------------------ tokens */
 
 :root {
-  /* Brand ramp — deep water */
+  /* Brand ramp: deep water */
   --fn-navy-900: #041625;
   --fn-navy-800: #072033;
   --fn-navy-700: #0b3049;
   --fn-navy-600: #114b6d;
   --fn-navy-500: #16688f;
 
-  /* Current — the live/interactive accent */
+  /* Current: the live and interactive accent */
   --fn-cyan-400: #22d3ee;
   --fn-cyan-500: #06b6d4;
   --fn-cyan-600: #0891b2;
@@ -74,7 +74,7 @@
   --fn-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --fn-sidebar-w: 16.5rem;
 
-  /* Bootstrap bridge — makes every stock component adopt the palette */
+  /* Bootstrap bridge: makes every stock component adopt the palette */
   --bs-primary: #0e7fa6;
   --bs-primary-rgb: 14, 127, 166;
   --bs-body-color: #0b2437;
@@ -1687,7 +1687,7 @@ a.fn-facility-chip:focus-visible {
   color: var(--fn-cyan-600);
 }
 
-/* Compact provenance legend — three chips rather than a heavy panel. */
+/* Compact provenance legend: three chips rather than a heavy panel. */
 .legend-item {
   display: flex;
   gap: 0.85rem;

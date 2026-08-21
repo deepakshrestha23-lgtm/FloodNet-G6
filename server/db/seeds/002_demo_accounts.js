@@ -1,4 +1,5 @@
 const { hashPassword } = require('../../utils/password');
+const { checkPassword } = require('../../utils/validation');
 
 /**
  * Demonstration accounts and operational data for local development and the
@@ -148,6 +149,17 @@ async function seedAccounts(client, passwordHash) {
       ? await lookupIdByCode(client, 'flood_zones', account.homeZoneCode)
       : null;
 
+    // The demo zones are mapped to real wards by 001_nepal_geography.js, so the
+    // resident's official home ward is taken from that mapping rather than
+    // hardcoded to an identifier that would drift.
+    const homeWardResult = homeZoneId
+      ? await client.query(
+          'SELECT ward_id FROM flood_zone_wards WHERE zone_id = $1 ORDER BY is_primary DESC LIMIT 1',
+          [homeZoneId]
+        )
+      : { rows: [] };
+    const homeWardId = homeWardResult.rows[0]?.ward_id || null;
+
     const userResult = await client.query(
       'INSERT INTO users (role_id, email, password_hash) VALUES ($1, $2, $3) RETURNING id',
       [roleId, account.email, passwordHash]
@@ -157,10 +169,10 @@ async function seedAccounts(client, passwordHash) {
 
     await client.query(
       `
-        INSERT INTO user_profiles (user_id, first_name, last_name, phone, home_zone_id)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO user_profiles (user_id, first_name, last_name, phone, home_zone_id, home_ward_id)
+        VALUES ($1, $2, $3, $4, $5, $6)
       `,
-      [userId, account.firstName, account.lastName, account.phone, homeZoneId]
+      [userId, account.firstName, account.lastName, account.phone, homeZoneId, homeWardId]
     );
 
     await client.query('INSERT INTO notification_preferences (user_id) VALUES ($1)', [userId]);
@@ -333,6 +345,15 @@ async function seedAlert(client, officerId) {
       'INSERT INTO alert_zones (alert_id, zone_id) VALUES ($1, $2)',
       [alertResult.rows[0].id, zoneId]
     );
+
+    await client.query(
+      `
+        INSERT INTO alert_wards (alert_id, ward_id)
+        SELECT $1, fzw.ward_id FROM flood_zone_wards fzw WHERE fzw.zone_id = $2
+        ON CONFLICT (alert_id, ward_id) DO NOTHING
+      `,
+      [alertResult.rows[0].id, zoneId]
+    );
   }
 }
 
@@ -343,6 +364,14 @@ module.exports = async function seedDemoAccounts(pool) {
   }
 
   const password = process.env.DEMO_PASSWORD;
+
+  const policyErrors = [];
+  if (password) checkPassword(policyErrors, password, 'DEMO_PASSWORD');
+  if (policyErrors.length) {
+    throw new Error(
+      `${policyErrors.join('. ')}. If the value contains a "#", quote it in .env: DEMO_PASSWORD="..."`
+    );
+  }
 
   if (!password) {
     console.log('Skipping demo accounts seed: set DEMO_PASSWORD to create demonstration accounts');

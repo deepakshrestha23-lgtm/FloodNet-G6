@@ -13,6 +13,7 @@ import {
   OBSERVED_SEVERITY,
   ROAD_CONDITION,
   REVIEW_ACTION,
+  FLOOD_TYPE,
   describe
 } from '../../utils/enums';
 import { describeArea, formatDateTime } from '../../utils/formatters';
@@ -119,6 +120,16 @@ function ReportDetailPage() {
               </DetailRow>
               <DetailRow label="Observed at">{formatDateTime(report.observedAt)}</DetailRow>
               <DetailRow label="Submitted at">{formatDateTime(report.createdAt)}</DetailRow>
+              <DetailRow label="Flood type">{describe(FLOOD_TYPE, report.floodType).label}</DetailRow>
+              <DetailRow label="People at immediate risk">
+                {report.peopleAtRisk > 0
+                  ? report.peopleAtRisk.toLocaleString()
+                  : <span className="text-secondary">None reported</span>}
+              </DetailRow>
+              <DetailRow label="Administrative location">{describeArea(report)}</DetailRow>
+              <DetailRow label="Locality / Tole">
+                {report.locality || <span className="text-secondary">Not provided</span>}
+              </DetailRow>
               <div className="col-12">
                 <dt className="small text-secondary fw-semibold">Location</dt>
                 <dd className="mb-3">{report.locationDescription}</dd>

@@ -17,6 +17,8 @@ import { describeArea, formatRelative, formatNumber } from '../../utils/formatte
 function ResidentDashboardPage() {
   const { user } = useAuth();
   const homeZoneId = user?.profile?.homeZoneId;
+  const homeWardId = user?.profile?.homeWardId;
+  const hasHomeArea = Boolean(homeZoneId || homeWardId);
 
   const [state, setState] = useState({ loading: true, error: null, reports: null, alerts: [], centres: [] });
 
@@ -25,12 +27,19 @@ function ResidentDashboardPage() {
 
     async function load() {
       try {
-        // Alerts are scoped to the resident's home zone when they have set one,
-        // so the first thing they see is what affects where they live.
+        // Scoped to the resident's home area when they have set one, so the
+        // first thing they see is what affects where they live. The ward is the
+        // official location; the operational zone is matched as well, so an
+        // alert published against either still reaches them.
+        const homeArea = {
+          zoneId: homeZoneId || undefined,
+          wardId: homeWardId || undefined
+        };
+
         const [reportPayload, alertPayload, centrePayload] = await Promise.all([
           fetchMyReports({ limit: 5 }),
-          fetchActiveAlerts(homeZoneId || undefined),
-          fetchPublicCentres(homeZoneId || undefined)
+          fetchActiveAlerts(homeArea),
+          fetchPublicCentres(homeArea)
         ]);
 
         if (!active) return;
@@ -49,7 +58,7 @@ function ResidentDashboardPage() {
 
     load();
     return () => { active = false; };
-  }, [homeZoneId]);
+  }, [homeZoneId, homeWardId]);
 
   if (state.loading) return <LoadingState label="Loading your dashboard..." />;
   if (state.error) return <ErrorState message={state.error.message} details={state.error.details} />;
@@ -96,7 +105,7 @@ function ResidentDashboardPage() {
           <DashboardStatCard
             label="Active alerts"
             value={alerts.length}
-            hint={homeZoneId ? 'In your home zone' : 'Across all zones'}
+            hint={hasHomeArea ? 'In your home area' : 'Across all of Nepal'}
             tone={alerts.length > 0 ? 'danger' : 'default'}
             icon="bell"
           />
@@ -118,7 +127,7 @@ function ResidentDashboardPage() {
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
           <h2 className="h5 fw-bold mb-0 fn-section-title">
             <Icon name="bell" size={18} />
-            Active alerts {homeZoneId ? 'for your area' : ''}
+            Active alerts {hasHomeArea ? 'for your area' : ''}
           </h2>
           <Link className="btn btn-sm btn-outline-primary" to="/resident/alerts">View all alerts</Link>
         </div>

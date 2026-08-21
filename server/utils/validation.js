@@ -82,6 +82,23 @@ function rejectUnknownFields(errors, body, allowedFields) {
   }
 }
 
+/**
+ * The one password policy for the whole application. Registration, the
+ * administrator-created staff account, the self-service change and the
+ * administrator reset all call this, so an account can never be given a
+ * weaker credential through one route than another would allow.
+ */
+function checkPassword(errors, password, label = 'Password') {
+  if (typeof password !== 'string' || password.length < 8 || password.length > 72) {
+    errors.push(`${label} must be between 8 and 72 characters`);
+    return;
+  }
+
+  if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+    errors.push(`${label} must contain uppercase, lowercase and numeric characters`);
+  }
+}
+
 module.exports = {
   UUID_PATTERN,
   isUuid,
@@ -90,5 +107,6 @@ module.exports = {
   checkInteger,
   checkUuid,
   checkDate,
+  checkPassword,
   rejectUnknownFields
 };

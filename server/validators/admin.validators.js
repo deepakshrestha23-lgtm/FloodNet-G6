@@ -4,6 +4,7 @@ const {
   checkString,
   checkEnum,
   checkUuid,
+  checkPassword,
   rejectUnknownFields
 } = require('../utils/validation');
 
@@ -37,17 +38,6 @@ function parsePagination(query, errors) {
   }
 
   return { limit, offset };
-}
-
-function checkPassword(errors, password) {
-  if (typeof password !== 'string' || password.length < 8 || password.length > 72) {
-    errors.push('Password must be between 8 and 72 characters');
-    return;
-  }
-
-  if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
-    errors.push('Password must contain uppercase, lowercase and numeric characters');
-  }
 }
 
 function parseJurisdiction(errors, rawJurisdiction, { optional = true } = {}) {
@@ -173,6 +163,24 @@ function validateJurisdictionBody(request, _response, next) {
   const jurisdiction = parseJurisdiction(errors, request.body || {}, { optional: false });
   if (errors.length) return fail(next, errors);
   request.jurisdictionInput = jurisdiction;
+  return next();
+}
+
+/**
+ * An administrator supplies the replacement password directly. The reset is
+ * recorded in the audit log and ends every session the account has open, so a
+ * password the administrator knows cannot be used silently alongside the owner.
+ */
+function validatePasswordResetBody(request, _response, next) {
+  const errors = [];
+  const body = request.body || {};
+
+  rejectUnknownFields(errors, body, ['newPassword']);
+  checkPassword(errors, body.newPassword, 'New password');
+
+  if (errors.length) return fail(next, errors);
+
+  request.passwordResetInput = { newPassword: body.newPassword };
   return next();
 }
 
@@ -337,6 +345,7 @@ function validateResourceId(paramName, label) {
 module.exports = {
   validateUserListQuery,
   validateStaffUserBody,
+  validatePasswordResetBody,
   validateJurisdictionBody,
   validateUserStatusBody,
   validateUserRoleBody,

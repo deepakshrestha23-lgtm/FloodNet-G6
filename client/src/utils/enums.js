@@ -68,6 +68,15 @@ export const REVIEW_ACTION = {
   CLOSE: { label: 'Closed', variant: 'secondary', symbol: '■' }
 };
 
+export const FLOOD_TYPE = {
+  UNKNOWN: { label: 'Not sure', variant: 'secondary', symbol: '?' },
+  RIVER_OVERFLOW: { label: 'River overflow', variant: 'primary', symbol: '~' },
+  FLASH_FLOOD: { label: 'Flash flood', variant: 'danger', symbol: '!' },
+  URBAN_DRAINAGE: { label: 'Urban drainage / surface water', variant: 'info', symbol: '=' },
+  GLACIAL_LAKE_OUTBURST: { label: 'Glacial lake outburst flood', variant: 'danger', symbol: '!!' },
+  LANDSLIDE_BLOCKAGE: { label: 'Landslide blocking drainage', variant: 'warning', symbol: '^' }
+};
+
 export function describe(map, value, fallbackLabel = 'Unknown') {
   return map[value] || { label: value || fallbackLabel, variant: 'secondary', symbol: '?' };
 }

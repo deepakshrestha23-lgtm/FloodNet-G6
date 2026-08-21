@@ -12,6 +12,7 @@ import {
   OBSERVED_SEVERITY,
   ROAD_CONDITION,
   REVIEW_ACTION,
+  FLOOD_TYPE,
   describe
 } from '../../utils/enums';
 import { describeArea, formatDateTime, formatRelative, fullName } from '../../utils/formatters';
@@ -173,8 +174,11 @@ function ReviewReportPage() {
             </div>
 
             <dl className="row g-0 mb-0">
-              <DetailRow label="Flood zone">
-                {describeArea(report)} {report.zone?.code && <span className="text-secondary">({report.zone.code})</span>}
+              <DetailRow label="Administrative location">{describeArea(report)}</DetailRow>
+              <DetailRow label="Operational flood zone">
+                {report.zone
+                  ? <>{report.zone.name} {report.zone.code && <span className="text-secondary">({report.zone.code})</span>}</>
+                  : <span className="text-secondary">None selected</span>}
               </DetailRow>
               <DetailRow label="Observed at">{formatDateTime(report.observedAt)}</DetailRow>
               <DetailRow label="Resident-observed severity">
@@ -182,6 +186,33 @@ function ReviewReportPage() {
               </DetailRow>
               <DetailRow label="Road condition">
                 <StatusBadge map={ROAD_CONDITION} value={report.roadCondition} />
+              </DetailRow>
+              <DetailRow label="Flood type">{describe(FLOOD_TYPE, report.floodType).label}</DetailRow>
+              {/* Triage depends on this figure, so a non-zero count is emphasised
+                  rather than left to blend into the surrounding detail rows. */}
+              <DetailRow label="People at immediate risk">
+                {report.peopleAtRisk > 0
+                  ? <strong className="text-danger">{report.peopleAtRisk.toLocaleString()}</strong>
+                  : <span className="text-secondary">None reported</span>}
+              </DetailRow>
+              <DetailRow label="Locality / Tole">
+                {report.locality || <span className="text-secondary">Not provided</span>}
+              </DetailRow>
+              <DetailRow label="Nearest landmark">
+                {report.nearestLandmark || <span className="text-secondary">Not provided</span>}
+              </DetailRow>
+              <DetailRow label="Reported coordinates">
+                {report.latitude !== null && report.latitude !== undefined
+                  ? (
+                    <a
+                      href={`https://www.openstreetmap.org/?mlat=${report.latitude}&mlon=${report.longitude}#map=16/${report.latitude}/${report.longitude}`}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      {Number(report.latitude).toFixed(5)}, {Number(report.longitude).toFixed(5)}
+                    </a>
+                  )
+                  : <span className="text-secondary">Not captured</span>}
               </DetailRow>
               <div className="col-12">
                 <dt className="small text-secondary fw-semibold">Location description</dt>

@@ -4,8 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import { fetchZones } from '../services/publicApi';
 import AuthLayout from '../layouts/AuthLayout';
 import Icon from '../components/common/Icon';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../components/geography/GeographySelector';
 
 const initialForm = {
+  ...EMPTY_GEOGRAPHY,
   firstName: '',
   lastName: '',
   email: '',
@@ -53,6 +55,7 @@ function RegisterPage() {
 
     if (form.phone.trim()) details.phone = form.phone.trim();
     if (form.homeZoneId) details.homeZoneId = form.homeZoneId;
+    if (form.wardId) details.homeWardId = form.wardId;
 
     try {
       await register(details);
@@ -138,6 +141,15 @@ function RegisterPage() {
             </div>
           </div>
 
+          <GeographySelector
+            value={form}
+            onChange={(value) => setForm((current) => ({ ...current, ...value }))}
+            required={false}
+          />
+          <p className="form-text mt-n2 mb-3">
+            Setting your ward means alerts and evacuation centres for where you live are shown
+            first. You can add or change it later from your profile.
+          </p>
           <div className="mb-3">
             <label className="form-label fw-semibold" htmlFor="register-home-zone">Home flood zone (optional)</label>
             <select

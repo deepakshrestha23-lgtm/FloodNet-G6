@@ -4,9 +4,127 @@ import { apiRequest } from '../services/api';
 import { fetchZones } from '../services/publicApi';
 import PageHeader from '../components/common/PageHeader';
 import ErrorState from '../components/common/ErrorState';
+import Icon from '../components/common/Icon';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../components/geography/GeographySelector';
 import StatusBadge from '../components/common/StatusBadge';
 import { ROLE } from '../utils/enums';
 import { formatDateTime } from '../utils/formatters';
+
+const EMPTY_PASSWORD_FORM = { currentPassword: '', newPassword: '', confirmPassword: '' };
+
+/**
+ * Changing a password requires the current one, so knowing the account is not
+ * enough: an unattended signed-in browser cannot be used to take the account
+ * over. A successful change signs every other device out.
+ */
+function PasswordSection() {
+  const [form, setForm] = useState(EMPTY_PASSWORD_FORM);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [changed, setChanged] = useState(false);
+
+  const mismatch = form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword;
+
+  function updateField(field, value) {
+    setForm((current) => ({ ...current, [field]: value }));
+    setError(null);
+    setChanged(false);
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (mismatch) return;
+
+    setSubmitting(true);
+    setError(null);
+    setChanged(false);
+
+    try {
+      await apiRequest('/api/auth/me/password', {
+        method: 'PATCH',
+        body: { currentPassword: form.currentPassword, newPassword: form.newPassword }
+      });
+      setForm(EMPTY_PASSWORD_FORM);
+      setChanged(true);
+    } catch (requestError) {
+      setError(requestError);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form className="panel-card p-3 p-md-4 rounded-4 mt-3" onSubmit={handleSubmit} noValidate>
+      <h2 className="h6 fw-bold fn-section-title mb-1">
+        <Icon name="shield" size={18} />
+        Change password
+      </h2>
+      <p className="small text-secondary mb-3">
+        Use at least 8 characters with uppercase, lowercase and a number. Changing your password
+        signs you out on every other device.
+      </p>
+
+      <div className="mb-3">
+        <label className="form-label fw-semibold" htmlFor="password-current">Current password</label>
+        <input
+          id="password-current"
+          className="form-control"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={form.currentPassword}
+          onChange={(event) => updateField('currentPassword', event.target.value)}
+        />
+      </div>
+
+      <div className="row g-3 mb-3">
+        <div className="col-12 col-md-6">
+          <label className="form-label fw-semibold" htmlFor="password-new">New password</label>
+          <input
+            id="password-new"
+            className="form-control"
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            maxLength={72}
+            value={form.newPassword}
+            onChange={(event) => updateField('newPassword', event.target.value)}
+          />
+        </div>
+        <div className="col-12 col-md-6">
+          <label className="form-label fw-semibold" htmlFor="password-confirm">Confirm new password</label>
+          <input
+            id="password-confirm"
+            className={`form-control ${mismatch ? 'is-invalid' : ''}`}
+            type="password"
+            autoComplete="new-password"
+            required
+            value={form.confirmPassword}
+            onChange={(event) => updateField('confirmPassword', event.target.value)}
+          />
+          {mismatch && <div className="invalid-feedback">Both new password fields must match.</div>}
+        </div>
+      </div>
+
+      {error && <ErrorState message={error.message} details={error.details} />}
+
+      {changed && (
+        <div className="alert alert-success py-2 small" role="status">
+          Password changed. Any other signed-in devices have been signed out.
+        </div>
+      )}
+
+      <button
+        className="btn btn-primary"
+        type="submit"
+        disabled={submitting || mismatch || !form.currentPassword || !form.newPassword}
+      >
+        {submitting ? 'Changing...' : 'Change password'}
+      </button>
+    </form>
+  );
+}
 
 /**
  * Profile management for every signed-in role. The home flood zone matters
@@ -18,6 +136,7 @@ function ProfilePage() {
 
   const [zones, setZones] = useState([]);
   const [form, setForm] = useState({
+    ...EMPTY_GEOGRAPHY,
     firstName: '',
     lastName: '',
     phone: '',
@@ -30,11 +149,19 @@ function ProfilePage() {
   useEffect(() => {
     if (!user) return;
 
+    // The ward carries its ancestors, so the cascading selector can be
+    // repopulated without asking the resident to walk the hierarchy again.
+    const homeWard = user.profile?.homeWard;
+
     setForm({
       firstName: user.profile?.firstName || '',
       lastName: user.profile?.lastName || '',
       phone: user.profile?.phone || '',
-      homeZoneId: user.profile?.homeZoneId || ''
+      homeZoneId: user.profile?.homeZoneId || '',
+      provinceId: homeWard?.province?.id || '',
+      districtId: homeWard?.district?.id || '',
+      localLevelId: homeWard?.localLevel?.id || '',
+      wardId: homeWard?.id || ''
     });
   }, [user]);
 
@@ -59,7 +186,8 @@ function ProfilePage() {
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
       phone: form.phone.trim() || null,
-      homeZoneId: form.homeZoneId || null
+      homeZoneId: form.homeZoneId || null,
+      homeWardId: form.wardId || null
     };
 
     try {
@@ -124,8 +252,18 @@ function ProfilePage() {
               <p className="form-text">Used by officers only if they need to clarify a report.</p>
             </div>
 
+            <GeographySelector
+              value={form}
+              onChange={(value) => { setForm((current) => ({ ...current, ...value })); setSavedAt(null); }}
+              required={false}
+            />
+            <p className="form-text mt-n2 mb-3">
+              Your home ward decides which official alerts and evacuation centres you are shown
+              first. Leave it unset to see alerts from across Nepal.
+            </p>
+
             <div className="mb-3">
-              <label className="form-label fw-semibold" htmlFor="profile-home-zone">Home flood zone</label>
+              <label className="form-label fw-semibold" htmlFor="profile-home-zone">Home flood zone <span className="text-secondary fw-normal">(optional)</span></label>
               <select
                 id="profile-home-zone"
                 className="form-select"
@@ -140,7 +278,7 @@ function ProfilePage() {
                 ))}
               </select>
               <p className="form-text">
-                Your dashboard shows the alerts and evacuation centres for this zone first.
+                Operational zones are separate from the official administrative location above.
               </p>
             </div>
 
@@ -156,6 +294,8 @@ function ProfilePage() {
               {submitting ? 'Saving...' : 'Save changes'}
             </button>
           </form>
+
+          <PasswordSection />
         </div>
 
         <div className="col-12 col-lg-5">

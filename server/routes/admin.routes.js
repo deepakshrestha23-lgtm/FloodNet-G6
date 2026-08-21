@@ -6,6 +6,7 @@ const {
   validateStaffUserBody,
   validateUserStatusBody,
   validateUserRoleBody,
+  validatePasswordResetBody,
   validateJurisdictionBody,
   validateZoneBody,
   validateFacilityTypeBody,
@@ -33,6 +34,7 @@ router.get('/users/:id', validateUserId, asyncHandler(adminController.getUser));
 router.patch('/users/:id/status', validateUserId, validateUserStatusBody, asyncHandler(adminController.updateUserStatus));
 router.patch('/users/:id/role', validateUserId, validateUserRoleBody, asyncHandler(adminController.updateUserRole));
 router.patch('/users/:id/jurisdiction', validateUserId, validateJurisdictionBody, asyncHandler(adminController.updateUserJurisdiction));
+router.post('/users/:id/password-reset', validateUserId, validatePasswordResetBody, asyncHandler(adminController.resetUserPassword));
 
 router.get('/roles', asyncHandler(adminController.listRoles));
 

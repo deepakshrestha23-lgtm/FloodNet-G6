@@ -8,9 +8,9 @@ ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO flood_zones (code, name, locality, description, zone_type, is_demo_data)
 VALUES
-  ('ZONE-A', 'Riverbank North — DEMO DATA', 'Demo operational area', 'Fictional demonstration river corridor. Not an official administrative boundary.', 'RIVER_CORRIDOR', TRUE),
-  ('ZONE-B', 'Central Lowlands — DEMO DATA', 'Demo operational area', 'Fictional demonstration floodplain. Not an official administrative boundary.', 'FLOODPLAIN', TRUE),
-  ('ZONE-C', 'South Valley — DEMO DATA', 'Demo operational area', 'Fictional demonstration flood area. Not an official administrative boundary.', 'FLASH_FLOOD_AREA', TRUE)
+  ('ZONE-A', 'Riverbank North (demonstration data)', 'Demo operational area', 'Fictional demonstration river corridor. Not an official administrative boundary.', 'RIVER_CORRIDOR', TRUE),
+  ('ZONE-B', 'Central Lowlands (demonstration data)', 'Demo operational area', 'Fictional demonstration floodplain. Not an official administrative boundary.', 'FLOODPLAIN', TRUE),
+  ('ZONE-C', 'South Valley (demonstration data)', 'Demo operational area', 'Fictional demonstration flood area. Not an official administrative boundary.', 'FLASH_FLOOD_AREA', TRUE)
 ON CONFLICT (code) DO UPDATE SET
   name = EXCLUDED.name,
   locality = EXCLUDED.locality,

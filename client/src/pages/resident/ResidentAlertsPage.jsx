@@ -19,11 +19,14 @@ function ResidentAlertsPage() {
   const [zones, setZones] = useState([]);
 
   const zoneId = searchParams.get('zoneId') || user?.profile?.homeZoneId || '';
+  // An explicit zone filter from the URL is a deliberate override, so the
+  // resident's home ward is only applied while they are not filtering.
+  const wardId = searchParams.get('zoneId') ? '' : (user?.profile?.homeWardId || '');
 
   const loader = useCallback(async () => {
     const [alertPayload, incidentPayload] = await Promise.all([
-      fetchActiveAlerts(zoneId || undefined),
-      fetchVerifiedIncidents({ zoneId: zoneId || undefined, limit: 25 })
+      fetchActiveAlerts({ zoneId: zoneId || undefined, wardId: wardId || undefined }),
+      fetchVerifiedIncidents({ zoneId: zoneId || undefined, wardId: wardId || undefined, limit: 25 })
     ]);
 
     return {
@@ -32,7 +35,7 @@ function ResidentAlertsPage() {
         incidents: incidentPayload.data.incidents
       }
     };
-  }, [zoneId]);
+  }, [zoneId, wardId]);
 
   const { data, loading, error, reload } = useApiResource(loader);
 

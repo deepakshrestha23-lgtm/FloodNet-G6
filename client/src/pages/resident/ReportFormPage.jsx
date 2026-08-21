@@ -13,17 +13,8 @@ import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/G
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
-import { OBSERVED_SEVERITY, ROAD_CONDITION, toOptions } from '../../utils/enums';
+import { FLOOD_TYPE, OBSERVED_SEVERITY, ROAD_CONDITION, toOptions } from '../../utils/enums';
 import { toDateTimeLocalValue } from '../../utils/formatters';
-
-const FLOOD_TYPES = [
-  ['UNKNOWN', 'Not sure'],
-  ['RIVER_OVERFLOW', 'River overflow'],
-  ['FLASH_FLOOD', 'Flash flood'],
-  ['URBAN_DRAINAGE', 'Urban drainage / surface water'],
-  ['GLACIAL_LAKE_OUTBURST', 'Glacial lake outburst flood'],
-  ['LANDSLIDE_BLOCKAGE', 'Landslide blocking drainage']
-];
 
 const initialForm = {
   ...EMPTY_GEOGRAPHY,
@@ -211,7 +202,7 @@ function ReportFormPage() {
           <label className="form-label fw-semibold" htmlFor="report-zone">Operational flood zone <span className="text-secondary fw-normal">(optional)</span></label>
           <select id="report-zone" className="form-select" disabled={editing} value={form.zoneId} onChange={(event) => updateField('zoneId', event.target.value)}>
             <option value="">No operational zone selected</option>
-            {zones.map((zone) => <option key={zone.id} value={zone.id}>{zone.name}{zone.isDemoData ? ' — demonstration data' : ''}</option>)}
+            {zones.map((zone) => <option key={zone.id} value={zone.id}>{zone.name}{zone.isDemoData ? ' (demonstration data)' : ''}</option>)}
           </select>
           <p className="form-text">Administrative geography is the official location. Flood zones are separate operational areas used by officers.</p>
         </div>
@@ -239,7 +230,7 @@ function ReportFormPage() {
         <div className="row g-3 mb-3">
           <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="report-latitude">Latitude</label><input id="report-latitude" className="form-control" type="number" step="0.000001" min="-90" max="90" value={form.latitude} onChange={(event) => updateField('latitude', event.target.value)} placeholder="Optional" /></div>
           <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="report-longitude">Longitude</label><input id="report-longitude" className="form-control" type="number" step="0.000001" min="-180" max="180" value={form.longitude} onChange={(event) => updateField('longitude', event.target.value)} placeholder="Optional" /></div>
-          <div className="col-12 col-md-3"><label className="form-label fw-semibold" htmlFor="report-flood-type">Flood type</label><select id="report-flood-type" className="form-select" value={form.floodType} onChange={(event) => updateField('floodType', event.target.value)}>{FLOOD_TYPES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+          <div className="col-12 col-md-3"><label className="form-label fw-semibold" htmlFor="report-flood-type">Flood type</label><select id="report-flood-type" className="form-select" value={form.floodType} onChange={(event) => updateField('floodType', event.target.value)}>{toOptions(FLOOD_TYPE).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></div>
           <div className="col-12 col-md-3"><label className="form-label fw-semibold" htmlFor="report-risk">People immediately at risk</label><input id="report-risk" className="form-control" type="number" min="0" max="1000000" value={form.peopleAtRisk} onChange={(event) => updateField('peopleAtRisk', event.target.value)} /></div>
         </div>
 

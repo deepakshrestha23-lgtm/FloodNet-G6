@@ -9,15 +9,15 @@ async function findForUser(userId) {
   const result = await getPool().query(
     `
       SELECT uj.user_id, uj.scope_level,
-             uj.province_id, p.code AS province_code, p.name AS province_name,
-             uj.district_id, d.code AS district_code, d.name AS district_name,
-             uj.local_level_id, ll.code AS local_level_code, ll.name AS local_level_name,
-             uj.ward_id, w.ward_number, w.name AS ward_name
+             p.id AS province_id, p.code AS province_code, p.name AS province_name,
+             d.id AS district_id, d.code AS district_code, d.name AS district_name,
+             ll.id AS local_level_id, ll.code AS local_level_code, ll.name AS local_level_name,
+             w.id AS ward_id, w.ward_number, w.name AS ward_name
       FROM user_jurisdictions uj
-      LEFT JOIN geo_provinces p ON p.id = uj.province_id
-      LEFT JOIN geo_districts d ON d.id = uj.district_id
-      LEFT JOIN geo_local_levels ll ON ll.id = uj.local_level_id
       LEFT JOIN geo_wards w ON w.id = uj.ward_id
+      LEFT JOIN geo_local_levels ll ON ll.id = COALESCE(uj.local_level_id, w.local_level_id)
+      LEFT JOIN geo_districts d ON d.id = COALESCE(uj.district_id, ll.district_id)
+      LEFT JOIN geo_provinces p ON p.id = COALESCE(uj.province_id, d.province_id)
       WHERE uj.user_id = $1
     `,
     [userId]

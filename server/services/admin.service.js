@@ -111,6 +111,38 @@ async function updateUserJurisdiction(admin, userId, input) {
 }
 
 /**
+ * An administrator resets another account's password.
+ *
+ * Resetting your own password this way is refused: it would set a new
+ * credential without proving you know the current one, which would let anyone
+ * holding a stolen administrator access token lock the real owner out. The
+ * self-service endpoint, which does require the current password, is the only
+ * route to your own credential.
+ */
+async function resetUserPassword(admin, userId, newPassword) {
+  if (admin.id === userId) {
+    throw new AppError(
+      409,
+      'SELF_PASSWORD_RESET_FORBIDDEN',
+      'Change your own password from your profile, where your current password is required'
+    );
+  }
+
+  await getUser(userId);
+
+  const passwordHash = await hashPassword(newPassword);
+  const updated = await adminRepository.resetUserPassword({
+    actorId: admin.id,
+    userId,
+    passwordHash
+  });
+
+  if (!updated) throw new AppError(404, 'USER_NOT_FOUND', 'The requested user was not found');
+
+  return adminRepository.findUserById(userId);
+}
+
+/**
  * An administrator cannot deactivate their own account, and the last active
  * administrator cannot be deactivated at all, so the platform can never be
  * locked out of administrative access.
@@ -297,6 +329,7 @@ module.exports = {
   updateUserStatus,
   updateUserRole,
   updateUserJurisdiction,
+  resetUserPassword,
   listZones,
   createZone,
   updateZone,

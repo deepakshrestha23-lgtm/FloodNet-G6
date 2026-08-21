@@ -41,7 +41,8 @@ async function registerResident(input) {
       firstName: input.firstName.trim(),
       lastName: input.lastName.trim(),
       phone: input.phone?.trim() || null,
-      homeZoneId: input.homeZoneId || null
+      homeZoneId: input.homeZoneId || null,
+      homeWardId: input.homeWardId || null
     });
 
     return toPublicUser(user);
@@ -52,6 +53,10 @@ async function registerResident(input) {
 
     if (error.code === 'INVALID_HOME_ZONE') {
       throw new AppError(400, 'INVALID_HOME_ZONE', error.message);
+    }
+
+    if (error.code === 'INVALID_HOME_WARD') {
+      throw new AppError(400, 'INVALID_HOME_WARD', error.message);
     }
 
     throw error;
@@ -151,6 +156,36 @@ async function logout(refreshToken) {
   }
 }
 
+/**
+ * Changes the caller's own password after re-verifying the current one.
+ *
+ * The failure for a wrong current password is deliberately the same
+ * INVALID_CREDENTIALS used by login, so this endpoint cannot be used to probe
+ * whether a guessed password is correct any more cheaply than login can.
+ */
+async function changeOwnPassword(userId, { currentPassword, newPassword }, currentSessionId = null) {
+  const user = await userRepository.findUserById(userId);
+
+  if (!user) {
+    throw new AppError(404, 'USER_NOT_FOUND', 'User account not found');
+  }
+
+  const passwordMatches = await comparePassword(currentPassword, user.passwordHash);
+
+  if (!passwordMatches) {
+    throw new AppError(401, 'INVALID_CREDENTIALS', 'Your current password is incorrect');
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+  const updated = await userRepository.updatePassword(userId, passwordHash, {
+    keepSessionId: currentSessionId
+  });
+
+  if (!updated) {
+    throw new AppError(404, 'USER_NOT_FOUND', 'User account not found');
+  }
+}
+
 async function updateCurrentUser(userId, input) {
   if (input.homeZoneId) {
     const validZone = await userRepository.isActiveZone(input.homeZoneId);
@@ -159,11 +194,21 @@ async function updateCurrentUser(userId, input) {
     }
   }
 
+  // The home ward is the administrative location alerts are targeted at, so an
+  // inactive or unknown ward is rejected rather than quietly stored.
+  if (input.homeWardId) {
+    const validWard = await userRepository.isActiveWard(input.homeWardId);
+    if (!validWard) {
+      throw new AppError(400, 'INVALID_HOME_WARD', 'The selected home ward is invalid or inactive');
+    }
+  }
+
   const user = await userRepository.updateProfile(userId, {
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
     phone: input.phone?.trim() || null,
-    homeZoneId: input.homeZoneId || null
+    homeZoneId: input.homeZoneId || null,
+    homeWardId: input.homeWardId || null
   });
 
   if (!user) {
@@ -179,5 +224,6 @@ module.exports = {
   refresh,
   logout,
   toPublicUser,
-  updateCurrentUser
+  updateCurrentUser,
+  changeOwnPassword
 };

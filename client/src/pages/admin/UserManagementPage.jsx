@@ -4,6 +4,7 @@ import {
   createUser,
   fetchUsers,
   updateUserJurisdiction,
+  resetUserPassword,
   updateUserRole,
   updateUserStatus
 } from '../../services/adminApi';
@@ -22,6 +23,105 @@ import { formatDateTime } from '../../utils/formatters';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 const PAGE_SIZE = 20;
+
+/**
+ * An administrator sets a replacement password for an account that has been
+ * locked out. The reset is written to the audit log and ends every session the
+ * account has open, so the holder must sign in again with the new credential.
+ * Tell the owner to change it from their profile straight away: until they do,
+ * the administrator knows a working password for their account.
+ */
+function PasswordResetEditor({ user, onDone, onCancel }) {
+  const [form, setForm] = useState({ newPassword: '', confirmPassword: '' });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [done, setDone] = useState(false);
+
+  const mismatch = form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword;
+
+  async function save(event) {
+    event.preventDefault();
+    if (mismatch) return;
+
+    setSaving(true);
+    setError(null);
+
+    try {
+      await resetUserPassword(user.id, form.newPassword);
+      setForm({ newPassword: '', confirmPassword: '' });
+      setDone(true);
+      await onDone();
+    } catch (caughtError) {
+      setError(caughtError);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form className="panel-card p-3 p-md-4 mb-3" onSubmit={save}>
+      <div className="d-flex justify-content-between align-items-start gap-2 mb-3">
+        <div>
+          <h2 className="h6 fw-semibold mb-1">Reset account password</h2>
+          <p className="small text-secondary mb-0">{user.firstName} {user.lastName} · {user.email}</p>
+        </div>
+        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onCancel}>Close</button>
+      </div>
+
+      <p className="small text-secondary">
+        Use at least 8 characters with uppercase, lowercase and a number. The account is signed out
+        of every device and this reset is recorded in the audit log.
+      </p>
+
+      <div className="row g-3 mb-3">
+        <div className="col-12 col-md-6">
+          <label className="form-label fw-semibold" htmlFor="reset-password">New password</label>
+          <input
+            id="reset-password"
+            className="form-control"
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            maxLength={72}
+            value={form.newPassword}
+            onChange={(event) => { setForm((c) => ({ ...c, newPassword: event.target.value })); setDone(false); }}
+          />
+        </div>
+        <div className="col-12 col-md-6">
+          <label className="form-label fw-semibold" htmlFor="reset-password-confirm">Confirm password</label>
+          <input
+            id="reset-password-confirm"
+            className={`form-control ${mismatch ? 'is-invalid' : ''}`}
+            type="password"
+            autoComplete="new-password"
+            required
+            value={form.confirmPassword}
+            onChange={(event) => { setForm((c) => ({ ...c, confirmPassword: event.target.value })); setDone(false); }}
+          />
+          {mismatch && <div className="invalid-feedback">Both fields must match.</div>}
+        </div>
+      </div>
+
+      {error && <ErrorState message={error.message} details={error.details} />}
+
+      {done && (
+        <div className="alert alert-success py-2 small" role="status">
+          Password reset. Give it to {user.firstName} privately and ask them to change it from their
+          profile at their next sign-in.
+        </div>
+      )}
+
+      <button
+        className="btn btn-primary"
+        type="submit"
+        disabled={saving || mismatch || !form.newPassword}
+      >
+        {saving ? 'Resetting...' : 'Reset password'}
+      </button>
+    </form>
+  );
+}
 
 function JurisdictionEditor({ user, onSaved, onCancel }) {
   const [scopeLevel, setScopeLevel] = useState(user.jurisdiction?.scopeLevel || 'NATIONAL');
@@ -210,6 +310,7 @@ function UserManagementPage() {
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState(null);
   const [jurisdictionTarget, setJurisdictionTarget] = useState(null);
+  const [passwordTarget, setPasswordTarget] = useState(null);
 
   const filters = useMemo(() => ({
     search: searchParams.get('search') || '',
@@ -333,6 +434,13 @@ function UserManagementPage() {
                 Jurisdiction
               </button>
             )}
+            {/* Your own password is changed from your profile, where the current
+                one must be supplied, so the action is not offered against self. */}
+            {!isSelf && (
+              <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setPasswordTarget(row)}>
+                Reset password
+              </button>
+            )}
           </div>
         );
       }
@@ -377,6 +485,14 @@ function UserManagementPage() {
             setShowCreate(false);
             await reload();
           }}
+        />
+      )}
+
+      {passwordTarget && (
+        <PasswordResetEditor
+          user={passwordTarget}
+          onCancel={() => setPasswordTarget(null)}
+          onDone={reload}
         />
       )}
 

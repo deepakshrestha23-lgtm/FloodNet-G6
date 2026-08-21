@@ -51,6 +51,20 @@ async function updateUserStatus(request, response) {
   });
 }
 
+async function resetUserPassword(request, response) {
+  const user = await adminService.resetUserPassword(
+    request.user,
+    request.params.id,
+    request.passwordResetInput.newPassword
+  );
+
+  response.status(200).json({
+    success: true,
+    data: { user },
+    message: 'Password reset successfully. The account has been signed out of all devices.'
+  });
+}
+
 async function updateUserRole(request, response) {
   const user = await adminService.updateUserRole(
     request.user,
@@ -185,6 +199,7 @@ module.exports = {
   updateUserStatus,
   updateUserRole,
   updateUserJurisdiction,
+  resetUserPassword,
   listRoles,
   listZones,
   createZone,
