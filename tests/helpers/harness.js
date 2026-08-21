@@ -21,9 +21,6 @@ process.env.DB_NAME = testDatabase;
 // Evidence tests exercise validation, metadata and authorization. Object bytes
 // are not sent to AWS during tests, so no credentials or bucket are required.
 process.env.EVIDENCE_STORAGE_MODE = 'mock';
-// Conditions run against deterministic values. A test run must never depend
-// on Open-Meteo being reachable, and must never make an outbound call.
-process.env.WEATHER_MODE = 'mock';
 process.env.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'test-access-secret-value-for-automated-tests';
 process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'test-refresh-secret-value-for-automated-tests';
 process.env.EVIDENCE_UPLOAD_SECRET = process.env.EVIDENCE_UPLOAD_SECRET || 'test-evidence-secret-value-for-tests';

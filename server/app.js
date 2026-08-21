@@ -14,7 +14,6 @@ const officerRoutes = require('./routes/officer.routes');
 const centreRoutes = require('./routes/centre.routes');
 const adminRoutes = require('./routes/admin.routes');
 const geographyRoutes = require('./routes/geography.routes');
-const conditionsRoutes = require('./routes/conditions.routes');
 const { AppError } = require('./utils/http-error');
 
 const app = express();
@@ -62,7 +61,6 @@ app.use('/api/reports', evidenceRoutes);
 app.use('/api/officer', officerRoutes);
 app.use('/api/centres', centreRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/conditions', conditionsRoutes);
 
 const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
 const clientIndexPath = path.join(clientDistPath, 'index.html');

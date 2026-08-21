@@ -7,7 +7,6 @@ import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import StatusBadge from '../../components/common/StatusBadge';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
-import ConditionsPanel from '../../components/conditions/ConditionsPanel';
 import {
   REPORT_STATUS,
   OBSERVED_SEVERITY,
@@ -225,14 +224,6 @@ function ReviewReportPage() {
               </div>
             </dl>
           </section>
-
-          {/* Only for reports that carry GPS. A report located to a ward
-              alone has no coordinate precise enough to query against. */}
-          {report.latitude !== null && report.latitude !== undefined && (
-            <div className="mb-3">
-              <ConditionsPanel latitude={report.latitude} longitude={report.longitude} />
-            </div>
-          )}
 
           <section className="panel-card p-3 p-md-4 rounded-4 mb-3">
             <h2 className="h6 fw-semibold mb-1">Evidence</h2>
