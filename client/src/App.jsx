@@ -5,6 +5,8 @@ import { roleHomePath } from './routes/roleHome';
 import AppLayout from './layouts/AppLayout';
 
 import PublicHomePage from './pages/public/PublicHomePage';
+import PublicAlertsPage from './pages/public/PublicAlertsPage';
+import PublicLayout from './layouts/PublicLayout';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForbiddenPage from './pages/ForbiddenPage';
@@ -53,6 +55,19 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<PublicHomePage />} />
+        {/* Reachable without an account: someone deciding whether to leave
+            their house should not have to register first. */}
+        <Route path="/alerts" element={<PublicLayout><PublicAlertsPage /></PublicLayout>} />
+        <Route
+          path="/centres"
+          element={(
+            <PublicLayout>
+              <div className="container public-section">
+                <CentreDirectoryPage eyebrow="Public" />
+              </div>
+            </PublicLayout>
+          )}
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forbidden" element={<ForbiddenPage />} />

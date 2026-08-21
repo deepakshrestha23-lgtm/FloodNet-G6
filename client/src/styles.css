@@ -2010,3 +2010,110 @@ a.fn-facility-chip:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .fn-reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* ---------------------------------------------------------------- public
+   Shared chrome for the signed-out surface: landing page, alert list and
+   centre directory. The footer carries emergency numbers as tap targets,
+   because the person most likely to need them is on a phone. */
+
+.public-nav-link {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.55rem;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.public-nav-link:hover,
+.public-nav-link:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Page heading band for the public list pages, so following "view all" from
+   the landing page does not land on something visually unrelated. */
+.public-page-head {
+  background: linear-gradient(160deg, #0b2438 0%, #0e3350 100%);
+  color: #fff;
+  padding: 3.25rem 0 2.75rem;
+}
+
+.public-page-head .public-section-title {
+  color: #fff;
+}
+
+.public-page-head .public-section-lead {
+  color: #a9cde0;
+  max-width: 46rem;
+}
+
+.fn-foot-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7ea8c4;
+  margin-bottom: 0.85rem;
+}
+
+.fn-foot-text {
+  color: #93b4c9;
+}
+
+.fn-foot-list,
+.fn-foot-numbers {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fn-foot-list li + li,
+.fn-foot-numbers li + li {
+  margin-top: 0.5rem;
+}
+
+.fn-foot-list a {
+  color: #cfe4f0;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.fn-foot-list a:hover,
+.fn-foot-list a:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.fn-foot-numbers a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.6rem;
+  color: #cfe4f0;
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.fn-foot-numbers a:hover,
+.fn-foot-numbers a:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.fn-foot-numbers strong {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 575.98px) {
+  .public-page-head {
+    padding: 2.25rem 0 2rem;
+  }
+}

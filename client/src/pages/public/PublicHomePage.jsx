@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fetchActiveAlerts, fetchPublicCentres } from '../../services/publicApi';
 import { useApiResource } from '../../hooks/useApiResource';
+import PublicLayout from '../../layouts/PublicLayout';
 import AlertCard from '../../components/alert/AlertCard';
 import CentreSummaryCard from '../../components/centre/CentreSummaryCard';
 import LoadingState from '../../components/common/LoadingState';
@@ -11,7 +12,6 @@ import EmptyState from '../../components/common/EmptyState';
 import Icon from '../../components/common/Icon';
 import Reveal from '../../components/common/Reveal';
 import CountUp from '../../components/common/CountUp';
-import BrandMark from '../../components/brand/BrandMark';
 import WaveBackdrop from '../../components/brand/WaveBackdrop';
 import HeroMonitor from '../../components/brand/HeroMonitor';
 import { formatNumber } from '../../utils/formatters';
@@ -105,40 +105,7 @@ function PublicHomePage() {
   ];
 
   return (
-    <div className="public-shell">
-      <a className="visually-hidden-focusable skip-link" href="#public-content">
-        Skip to main content
-      </a>
-
-      <header className="public-nav">
-        <div className="container d-flex justify-content-between align-items-center gap-2 py-2">
-          <Link className="fn-brand-link" to="/">
-            <BrandMark size={34} />
-            <span className="fn-wordmark">Flood<span className="brand-accent">Net</span></span>
-          </Link>
-
-          <nav className="d-flex gap-2" aria-label="Account">
-            {isAuthenticated ? (
-              <Link className="btn btn-light btn-sm" to={dashboardPath}>
-                My dashboard
-                <Icon name="arrowRight" size={15} />
-              </Link>
-            ) : (
-              <>
-                <Link className="btn btn-outline-light btn-sm d-none d-sm-inline-flex" to="/register">
-                  Create account
-                </Link>
-                <Link className="btn btn-light btn-sm" to="/login">
-                  <Icon name="lock" size={14} />
-                  Sign in
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
-
-      <main id="public-content">
+    <PublicLayout>
         {/* ------------------------------------------------------- hero */}
         <section className="public-hero">
           <span
@@ -271,10 +238,16 @@ function PublicHomePage() {
                     </span>
                     <h2 className="public-section-title mt-3 mb-0">Current FloodNet alerts</h2>
                   </div>
-                  <span className="fn-live-pill">
-                    <span className="fn-live-dot" />
-                    {data.alerts.length} active
-                  </span>
+                  <div className="d-flex flex-wrap align-items-center gap-2">
+                    <span className="fn-live-pill">
+                      <span className="fn-live-dot" />
+                      {data.alerts.length} active
+                    </span>
+                    <Link className="btn btn-outline-primary btn-sm" to="/alerts">
+                      View all alerts
+                      <Icon name="arrowRight" size={15} />
+                    </Link>
+                  </div>
                 </div>
 
                 {data.alerts.length === 0 ? (
@@ -283,13 +256,23 @@ function PublicHomePage() {
                     description="There are no published FloodNet alerts in effect at the moment."
                   />
                 ) : (
-                  <div className="row g-4">
-                    {data.alerts.slice(0, 2).map((alert) => (
-                      <div className="col-12 col-xl-6" key={alert.id}>
-                        <AlertCard alert={alert} />
+                  <>
+                    <div className="row g-4">
+                      {data.alerts.slice(0, 2).map((alert) => (
+                        <div className="col-12 col-xl-6" key={alert.id}>
+                          <AlertCard alert={alert} />
+                        </div>
+                      ))}
+                    </div>
+                    {data.alerts.length > 2 && (
+                      <div className="text-center mt-4">
+                        <Link className="btn btn-outline-primary" to="/alerts">
+                          View the other {data.alerts.length - 2} active alert{data.alerts.length - 2 === 1 ? '' : 's'}
+                          <Icon name="arrowRight" size={16} />
+                        </Link>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
 
                 <div className="d-flex flex-wrap justify-content-between align-items-end gap-3 mt-5 pt-4 mb-4">
@@ -300,22 +283,38 @@ function PublicHomePage() {
                     </span>
                     <h2 className="public-section-title mt-3 mb-0">Where there is space right now</h2>
                   </div>
-                  <span className="fn-live-pill">
-                    <span className="fn-live-dot" />
-                    {formatNumber(availableSpaces)} spaces free
-                  </span>
+                  <div className="d-flex flex-wrap align-items-center gap-2">
+                    <span className="fn-live-pill">
+                      <span className="fn-live-dot" />
+                      {formatNumber(availableSpaces)} spaces free
+                    </span>
+                    <Link className="btn btn-outline-primary btn-sm" to="/centres">
+                      View all centres
+                      <Icon name="arrowRight" size={15} />
+                    </Link>
+                  </div>
                 </div>
 
                 {data.centres.length === 0 ? (
                   <EmptyState title="No evacuation centres are currently listed" />
                 ) : (
-                  <div className="row g-4">
-                    {data.centres.slice(0, 3).map((centre) => (
-                      <div className="col-12 col-md-6 col-xl-4" key={centre.id}>
-                        <CentreSummaryCard centre={centre} />
+                  <>
+                    <div className="row g-4">
+                      {data.centres.slice(0, 3).map((centre) => (
+                        <div className="col-12 col-md-6 col-xl-4" key={centre.id}>
+                          <CentreSummaryCard centre={centre} />
+                        </div>
+                      ))}
+                    </div>
+                    {data.centres.length > 3 && (
+                      <div className="text-center mt-4">
+                        <Link className="btn btn-outline-primary" to="/centres">
+                          View all {data.centres.length} evacuation centres
+                          <Icon name="arrowRight" size={16} />
+                        </Link>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -414,31 +413,7 @@ function PublicHomePage() {
             </Reveal>
           </div>
         </section>
-      </main>
-
-      <footer className="public-foot mt-auto">
-        <div className="container">
-          <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <Link className="fn-brand-link" to="/">
-              <BrandMark size={30} />
-              <span className="fn-wordmark text-white">Flood<span className="brand-accent">Net</span></span>
-            </Link>
-            <nav className="d-flex flex-wrap gap-4 small" aria-label="Footer">
-              <a href="#live">Live alerts</a>
-              <Link to="/login">Sign in</Link>
-              <Link to="/register">Create account</Link>
-            </nav>
-          </div>
-
-          <hr className="fn-rule my-4" />
-
-          <p className="small mb-0">
-            FloodNet distinguishes community reports, officer-verified incidents and official alerts.
-            In a life-threatening emergency, call Nepal Police on 100 or Ambulance on 102.
-          </p>
-        </div>
-      </footer>
-    </div>
+    </PublicLayout>
   );
 }
 
