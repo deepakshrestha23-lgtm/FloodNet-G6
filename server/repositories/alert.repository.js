@@ -152,6 +152,42 @@ async function listAlerts({
   };
 }
 
+/**
+ * Live alerts inside an officer's own jurisdiction, read only.
+ *
+ * Evacuation officers decide when to open a shelter, so they need to see the
+ * warning that makes that necessary. They cannot create, edit or publish one:
+ * that separation stays with the monitoring officer.
+ *
+ * The validity window is applied here as well as the status, because expiry is
+ * an explicit officer action and a published alert can sit past its own
+ * expires_at until someone performs it.
+ */
+async function listActiveAlertsInJurisdiction(officerId, limit = 50) {
+  const result = await getPool().query(
+    `
+      ${alertSelect}
+      WHERE a.status = 'PUBLISHED'
+        AND a.valid_from <= NOW()
+        AND a.expires_at > NOW()
+        AND ${alertPredicate('a', 2)}
+      GROUP BY a.id
+      ORDER BY
+        CASE a.severity
+          WHEN 'EMERGENCY' THEN 1
+          WHEN 'WARNING' THEN 2
+          WHEN 'WATCH' THEN 3
+          ELSE 4
+        END,
+        a.valid_from DESC
+      LIMIT $1
+    `,
+    [limit, officerId]
+  );
+
+  return result.rows.map(mapAlert);
+}
+
 async function replaceAlertTargets(client, alertId, zoneIds, wardIds) {
   await client.query('DELETE FROM alert_zones WHERE alert_id = $1', [alertId]);
   await client.query('DELETE FROM alert_wards WHERE alert_id = $1', [alertId]);
@@ -369,6 +405,7 @@ async function transitionAlert({ alertId, actorId, newStatus, allowedFromStatuse
 }
 
 module.exports = {
+  listActiveAlertsInJurisdiction,
   findAlertById,
   listAlerts,
   createAlert,

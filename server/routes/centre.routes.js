@@ -22,6 +22,16 @@ const requireEvacuationOfficer = requireRoles('EVACUATION_OFFICER');
 // Officer may change it.
 router.get('/dashboard', validateGeographyQuery, asyncHandler(centreController.dashboard));
 router.get('/facility-types', asyncHandler(centreController.facilityTypes));
+/*
+ * Live alerts for the officer's own jurisdiction, read only. Declared before
+ * the ":id" routes so "alerts" is not parsed as a centre identifier.
+ *
+ * The evacuation officer decides when to open a shelter and needs to see the
+ * warning that makes that necessary. Creating and publishing alerts stays with
+ * the monitoring officer.
+ */
+router.get('/alerts', requireEvacuationOfficer, asyncHandler(centreController.listActiveAlerts));
+
 router.get('/', validateCentreListQuery, asyncHandler(centreController.list));
 router.get('/:id', validateCentreId, asyncHandler(centreController.get));
 

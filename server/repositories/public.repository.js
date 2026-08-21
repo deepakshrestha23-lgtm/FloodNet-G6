@@ -5,6 +5,73 @@ function getPool() {
   return pool;
 }
 
+/*
+ * Whether a record reaches a viewer standing in a given zone and ward.
+ *
+ * A direct match on either is obvious. The two bridged cases are the ones that
+ * were missing: a record filed against a zone still reaches a resident whose
+ * ward that zone covers, and a record filed against a ward still reaches a
+ * resident whose zone covers it. Without the bridge a resident filtering by
+ * ward cannot see a centre recorded with only a zone, even when the zone spans
+ * their own ward.
+ *
+ * The officer side already reasons this way in jurisdiction.repository; this
+ * brings the public side into line.
+ */
+function areaReachPredicate(alias, zoneParameter = 1, wardParameter = 2) {
+  const zone = `$${zoneParameter}::UUID`;
+  const ward = `$${wardParameter}::UUID`;
+
+  return `
+    (
+      (${zone} IS NULL AND ${ward} IS NULL)
+      OR ${alias}.zone_id = ${zone}
+      OR ${alias}.ward_id = ${ward}
+      OR (${ward} IS NOT NULL AND EXISTS (
+        SELECT 1 FROM flood_zone_wards bridge
+        WHERE bridge.zone_id = ${alias}.zone_id AND bridge.ward_id = ${ward}
+      ))
+      OR (${zone} IS NOT NULL AND EXISTS (
+        SELECT 1 FROM flood_zone_wards bridge
+        WHERE bridge.zone_id = ${zone} AND bridge.ward_id = ${alias}.ward_id
+      ))
+    )
+  `;
+}
+
+/** The same reasoning for alerts, whose targets live in two join tables. */
+function alertReachPredicate(alias, zoneParameter = 1, wardParameter = 2) {
+  const zone = `$${zoneParameter}::UUID`;
+  const ward = `$${wardParameter}::UUID`;
+
+  return `
+    (
+      (${zone} IS NULL AND ${ward} IS NULL)
+      OR EXISTS (
+        SELECT 1 FROM alert_zones t WHERE t.alert_id = ${alias}.id AND t.zone_id = ${zone}
+      )
+      OR EXISTS (
+        SELECT 1 FROM alert_wards t WHERE t.alert_id = ${alias}.id AND t.ward_id = ${ward}
+      )
+      OR EXISTS (
+        SELECT 1 FROM alert_zones t
+        INNER JOIN flood_zone_wards bridge ON bridge.zone_id = t.zone_id
+        WHERE t.alert_id = ${alias}.id AND bridge.ward_id = ${ward}
+      )
+      OR EXISTS (
+        SELECT 1 FROM alert_wards t
+        INNER JOIN flood_zone_wards bridge ON bridge.ward_id = t.ward_id
+        WHERE t.alert_id = ${alias}.id AND bridge.zone_id = ${zone}
+      )
+    )
+  `;
+}
+
+/** A published alert is only live inside its own validity window. */
+const ALERT_IS_LIVE = `
+  a.status = 'PUBLISHED' AND a.valid_from <= NOW() AND a.expires_at > NOW()
+`;
+
 async function listActiveZones() {
   const result = await getPool().query(
     `SELECT id, code, name, locality, description, zone_type, is_demo_data
@@ -35,21 +102,24 @@ async function listActiveAlerts(zoneId, wardId) {
       FROM flood_alerts a
       LEFT JOIN alert_zones az ON az.alert_id = a.id
       LEFT JOIN flood_zones z ON z.id = az.zone_id
-      WHERE a.status = 'PUBLISHED' AND a.valid_from <= NOW() AND a.expires_at > NOW()
-        AND (($1::UUID IS NULL AND $2::UUID IS NULL) OR EXISTS (
-          SELECT 1 FROM alert_zones filtered_az
-          WHERE filtered_az.alert_id = a.id AND filtered_az.zone_id = $1
-        ) OR EXISTS (
-          SELECT 1 FROM alert_wards filtered_aw
-          WHERE filtered_aw.alert_id = a.id AND filtered_aw.ward_id = $2
-        ))
+      WHERE ${ALERT_IS_LIVE}
+        AND ${alertReachPredicate('a')}
       GROUP BY a.id
       ORDER BY a.severity DESC, a.valid_from DESC
     `,
     [zoneId || null, wardId || null]
   );
 
-  return result.rows.map((row) => ({
+  /*
+   * Counted without the area filter so a resident is never shown a bare "no
+   * alerts" that they cannot tell apart from "all clear". The screen can say
+   * how many are live elsewhere and offer to show them.
+   */
+  const total = await getPool().query(
+    `SELECT COUNT(*)::INT AS total FROM flood_alerts a WHERE ${ALERT_IS_LIVE}`
+  );
+
+  const alerts = result.rows.map((row) => ({
     id: row.id,
     alertReference: row.alert_ref,
     title: row.title,
@@ -61,6 +131,8 @@ async function listActiveAlerts(zoneId, wardId) {
     zones: row.zones,
     wards: row.wards
   }));
+
+  return { alerts, totalActive: total.rows[0].total };
 }
 
 async function listVerifiedIncidents(zoneId, wardId, limit) {
@@ -78,7 +150,7 @@ async function listVerifiedIncidents(zoneId, wardId, limit) {
       LEFT JOIN geo_districts d ON d.id = ll.district_id
       LEFT JOIN geo_provinces p ON p.id = d.province_id
       WHERE fr.status IN ('VERIFIED', 'CLOSED')
-        AND (($1::UUID IS NULL AND $2::UUID IS NULL) OR fr.zone_id = $1 OR fr.ward_id = $2)
+        AND ${areaReachPredicate('fr')}
       ORDER BY fr.observed_at DESC
       LIMIT $3
     `,
@@ -123,14 +195,28 @@ async function listActiveCentres(zoneId, wardId) {
       LEFT JOIN centre_facilities cf ON cf.centre_id = ec.id
       LEFT JOIN centre_facility_types cft ON cft.id = cf.facility_type_id
       WHERE ec.is_active = TRUE
-        AND (($1::UUID IS NULL AND $2::UUID IS NULL) OR ec.zone_id = $1 OR ec.ward_id = $2)
+        AND ${areaReachPredicate('ec')}
       GROUP BY ec.id, z.id, w.id, ll.id, d.id, p.id
-      ORDER BY COALESCE(p.name, ''), COALESCE(d.name, ''), ec.name ASC
+      -- Somewhere with room comes first. A resident looking for shelter should
+      -- not have to read past centres that cannot take them.
+      ORDER BY
+        CASE ec.operational_status
+          WHEN 'OPEN' THEN 1
+          WHEN 'NEAR_CAPACITY' THEN 2
+          WHEN 'FULL' THEN 3
+          ELSE 4
+        END,
+        ec.available_space DESC NULLS LAST,
+        COALESCE(p.name, ''), COALESCE(d.name, ''), ec.name ASC
     `,
     [zoneId || null, wardId || null]
   );
 
-  return result.rows.map((row) => ({
+  const total = await getPool().query(
+    'SELECT COUNT(*)::INT AS total FROM evacuation_centres WHERE is_active = TRUE'
+  );
+
+  const centres = result.rows.map((row) => ({
     id: row.id,
     name: row.name,
     locationDescription: row.location_description,
@@ -148,6 +234,8 @@ async function listActiveCentres(zoneId, wardId) {
     } : null,
     facilities: row.facilities
   }));
+
+  return { centres, totalActive: total.rows[0].total };
 }
 
 module.exports = { listActiveZones, listActiveAlerts, listVerifiedIncidents, listActiveCentres };

@@ -9,9 +9,16 @@ async function zones(_request, response) {
 }
 
 async function alerts(request, response) {
+  // totalActive counts every live alert regardless of area, so the client can
+  // distinguish "nothing here" from "nothing anywhere".
+  const { alerts: activeAlerts, totalActive } = await publicService.getAlerts(
+    request.query.zoneId,
+    request.query.wardId
+  );
+
   response.status(200).json({
     success: true,
-    data: { alerts: await publicService.getAlerts(request.query.zoneId, request.query.wardId) },
+    data: { alerts: activeAlerts, totalActive },
     message: 'Active alerts retrieved successfully'
   });
 }
@@ -25,9 +32,14 @@ async function incidents(request, response) {
 }
 
 async function centres(request, response) {
+  const { centres: activeCentres, totalActive } = await publicService.getCentres(
+    request.query.zoneId,
+    request.query.wardId
+  );
+
   response.status(200).json({
     success: true,
-    data: { centres: await publicService.getCentres(request.query.zoneId, request.query.wardId) },
+    data: { centres: activeCentres, totalActive },
     message: 'Evacuation centres retrieved successfully'
   });
 }

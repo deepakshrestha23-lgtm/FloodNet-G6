@@ -9,6 +9,7 @@ import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
 import FilterBar from '../../components/common/FilterBar';
 import AlertCard from '../../components/alert/AlertCard';
+import AreaScopeNotice from '../../components/common/AreaScopeNotice';
 import StatusBadge from '../../components/common/StatusBadge';
 import { OBSERVED_SEVERITY, ROAD_CONDITION } from '../../utils/enums';
 import { formatDateTime } from '../../utils/formatters';
@@ -23,19 +24,26 @@ function ResidentAlertsPage() {
   // resident's home ward is only applied while they are not filtering.
   const wardId = searchParams.get('zoneId') ? '' : (user?.profile?.homeWardId || '');
 
+  // "showAll" is an explicit override the resident can reach from the notice
+  // below, so being scoped to a home area is never a dead end.
+  const showingAll = searchParams.get('area') === 'all';
+  const effectiveZoneId = showingAll ? '' : zoneId;
+  const effectiveWardId = showingAll ? '' : wardId;
+
   const loader = useCallback(async () => {
     const [alertPayload, incidentPayload] = await Promise.all([
-      fetchActiveAlerts({ zoneId: zoneId || undefined, wardId: wardId || undefined }),
-      fetchVerifiedIncidents({ zoneId: zoneId || undefined, wardId: wardId || undefined, limit: 25 })
+      fetchActiveAlerts({ zoneId: effectiveZoneId || undefined, wardId: effectiveWardId || undefined }),
+      fetchVerifiedIncidents({ zoneId: effectiveZoneId || undefined, wardId: effectiveWardId || undefined, limit: 25 })
     ]);
 
     return {
       data: {
         alerts: alertPayload.data.alerts,
+        totalActive: alertPayload.data.totalActive,
         incidents: incidentPayload.data.incidents
       }
     };
-  }, [zoneId, wardId]);
+  }, [effectiveZoneId, effectiveWardId]);
 
   const { data, loading, error, reload } = useApiResource(loader);
 
@@ -45,7 +53,21 @@ function ResidentAlertsPage() {
       .catch(() => setZones([]));
   }, []);
 
-  const filters = useMemo(() => ({ zoneId }), [zoneId]);
+  const filters = useMemo(() => ({ zoneId: effectiveZoneId }), [effectiveZoneId]);
+
+  const homeWard = user?.profile?.homeWard;
+  const scopeLabel = showingAll || !(effectiveZoneId || effectiveWardId)
+    ? ''
+    : (effectiveWardId && homeWard
+        ? `alerts for ${homeWard.name}, ${homeWard.localLevel?.name}, ${homeWard.district?.name}`
+        : 'alerts for the selected area');
+
+  function showAllOfNepal() {
+    const next = new URLSearchParams(searchParams);
+    next.delete('zoneId');
+    next.set('area', 'all');
+    setSearchParams(next);
+  }
 
   function updateFilter(name, value) {
     const next = new URLSearchParams(searchParams);
@@ -87,10 +109,22 @@ function ResidentAlertsPage() {
               Published by an authorised Flood Monitoring Officer and currently in effect.
             </p>
 
+            <AreaScopeNotice
+              areaLabel={scopeLabel}
+              shownCount={data.alerts.length}
+              totalCount={data.totalActive}
+              onShowAll={showAllOfNepal}
+              noun="alert"
+            />
+
             {data.alerts.length === 0 ? (
               <EmptyState
-                title="No active alerts"
-                description="No published alerts are in effect for the selected area."
+                title={scopeLabel ? 'No active alerts for your area' : 'No active alerts'}
+                description={
+                  scopeLabel && data.totalActive > 0
+                    ? `Nothing is in effect where you live. ${data.totalActive} alert${data.totalActive === 1 ? ' is' : 's are'} active elsewhere in Nepal.`
+                    : 'No published alerts are in effect anywhere in Nepal right now.'
+                }
               />
             ) : (
               <div className="row g-3">

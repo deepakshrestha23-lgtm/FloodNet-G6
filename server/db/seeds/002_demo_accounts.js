@@ -335,7 +335,31 @@ async function seedAlert(client, officerId) {
   const alertRef = 'ALT-DEMO-0001';
   const existing = await client.query('SELECT id FROM flood_alerts WHERE alert_ref = $1', [alertRef]);
 
-  if (existing.rowCount > 0) return;
+  /*
+   * Re-seeding refreshes the validity window rather than skipping.
+   *
+   * A demonstration alert seeded once with a fixed window silently falls out
+   * of every public query the moment it expires, and because the seed used to
+   * skip records that already existed, re-running it never brought the alert
+   * back. The result looked exactly like a broken feature: an alert marked
+   * PUBLISHED that no resident could see.
+   */
+  if (existing.rowCount > 0) {
+    await client.query(
+      `
+        UPDATE flood_alerts
+        SET status = 'PUBLISHED',
+            valid_from = NOW() - INTERVAL '3 hours',
+            expires_at = NOW() + INTERVAL '21 hours',
+            published_at = NOW() - INTERVAL '3 hours',
+            cancelled_at = NULL,
+            updated_at = NOW()
+        WHERE id = $1
+      `,
+      [existing.rows[0].id]
+    );
+    return;
+  }
 
   const alertResult = await client.query(
     `

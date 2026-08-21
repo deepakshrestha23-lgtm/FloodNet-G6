@@ -26,6 +26,7 @@ const NAVIGATION = {
   ],
   EVACUATION_OFFICER: [
     { to: '/evacuation', label: 'Dashboard', icon: 'dashboard', end: true },
+    { to: '/evacuation/alerts', label: 'Active alerts', icon: 'bell' },
     { to: '/evacuation/centres', label: 'Centres', icon: 'shelter' },
     { to: '/evacuation/centres/new', label: 'Add centre', icon: 'plus' }
   ],

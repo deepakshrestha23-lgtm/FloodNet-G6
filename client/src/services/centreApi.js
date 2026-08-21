@@ -42,3 +42,13 @@ export function updateCentreStatus(centreId, operationalStatus) {
 export function archiveCentre(centreId) {
   return apiRequest(`/api/centres/${centreId}/archive`, { method: 'POST' });
 }
+
+/**
+ * Live alerts inside the evacuation officer's own jurisdiction.
+ *
+ * Read only: shelter decisions are theirs, but publishing an alert stays with
+ * the monitoring officer.
+ */
+export function fetchEvacuationAlerts() {
+  return apiRequest('/api/centres/alerts');
+}

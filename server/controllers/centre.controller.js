@@ -98,7 +98,18 @@ async function dashboard(request, response) {
   });
 }
 
+async function listActiveAlerts(request, response) {
+  const alerts = await centreService.listActiveAlerts(request.user);
+
+  response.status(200).json({
+    success: true,
+    data: { alerts },
+    message: 'Active alerts retrieved successfully'
+  });
+}
+
 module.exports = {
+  listActiveAlerts,
   list,
   get,
   create,

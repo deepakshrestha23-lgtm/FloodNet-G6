@@ -26,6 +26,7 @@ import AlertFormPage from './pages/officer/AlertFormPage';
 
 import EvacuationDashboardPage from './pages/evacuation/EvacuationDashboardPage';
 import CentreListPage from './pages/evacuation/CentreListPage';
+import EvacuationAlertsPage from './pages/evacuation/EvacuationAlertsPage';
 import CentreFormPage from './pages/evacuation/CentreFormPage';
 
 import AdminOverviewPage from './pages/admin/AdminOverviewPage';
@@ -90,6 +91,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['EVACUATION_OFFICER']} />}>
           <Route element={<AppLayout />}>
             <Route path="/evacuation" element={<EvacuationDashboardPage />} />
+            <Route path="/evacuation/alerts" element={<EvacuationAlertsPage />} />
             <Route path="/evacuation/centres" element={<CentreListPage />} />
             <Route path="/evacuation/centres/new" element={<CentreFormPage />} />
             <Route path="/evacuation/centres/:id/edit" element={<CentreFormPage />} />

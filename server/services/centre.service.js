@@ -4,6 +4,7 @@ const dashboardRepository = require('../repositories/dashboard.repository');
 const userRepository = require('../repositories/user.repository');
 const jurisdictionService = require('./jurisdiction.service');
 const jurisdictionRepository = require('../repositories/jurisdiction.repository');
+const alertRepository = require('../repositories/alert.repository');
 
 const NEAR_CAPACITY_THRESHOLD = 0.85;
 
@@ -75,6 +76,18 @@ async function resolveFacilities(facilities) {
   }
 
   return facilities;
+}
+
+/**
+ * The live alerts an evacuation officer is responsible for responding to.
+ *
+ * Read only by design. Opening a shelter is their decision, but creating,
+ * editing and publishing an alert stays with the monitoring officer, so this
+ * gives visibility without crossing that separation of duties.
+ */
+async function listActiveAlerts(officer) {
+  await jurisdictionService.requireAssignment(officer.id);
+  return alertRepository.listActiveAlertsInJurisdiction(officer.id);
 }
 
 async function listCentres(query) {
@@ -262,6 +275,7 @@ async function getDashboard(officer, geographyQuery) {
 }
 
 module.exports = {
+  listActiveAlerts,
   NEAR_CAPACITY_THRESHOLD,
   suggestOperationalStatus,
   listCentres,

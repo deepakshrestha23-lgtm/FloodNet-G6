@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { fetchPublicCentres, fetchZones } from '../../services/publicApi';
 import { useApiResource } from '../../hooks/useApiResource';
 import PageHeader from '../../components/common/PageHeader';
@@ -8,6 +9,7 @@ import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
 import FilterBar from '../../components/common/FilterBar';
 import CentreSummaryCard from '../../components/centre/CentreSummaryCard';
+import AreaScopeNotice from '../../components/common/AreaScopeNotice';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
 import { CENTRE_STATUS, toOptions } from '../../utils/enums';
 
@@ -16,13 +18,28 @@ import { CENTRE_STATUS, toOptions } from '../../utils/enums';
  * endpoint returns, which excludes operational notes and personal details.
  */
 function CentreDirectoryPage({ eyebrow = 'Resident' }) {
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [zones, setZones] = useState([]);
 
   const zoneId = searchParams.get('zoneId') || '';
   const status = searchParams.get('status') || '';
 
-  const loader = useCallback(() => fetchPublicCentres(zoneId || undefined), [zoneId]);
+  /*
+   * A signed-in resident starts with the centres near where they live, which
+   * is what the dashboard already did. Anonymous visitors, and anyone who has
+   * asked for everything or picked a zone, see the whole country.
+   */
+  const showingAll = searchParams.get('area') === 'all';
+  const homeWardId = user?.profile?.homeWardId;
+  const homeWard = user?.profile?.homeWard;
+  const scopedToHome = Boolean(homeWardId) && !showingAll && !zoneId;
+  const wardId = scopedToHome ? homeWardId : '';
+
+  const loader = useCallback(
+    () => fetchPublicCentres({ zoneId: zoneId || undefined, wardId: wardId || undefined }),
+    [zoneId, wardId]
+  );
   const { data, loading, error, reload } = useApiResource(loader);
 
   useEffect(() => {
@@ -35,6 +52,17 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
     if (!data) return [];
     return status ? data.centres.filter((centre) => centre.operationalStatus === status) : data.centres;
   }, [data, status]);
+
+  const scopeLabel = scopedToHome && homeWard
+    ? `centres near ${homeWard.name}, ${homeWard.localLevel?.name}, ${homeWard.district?.name}`
+    : '';
+
+  function showAllOfNepal() {
+    const next = new URLSearchParams(searchParams);
+    next.delete('zoneId');
+    next.set('area', 'all');
+    setSearchParams(next);
+  }
 
   const totals = useMemo(() => centres.reduce((accumulator, centre) => ({
     capacity: accumulator.capacity + centre.maximumCapacity,
@@ -92,10 +120,22 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
             </div>
           </div>
 
+          <AreaScopeNotice
+            areaLabel={scopeLabel}
+            shownCount={data.centres.length}
+            totalCount={data.totalActive}
+            onShowAll={showAllOfNepal}
+            noun="centre"
+          />
+
           {centres.length === 0 ? (
             <EmptyState
-              title="No evacuation centres match these filters"
-              description="Try clearing the filters or selecting a different flood zone."
+              title={scopeLabel ? "No centres near you match these filters" : "No evacuation centres match these filters"}
+              description={
+                scopeLabel && data.totalActive > 0
+                  ? `Nothing matches near where you live. ${data.totalActive} centre${data.totalActive === 1 ? " is" : "s are"} listed elsewhere in Nepal.`
+                  : "Try clearing the filters or selecting a different flood zone."
+              }
             />
           ) : (
             <div className="row g-3">
