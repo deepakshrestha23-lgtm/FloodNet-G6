@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { roleHomePath } from '../routes/roleHome';
+import AuthLayout from '../layouts/AuthLayout';
+import Icon from '../components/common/Icon';
 
 function LoginPage() {
   const { login } = useAuth();
@@ -29,63 +31,73 @@ function LoginPage() {
   }
 
   return (
-    <main className="auth-shell d-flex align-items-center justify-content-center px-3 py-5">
-      <div className="auth-card panel-card p-4 p-md-5 rounded-4 w-100">
-        <Link className="text-decoration-none" to="/">
-          <span className="h5 fw-bold">Flood<span className="brand-accent">Net</span></span>
-        </Link>
+    <AuthLayout>
+      <span className="eyebrow">
+        <Icon name="lock" size={12} strokeWidth={2} />
+        Secure sign in
+      </span>
 
-        <h1 className="h3 fw-bold mt-4 mb-1">Sign in</h1>
-        <p className="text-secondary">Access your FloodNet reporting and information tools.</p>
+      <h1 className="h3 fw-bold mt-3 mb-1">Welcome back</h1>
+      <p className="text-secondary">Access your FloodNet reporting and information tools.</p>
 
-        {justRegistered && (
-          <div className="alert alert-success" role="alert">
-            Your account has been created. Sign in to continue.
-          </div>
-        )}
+      {justRegistered && (
+        <div className="alert alert-success d-flex gap-2 align-items-center" role="alert">
+          <Icon name="check" size={18} strokeWidth={2.4} />
+          Your account has been created. Sign in to continue.
+        </div>
+      )}
 
-        {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      {error && (
+        <div className="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+          <Icon name="warning" size={18} strokeWidth={2} className="mt-1" />
+          <span>{error}</span>
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="mb-3">
-            <label className="form-label fw-semibold" htmlFor="login-email">Email address</label>
-            <input
-              id="login-email"
-              className="form-control"
-              type="email"
-              autoComplete="username"
-              required
-              value={form.email}
-              onChange={(event) => setForm({ ...form, email: event.target.value })}
-            />
-          </div>
+      <form onSubmit={handleSubmit} noValidate className="mt-4">
+        <div className="mb-3">
+          <label className="form-label fw-semibold" htmlFor="login-email">Email address</label>
+          <input
+            id="login-email"
+            className="form-control"
+            type="email"
+            autoComplete="username"
+            placeholder="you@example.com"
+            required
+            value={form.email}
+            onChange={(event) => setForm({ ...form, email: event.target.value })}
+          />
+        </div>
 
-          <div className="mb-4">
-            <label className="form-label fw-semibold" htmlFor="login-password">Password</label>
-            <input
-              id="login-password"
-              className="form-control"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={form.password}
-              onChange={(event) => setForm({ ...form, password: event.target.value })}
-            />
-          </div>
+        <div className="mb-4">
+          <label className="form-label fw-semibold" htmlFor="login-password">Password</label>
+          <input
+            id="login-password"
+            className="form-control"
+            type="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            required
+            value={form.password}
+            onChange={(event) => setForm({ ...form, password: event.target.value })}
+          />
+        </div>
 
-          <button className="btn btn-primary w-100" type="submit" disabled={submitting}>
-            {submitting ? 'Signing in...' : 'Sign in'}
-          </button>
-        </form>
+        <button className="btn btn-primary btn-lg w-100" type="submit" disabled={submitting}>
+          {submitting ? 'Signing in...' : 'Sign in'}
+          {!submitting && <Icon name="arrowRight" size={17} />}
+        </button>
+      </form>
 
-        <p className="text-secondary mt-4 mb-0">
-          Need an account? <Link to="/register">Register as a resident</Link>
-        </p>
-        <p className="text-secondary small mt-2 mb-0">
-          <Link to="/">Return to public flood information</Link>
-        </p>
-      </div>
-    </main>
+      <hr className="fn-rule my-4" />
+
+      <p className="text-secondary mb-1">
+        Need an account? <Link to="/register">Register as a resident</Link>
+      </p>
+      <p className="text-secondary small mb-0">
+        <Link to="/">Return to public flood information</Link>
+      </p>
+    </AuthLayout>
   );
 }
 

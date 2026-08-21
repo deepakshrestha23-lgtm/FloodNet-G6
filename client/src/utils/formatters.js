@@ -6,21 +6,21 @@ const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
 const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 
 export function formatDateTime(value) {
-  if (!value) return '—';
+  if (!value) return 'N/A';
   const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? '—' : dateTimeFormatter.format(parsed);
+  return Number.isNaN(parsed.getTime()) ? 'N/A' : dateTimeFormatter.format(parsed);
 }
 
 export function formatDate(value) {
-  if (!value) return '—';
+  if (!value) return 'N/A';
   const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? '—' : dateFormatter.format(parsed);
+  return Number.isNaN(parsed.getTime()) ? 'N/A' : dateFormatter.format(parsed);
 }
 
 export function formatRelative(value) {
-  if (!value) return '—';
+  if (!value) return 'N/A';
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return '—';
+  if (Number.isNaN(parsed.getTime())) return 'N/A';
 
   const diffMinutes = Math.round((Date.now() - parsed.getTime()) / 60000);
 
@@ -47,17 +47,17 @@ export function toDateTimeLocalValue(value) {
 }
 
 export function formatNumber(value) {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return 'N/A';
   return new Intl.NumberFormat().format(value);
 }
 
 export function formatPercent(value) {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return 'N/A';
   return `${Math.round(value)}%`;
 }
 
 export function fullName(person) {
-  if (!person) return '—';
+  if (!person) return 'N/A';
   const name = [person.firstName, person.lastName].filter(Boolean).join(' ');
-  return name || person.email || '—';
+  return name || person.email || 'N/A';
 }

@@ -104,7 +104,7 @@ function ZoneManagementPage() {
         </div>
       )
     },
-    { key: 'locality', header: 'Locality', render: (row) => row.locality || '—' },
+    { key: 'locality', header: 'Locality', render: (row) => row.locality || 'Not set' },
     {
       key: 'usage',
       header: 'In use',
@@ -149,6 +149,7 @@ function ZoneManagementPage() {
       <PageHeader
         eyebrow="Administration"
         title="Flood zone management"
+        icon="map"
         description="Zones are the shared reference used by reports, alerts and evacuation centres."
       />
 

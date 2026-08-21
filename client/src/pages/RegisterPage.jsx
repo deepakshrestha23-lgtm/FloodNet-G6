@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchZones } from '../services/publicApi';
+import AuthLayout from '../layouts/AuthLayout';
+import Icon from '../components/common/Icon';
 
 const initialForm = {
   firstName: '',
@@ -63,21 +65,26 @@ function RegisterPage() {
   }
 
   return (
-    <main className="auth-shell d-flex align-items-center justify-content-center px-3 py-5">
-      <div className="auth-card auth-card-wide panel-card p-4 p-md-5 rounded-4 w-100">
-        <Link className="text-decoration-none" to="/">
-          <span className="h5 fw-bold">Flood<span className="brand-accent">Net</span></span>
-        </Link>
+    <AuthLayout wide>
+      <span className="eyebrow">
+        <Icon name="user" size={12} strokeWidth={2} />
+        Resident registration
+      </span>
 
-        <h1 className="h3 fw-bold mt-4 mb-1">Create a resident account</h1>
-        <p className="text-secondary">
-          Residents can report flooding and follow alerts for their area. Officer and administrator
-          accounts are created by a FloodNet administrator.
-        </p>
+      <h1 className="h3 fw-bold mt-3 mb-1">Create a resident account</h1>
+      <p className="text-secondary">
+        Residents can report flooding and follow alerts for their area. Officer and administrator
+        accounts are created by a FloodNet administrator.
+      </p>
 
-        {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      {error && (
+        <div className="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+          <Icon name="warning" size={18} strokeWidth={2} className="mt-1" />
+          <span>{error}</span>
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate className="mt-4">
           <div className="row g-3 mb-3">
             <div className="col-12 col-md-6">
               <label className="form-label fw-semibold" htmlFor="register-first-name">First name</label>
@@ -142,7 +149,7 @@ function RegisterPage() {
               <option value="">Not set</option>
               {zones.map((zone) => (
                 <option key={zone.id} value={zone.id}>
-                  {zone.name}{zone.locality ? ` — ${zone.locality}` : ''}
+                  {zone.name}{zone.locality ? `, ${zone.locality}` : ''}
                 </option>
               ))}
             </select>
@@ -181,16 +188,18 @@ function RegisterPage() {
             </div>
           </div>
 
-          <button className="btn btn-primary w-100" type="submit" disabled={submitting}>
+          <button className="btn btn-primary btn-lg w-100" type="submit" disabled={submitting}>
             {submitting ? 'Creating account...' : 'Create account'}
+            {!submitting && <Icon name="arrowRight" size={17} />}
           </button>
         </form>
 
-        <p className="text-secondary mt-4 mb-0">
-          Already registered? <Link to="/login">Sign in</Link>
-        </p>
-      </div>
-    </main>
+      <hr className="fn-rule my-4" />
+
+      <p className="text-secondary mb-0">
+        Already registered? <Link to="/login">Sign in</Link>
+      </p>
+    </AuthLayout>
   );
 }
 

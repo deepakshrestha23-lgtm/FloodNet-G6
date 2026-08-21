@@ -81,6 +81,7 @@ function ReportDetailPage() {
       <PageHeader
         eyebrow="Resident"
         title={report.reportReference}
+        icon="report"
         description={`${report.zone.name} · ${report.locationDescription}`}
         actions={
           <>

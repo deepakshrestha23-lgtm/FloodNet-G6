@@ -52,6 +52,7 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
       <PageHeader
         eyebrow={eyebrow}
         title="Evacuation centres"
+        icon="shelter"
         description="Where shelter is available right now, kept up to date by evacuation officers."
       />
 

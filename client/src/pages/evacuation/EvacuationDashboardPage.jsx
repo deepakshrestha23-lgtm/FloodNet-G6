@@ -6,6 +6,7 @@ import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
+import Icon from '../../components/common/Icon';
 import ChartCard from '../../components/chart/ChartCard';
 import DataTable from '../../components/common/DataTable';
 import { formatNumber, formatPercent } from '../../utils/formatters';
@@ -23,12 +24,12 @@ function EvacuationDashboardPage() {
         {
           label: 'Occupied',
           data: data.byZone.map((row) => row.occupancy),
-          backgroundColor: '#dc3545'
+          backgroundColor: '#dc2743'
         },
         {
           label: 'Available',
           data: data.byZone.map((row) => row.available),
-          backgroundColor: '#20c997'
+          backgroundColor: '#0f9d6f'
         }
       ]
     };
@@ -48,7 +49,7 @@ function EvacuationDashboardPage() {
             summary.fullCentres,
             summary.closedCentres
           ],
-          backgroundColor: ['#20c997', '#fd7e14', '#dc3545', '#6c757d']
+          backgroundColor: ['#0f9d6f', '#e8820c', '#dc2743', '#64748b']
         }
       ]
     };
@@ -88,7 +89,7 @@ function EvacuationDashboardPage() {
     {
       key: 'rate',
       header: 'Occupancy',
-      render: (row) => (row.capacity > 0 ? formatPercent((row.occupancy / row.capacity) * 100) : '—')
+      render: (row) => (row.capacity > 0 ? formatPercent((row.occupancy / row.capacity) * 100) : 'N/A')
     }
   ];
 
@@ -98,20 +99,27 @@ function EvacuationDashboardPage() {
         eyebrow="Evacuation coordination"
         title="Centre capacity dashboard"
         description="Live capacity and occupancy aggregated across all active evacuation centres."
+        icon="shelter"
         actions={
           <>
-            <Link className="btn btn-outline-primary" to="/evacuation/centres">Manage centres</Link>
-            <Link className="btn btn-primary" to="/evacuation/centres/new">Add centre</Link>
+            <Link className="btn btn-outline-primary" to="/evacuation/centres">
+              <Icon name="shelter" size={16} />
+              Manage centres
+            </Link>
+            <Link className="btn btn-primary" to="/evacuation/centres/new">
+              <Icon name="plus" size={16} strokeWidth={2.2} />
+              Add centre
+            </Link>
           </>
         }
       />
 
       <div className="row g-3 mb-4">
         <div className="col-6 col-lg-3">
-          <DashboardStatCard label="Active centres" value={summary.totalCentres} hint={`${summary.openCentres} currently open`} />
+          <DashboardStatCard label="Active centres" value={summary.totalCentres} hint={`${summary.openCentres} currently open`} icon="shelter" />
         </div>
         <div className="col-6 col-lg-3">
-          <DashboardStatCard label="Total capacity" value={summary.totalCapacity} hint="Across all active centres" />
+          <DashboardStatCard label="Total capacity" value={summary.totalCapacity} hint="Across all active centres" icon="people" />
         </div>
         <div className="col-6 col-lg-3">
           <DashboardStatCard
@@ -119,6 +127,7 @@ function EvacuationDashboardPage() {
             value={summary.totalAvailable}
             hint={`${formatNumber(summary.totalOccupancy)} people accommodated`}
             tone={summary.totalAvailable === 0 ? 'danger' : 'success'}
+            icon="check"
           />
         </div>
         <div className="col-6 col-lg-3">
@@ -128,6 +137,7 @@ function EvacuationDashboardPage() {
             isPercent
             hint={`${summary.nearCapacityCentres} near capacity, ${summary.fullCentres} full`}
             tone={summary.occupancyRate >= 85 ? 'warning' : 'default'}
+            icon="chart"
           />
         </div>
       </div>
@@ -138,6 +148,7 @@ function EvacuationDashboardPage() {
             title="Capacity by flood zone"
             description="Occupied versus available spaces in each zone."
             type="bar"
+            icon="map"
             data={capacityChart}
             options={stackedOptions}
             isEmpty={data.byZone.every((row) => row.capacity === 0)}
@@ -147,6 +158,7 @@ function EvacuationDashboardPage() {
           <ChartCard
             title="Centres by operational status"
             type="doughnut"
+            icon="shelter"
             data={statusChart}
             options={doughnutOptions}
             isEmpty={summary.totalCentres === 0}
@@ -154,8 +166,11 @@ function EvacuationDashboardPage() {
         </div>
       </div>
 
-      <section className="panel-card p-0 rounded-4 overflow-hidden">
-        <h2 className="h6 fw-semibold p-3 p-md-4 mb-0">Zone breakdown</h2>
+      <section className="panel-card p-0 overflow-hidden">
+        <h2 className="h6 fw-bold fn-section-title p-3 p-md-4 mb-0">
+          <Icon name="map" size={18} />
+          Zone breakdown
+        </h2>
         <DataTable
           caption="Evacuation capacity by flood zone"
           columns={zoneColumns}

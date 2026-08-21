@@ -1,3 +1,5 @@
+import Icon from './Icon';
+
 function Pagination({ total, limit, offset, onChange }) {
   const totalPages = Math.max(Math.ceil(total / limit), 1);
   const currentPage = Math.floor(offset / limit) + 1;
@@ -11,8 +13,9 @@ function Pagination({ total, limit, offset, onChange }) {
 
   return (
     <nav aria-label="Pagination" className="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
-      <p className="small text-secondary mb-0">
-        Showing {offset + 1} to {Math.min(offset + limit, total)} of {total}
+      <p className="fn-pagination-info mb-0">
+        Showing <strong>{offset + 1}</strong> to <strong>{Math.min(offset + limit, total)}</strong> of{' '}
+        <strong>{total}</strong>
       </p>
       <div className="btn-group">
         <button
@@ -21,6 +24,7 @@ function Pagination({ total, limit, offset, onChange }) {
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage <= 1}
         >
+          <Icon name="chevronLeft" size={14} />
           Previous
         </button>
         <span className="btn btn-outline-secondary btn-sm disabled">
@@ -33,6 +37,7 @@ function Pagination({ total, limit, offset, onChange }) {
           disabled={currentPage >= totalPages}
         >
           Next
+          <Icon name="chevronRight" size={14} />
         </button>
       </div>
     </nav>

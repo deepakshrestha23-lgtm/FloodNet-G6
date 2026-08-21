@@ -10,6 +10,7 @@ import EmptyState from '../../components/common/EmptyState';
 import StatusBadge from '../../components/common/StatusBadge';
 import AlertCard from '../../components/alert/AlertCard';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
+import Icon from '../../components/common/Icon';
 import { REPORT_STATUS } from '../../utils/enums';
 import { formatRelative, formatNumber } from '../../utils/formatters';
 
@@ -66,7 +67,13 @@ function ResidentDashboardPage() {
         eyebrow="Resident"
         title={`Welcome back, ${user?.profile?.firstName || 'resident'}`}
         description="Your reports, the alerts affecting your area, and where shelter is available."
-        actions={<Link className="btn btn-primary" to="/resident/reports/new">Report flooding</Link>}
+        icon="dashboard"
+        actions={(
+          <Link className="btn btn-primary" to="/resident/reports/new">
+            <Icon name="plus" size={16} strokeWidth={2.2} />
+            Report flooding
+          </Link>
+        )}
       />
 
       {awaitingAction > 0 && (
@@ -83,7 +90,7 @@ function ResidentDashboardPage() {
 
       <div className="row g-3 mb-4">
         <div className="col-6 col-lg-3">
-          <DashboardStatCard label="Your reports" value={reports.pagination.total} />
+          <DashboardStatCard label="Your reports" value={reports.pagination.total} icon="report" />
         </div>
         <div className="col-6 col-lg-3">
           <DashboardStatCard
@@ -91,23 +98,26 @@ function ResidentDashboardPage() {
             value={alerts.length}
             hint={homeZoneId ? 'In your home zone' : 'Across all zones'}
             tone={alerts.length > 0 ? 'danger' : 'default'}
+            icon="bell"
           />
         </div>
         <div className="col-6 col-lg-3">
-          <DashboardStatCard label="Centres available" value={openCentres} hint={`${centres.length} nearby`} />
+          <DashboardStatCard label="Centres available" value={openCentres} hint={`${centres.length} nearby`} icon="shelter" />
         </div>
         <div className="col-6 col-lg-3">
           <DashboardStatCard
             label="Spaces available"
             value={availableSpaces}
             tone={availableSpaces === 0 ? 'danger' : 'success'}
+            icon="people"
           />
         </div>
       </div>
 
       <section className="mb-4">
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-          <h2 className="h5 fw-bold mb-0">
+          <h2 className="h5 fw-bold mb-0 fn-section-title">
+            <Icon name="bell" size={18} />
             Active alerts {homeZoneId ? 'for your area' : ''}
           </h2>
           <Link className="btn btn-sm btn-outline-primary" to="/resident/alerts">View all alerts</Link>
@@ -131,7 +141,7 @@ function ResidentDashboardPage() {
 
       <section>
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-          <h2 className="h5 fw-bold mb-0">Your recent reports</h2>
+          <h2 className="h5 fw-bold mb-0 fn-section-title"><Icon name="report" size={18} />Your recent reports</h2>
           <Link className="btn btn-sm btn-outline-primary" to="/resident/reports">View all reports</Link>
         </div>
 
@@ -142,7 +152,7 @@ function ResidentDashboardPage() {
             action={<Link className="btn btn-primary" to="/resident/reports/new">Report flooding</Link>}
           />
         ) : (
-          <div className="panel-card rounded-4 p-0 overflow-hidden">
+          <div className="panel-card p-0 overflow-hidden">
             <ul className="list-group list-group-flush">
               {reports.reports.map((report) => (
                 <li className="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2" key={report.id}>

@@ -139,6 +139,7 @@ function ReportFormPage() {
       <PageHeader
         eyebrow="Resident"
         title={editing ? 'Provide additional information' : 'Report flooding'}
+        icon="report"
         description={
           editing
             ? 'Update your report with the detail the officer asked for, then resubmit it for review.'
@@ -173,7 +174,7 @@ function ReportFormPage() {
             <option value="">Select a zone</option>
             {zones.map((zone) => (
               <option key={zone.id} value={zone.id}>
-                {zone.name}{zone.locality ? ` — ${zone.locality}` : ''}
+                {zone.name}{zone.locality ? `, ${zone.locality}` : ''}
               </option>
             ))}
           </select>

@@ -174,6 +174,7 @@ function ReviewQueuePage() {
       <PageHeader
         eyebrow="Flood monitoring"
         title="Report review queue"
+        icon="inbox"
         description="Community reports awaiting assessment by an authorised Flood Monitoring Officer."
       />
 

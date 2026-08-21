@@ -55,6 +55,7 @@ function ResidentAlertsPage() {
       <PageHeader
         eyebrow="Resident"
         title="Alerts and verified incidents"
+        icon="bell"
         description="Official FloodNet alerts and officer-verified incidents are listed separately."
       />
 

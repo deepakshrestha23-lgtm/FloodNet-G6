@@ -48,6 +48,7 @@ function ReportsPage() {
       <PageHeader
         eyebrow="Resident"
         title="My flood reports"
+        icon="report"
         description="Track the reports you have submitted and any feedback from a flood monitoring officer."
         actions={<Link className="btn btn-primary" to="/resident/reports/new">Report flooding</Link>}
       />
