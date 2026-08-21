@@ -3,7 +3,13 @@ import { fetchDistricts, fetchLocalLevels, fetchProvinces, fetchWards } from '..
 
 const EMPTY = { provinceId: '', districtId: '', localLevelId: '', wardId: '' };
 
-function GeographySelector({ value = EMPTY, onChange, disabled = false, required = true }) {
+/*
+ * onLabelsChange is opt in and reports the names behind the selected
+ * identifiers. It is deliberately separate from onChange: several forms spread
+ * the onChange payload straight into a request body, and adding label fields
+ * there would send unknown fields the API correctly rejects.
+ */
+function GeographySelector({ value = EMPTY, onChange, onLabelsChange, disabled = false, required = true }) {
   const selection = { ...EMPTY, ...value };
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -65,6 +71,16 @@ function GeographySelector({ value = EMPTY, onChange, disabled = false, required
     if (field === 'districtId') Object.assign(next, { localLevelId: '', wardId: '' });
     if (field === 'localLevelId') Object.assign(next, { wardId: '' });
     onChange(next);
+
+    if (onLabelsChange) {
+      const nameOf = (list, id) => list.find((item) => item.id === id)?.name || '';
+      onLabelsChange({
+        provinceLabel: nameOf(provinces, next.provinceId),
+        districtLabel: nameOf(districts, next.districtId),
+        localLevelLabel: nameOf(localLevels, next.localLevelId),
+        wardLabel: nameOf(wards, next.wardId)
+      });
+    }
   }
 
   return (

@@ -88,4 +88,66 @@ async function findWard(wardId) {
   return result.rows[0] || null;
 }
 
-module.exports = { listProvinces, listDistricts, listLocalLevels, listWards, findWard };
+/**
+ * Resolves coarse area selections into the concrete active wards they contain.
+ *
+ * An officer warning a district should not have to name its seventy wards, but
+ * the stored target must still be a definite list: expanding at save time means
+ * the set an alert was published against is fixed and auditable, and does not
+ * silently change if the geography tables are edited later.
+ *
+ * Inactive wards, municipalities and districts are excluded, so an alert can
+ * never be aimed at somewhere that is no longer in service.
+ */
+async function expandAreasToWardIds({ provinceIds = [], districtIds = [], localLevelIds = [] }) {
+  if (!provinceIds.length && !districtIds.length && !localLevelIds.length) return [];
+
+  const result = await getPool().query(
+    `
+      SELECT w.id
+      FROM geo_wards w
+      INNER JOIN geo_local_levels ll ON ll.id = w.local_level_id
+      INNER JOIN geo_districts d ON d.id = ll.district_id
+      INNER JOIN geo_provinces p ON p.id = d.province_id
+      WHERE w.is_active = TRUE AND ll.is_active = TRUE
+        AND d.is_active = TRUE AND p.is_active = TRUE
+        AND (
+          d.province_id = ANY($1::UUID[])
+          OR d.id = ANY($2::UUID[])
+          OR ll.id = ANY($3::UUID[])
+        )
+    `,
+    [provinceIds, districtIds, localLevelIds]
+  );
+
+  return result.rows.map((row) => row.id);
+}
+
+/** Wards in the given set that do not exist or are no longer active. */
+async function findUnusableWardIds(wardIds) {
+  if (!wardIds.length) return [];
+
+  const result = await getPool().query(
+    `
+      SELECT candidate AS id
+      FROM UNNEST($1::UUID[]) AS candidate
+      WHERE NOT EXISTS (
+        SELECT 1
+        FROM geo_wards w
+        INNER JOIN geo_local_levels ll ON ll.id = w.local_level_id
+        INNER JOIN geo_districts d ON d.id = ll.district_id
+        INNER JOIN geo_provinces p ON p.id = d.province_id
+        WHERE w.id = candidate
+          AND w.is_active = TRUE AND ll.is_active = TRUE
+          AND d.is_active = TRUE AND p.is_active = TRUE
+      )
+    `,
+    [wardIds]
+  );
+
+  return result.rows.map((row) => row.id);
+}
+
+module.exports = {
+  expandAreasToWardIds,
+  findUnusableWardIds, listProvinces, listDistricts, listLocalLevels, listWards, findWard };

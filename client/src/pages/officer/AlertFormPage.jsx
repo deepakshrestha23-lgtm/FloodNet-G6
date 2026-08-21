@@ -48,6 +48,14 @@ function AlertFormPage() {
     ...defaultValidityWindow()
   }));
 
+  /*
+   * Areas an officer has chosen, at whatever level they chose them. Kept as
+   * labelled entries so the form can show "Gorkha district" rather than a list
+   * of ninety-four ward chips. The server expands them to wards when saving.
+   */
+  const [areaTargets, setAreaTargets] = useState([]);
+  const [selectedLabels, setSelectedLabels] = useState({});
+
   useEffect(() => {
     let active = true;
 
@@ -75,6 +83,17 @@ function AlertFormPage() {
             validFrom: toDateTimeLocalValue(alert.validFrom),
             expiresAt: toDateTimeLocalValue(alert.expiresAt)
           });
+
+          // An alert stores the wards it resolved to, not the level it was
+          // created from, so they are reloaded as individual ward targets.
+          // Without this an edit would submit no areas and silently strip
+          // every ward the alert was published against.
+          setAreaTargets((alert.wards || []).map((ward) => ({
+            id: ward.id,
+            level: 'ward',
+            field: 'wardIds',
+            label: [ward.name, ward.localLevel].filter(Boolean).join(', ')
+          })));
         }
       } catch (caughtError) {
         if (active) setLoadError(caughtError);
@@ -100,15 +119,56 @@ function AlertFormPage() {
     }));
   }
 
-  function addWardTarget() {
-    if (!selectedGeography.wardId) return;
-    setForm((current) => current.wardIds.includes(selectedGeography.wardId)
-      ? current
-      : { ...current, wardIds: [...current.wardIds, selectedGeography.wardId] });
+  /**
+   * Adds the narrowest level the officer has actually selected.
+   *
+   * Stopping at a district warns the whole district, which is the common case
+   * during a river flood. Drilling to a ward warns only that ward. Nobody has
+   * to enumerate wards to cover an area.
+   */
+  function addAreaTarget() {
+    const levels = [
+      {
+        key: 'wardId',
+        level: 'ward',
+        field: 'wardIds',
+        label: [selectedLabels.wardLabel, selectedLabels.localLevelLabel].filter(Boolean).join(', ')
+      },
+      {
+        key: 'localLevelId',
+        level: 'municipality',
+        field: 'localLevelIds',
+        label: [selectedLabels.localLevelLabel, selectedLabels.districtLabel].filter(Boolean).join(', ')
+      },
+      {
+        key: 'districtId',
+        level: 'district',
+        field: 'districtIds',
+        label: selectedLabels.districtLabel
+      },
+      {
+        key: 'provinceId',
+        level: 'province',
+        field: 'provinceIds',
+        label: selectedLabels.provinceLabel
+      }
+    ];
+
+    const chosen = levels.find((entry) => selectedGeography[entry.key]);
+    if (!chosen) return;
+
+    const id = selectedGeography[chosen.key];
+    setAreaTargets((current) => (
+      current.some((target) => target.id === id)
+        ? current
+        : [...current, { id, level: chosen.level, field: chosen.field, label: chosen.label || chosen.level }]
+    ));
+    setSelectedGeography(EMPTY_GEOGRAPHY);
+    setSelectedLabels({});
   }
 
-  function removeWardTarget(wardId) {
-    setForm((current) => ({ ...current, wardIds: current.wardIds.filter((value) => value !== wardId) }));
+  function removeAreaTarget(id) {
+    setAreaTargets((current) => current.filter((target) => target.id !== id));
   }
 
   async function handleSubmit(event) {
@@ -124,7 +184,11 @@ function AlertFormPage() {
       validFrom: new Date(form.validFrom).toISOString(),
       expiresAt: new Date(form.expiresAt).toISOString(),
       zoneIds: form.zoneIds,
-      wardIds: form.wardIds
+      // Grouped by level for the server, which resolves each to its wards.
+      wardIds: areaTargets.filter((t) => t.field === 'wardIds').map((t) => t.id),
+      localLevelIds: areaTargets.filter((t) => t.field === 'localLevelIds').map((t) => t.id),
+      districtIds: areaTargets.filter((t) => t.field === 'districtIds').map((t) => t.id),
+      provinceIds: areaTargets.filter((t) => t.field === 'provinceIds').map((t) => t.id)
     };
 
     try {
@@ -227,11 +291,48 @@ function AlertFormPage() {
               ))}
             </div>
           )}
-          <p className="form-text">Operational zones are useful for broad areas. Add official wards when the warning must reach a precise community.</p>
+          <p className="form-text">Operational zones cover broad areas. Add official locations below when the warning must reach specific communities.</p>
+
           <div className="border-top pt-3 mt-3">
-            <GeographySelector value={selectedGeography} onChange={setSelectedGeography} required={false} />
-            <button type="button" className="btn btn-outline-primary btn-sm" onClick={addWardTarget} disabled={!selectedGeography.wardId}>Add selected ward</button>
-            {form.wardIds.length > 0 && <div className="d-flex flex-wrap gap-2 mt-2">{form.wardIds.map((wardId) => <span className="badge text-bg-light border" key={wardId}>Administrative ward selected <button type="button" className="btn btn-link btn-sm p-0 ms-1" onClick={() => removeWardTarget(wardId)} aria-label="Remove ward target">×</button></span>)}</div>}
+            <GeographySelector
+              value={selectedGeography}
+              onChange={setSelectedGeography}
+              onLabelsChange={setSelectedLabels}
+              required={false}
+            />
+            <div className="d-flex flex-wrap align-items-center gap-2">
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm"
+                onClick={addAreaTarget}
+                disabled={!selectedGeography.provinceId}
+              >
+                Add this area
+              </button>
+              <span className="form-text mb-0">
+                Stop at a district to warn the whole district. Continue to a ward to warn only that ward.
+              </span>
+            </div>
+
+            {areaTargets.length > 0 && (
+              <div className="d-flex flex-wrap gap-2 mt-3">
+                {areaTargets.map((target) => (
+                  <span className="badge text-bg-light border d-inline-flex align-items-center gap-2" key={target.id}>
+                    <span className="text-uppercase fw-bold" style={{ fontSize: '0.62rem', letterSpacing: '0.06em' }}>
+                      {target.level}
+                    </span>
+                    {target.label}
+                    <button
+                      type="button"
+                      className="btn-close btn-close-sm"
+                      style={{ fontSize: '0.55rem' }}
+                      onClick={() => removeAreaTarget(target.id)}
+                      aria-label={`Remove ${target.label}`}
+                    />
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </fieldset>
 

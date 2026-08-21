@@ -127,7 +127,10 @@ function validateAlertBody(request, _response, next) {
     'validFrom',
     'expiresAt',
     'zoneIds',
-    'wardIds'
+    'wardIds',
+    'provinceIds',
+    'districtIds',
+    'localLevelIds'
   ]);
 
   const title = checkString(errors, body.title, 'Alert title', { min: 5, max: 180 });
@@ -137,17 +140,41 @@ function validateAlertBody(request, _response, next) {
   const validFrom = checkDate(errors, body.validFrom, 'Valid from');
   const expiresAt = checkDate(errors, body.expiresAt, 'Expires at');
 
+  /*
+   * Targets may be given coarsely or precisely. A province, district or
+   * municipality is expanded into its wards by the service before the alert is
+   * stored, so an officer warning a whole district does not have to name its
+   * wards one at a time. The limits below count selections, not the wards they
+   * resolve to: a single province is one selection and several hundred wards.
+   */
   const zoneIds = body.zoneIds || [];
   const wardIds = body.wardIds || [];
-  if (!Array.isArray(zoneIds) || !Array.isArray(wardIds) || (zoneIds.length === 0 && wardIds.length === 0)) {
-    errors.push('At least one affected flood zone or administrative ward is required');
-  } else if (zoneIds.length > 50) {
-    errors.push('An alert cannot target more than 50 flood zones');
-  } else if (wardIds.length > 200) {
-    errors.push('An alert cannot target more than 200 administrative wards');
+  const provinceIds = body.provinceIds || [];
+  const districtIds = body.districtIds || [];
+  const localLevelIds = body.localLevelIds || [];
+
+  const areaLists = [
+    [zoneIds, 'Affected zone', 50, 'flood zones'],
+    [wardIds, 'Affected ward', 200, 'administrative wards'],
+    [provinceIds, 'Affected province', 7, 'provinces'],
+    [districtIds, 'Affected district', 77, 'districts'],
+    [localLevelIds, 'Affected municipality', 100, 'municipalities']
+  ];
+
+  const allArrays = areaLists.every(([list]) => Array.isArray(list));
+  const totalSelections = allArrays
+    ? areaLists.reduce((sum, [list]) => sum + list.length, 0)
+    : 0;
+
+  if (!allArrays) {
+    errors.push('Alert targets must be provided as lists');
+  } else if (totalSelections === 0) {
+    errors.push('At least one affected area is required');
   } else {
-    zoneIds.forEach((zoneId) => checkUuid(errors, zoneId, 'Affected zone'));
-    wardIds.forEach((wardId) => checkUuid(errors, wardId, 'Affected ward'));
+    for (const [list, label, max, noun] of areaLists) {
+      if (list.length > max) errors.push(`An alert cannot target more than ${max} ${noun}`);
+      list.forEach((id) => checkUuid(errors, id, label));
+    }
   }
 
   if (errors.length) return fail(next, errors);
@@ -160,7 +187,10 @@ function validateAlertBody(request, _response, next) {
     validFrom,
     expiresAt,
     zoneIds: [...new Set(zoneIds)],
-    wardIds: [...new Set(wardIds)]
+    wardIds: [...new Set(wardIds)],
+    provinceIds: [...new Set(provinceIds)],
+    districtIds: [...new Set(districtIds)],
+    localLevelIds: [...new Set(localLevelIds)]
   };
 
   return next();

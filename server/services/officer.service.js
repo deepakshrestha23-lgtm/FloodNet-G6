@@ -6,6 +6,7 @@ const dashboardRepository = require('../repositories/dashboard.repository');
 const userRepository = require('../repositories/user.repository');
 const jurisdictionService = require('./jurisdiction.service');
 const jurisdictionRepository = require('../repositories/jurisdiction.repository');
+const geographyRepository = require('../repositories/geography.repository');
 
 /**
  * A review action maps to exactly one resulting report status, and each action
@@ -137,11 +138,47 @@ async function listAlerts(officer, query) {
   return alertRepository.listAlerts({ ...query, officerId: officer.id });
 }
 
-async function assertAlertTargetsAreAllowed(officerId, zoneIds, wardIds) {
-  for (const wardId of wardIds) {
-    if (!(await userRepository.isActiveWard(wardId)) || !(await jurisdictionRepository.canAccessWard(officerId, wardId))) {
-      throw new AppError(403, 'JURISDICTION_FORBIDDEN', 'One or more alert wards are outside your assigned jurisdiction');
-    }
+/**
+ * Turns what an officer selected into the definite set of wards to store.
+ *
+ * Coarse selections are expanded here, at save time, rather than being resolved
+ * on every read. The set an alert was published against is then fixed and
+ * auditable, and cannot drift later if the geography tables change.
+ *
+ * Everything is validated against the resolved set, not the selections, so
+ * choosing a district an officer only partly covers is refused rather than
+ * quietly warning the part they are allowed to.
+ */
+async function resolveAlertTargets(officerId, input) {
+  const expanded = await geographyRepository.expandAreasToWardIds({
+    provinceIds: input.provinceIds || [],
+    districtIds: input.districtIds || [],
+    localLevelIds: input.localLevelIds || []
+  });
+
+  const wardIds = [...new Set([...(input.wardIds || []), ...expanded])];
+  const zoneIds = input.zoneIds || [];
+
+  if (wardIds.length === 0 && zoneIds.length === 0) {
+    throw new AppError(
+      400,
+      'ALERT_TARGETS_EMPTY',
+      'The selected areas contain no active wards, so this alert would reach nobody'
+    );
+  }
+
+  const unusable = await geographyRepository.findUnusableWardIds(wardIds);
+  if (unusable.length) {
+    throw new AppError(400, 'INVALID_WARD', 'One or more selected wards are unknown or inactive');
+  }
+
+  const outside = await jurisdictionRepository.findWardsOutsideJurisdiction(officerId, wardIds);
+  if (outside.length) {
+    throw new AppError(
+      403,
+      'JURISDICTION_FORBIDDEN',
+      'One or more selected areas fall outside your assigned jurisdiction'
+    );
   }
 
   for (const zoneId of zoneIds) {
@@ -149,6 +186,8 @@ async function assertAlertTargetsAreAllowed(officerId, zoneIds, wardIds) {
       throw new AppError(403, 'JURISDICTION_FORBIDDEN', 'One or more alert zones are outside your assigned jurisdiction');
     }
   }
+
+  return { zoneIds, wardIds };
 }
 
 async function getAlert(officer, alertId) {
@@ -166,7 +205,7 @@ async function createAlert(officer, input) {
   await jurisdictionService.requireAssignment(officer.id);
   assertValidityWindow(input.validFrom, input.expiresAt);
   await assertZonesAreActive(input.zoneIds);
-  await assertAlertTargetsAreAllowed(officer.id, input.zoneIds, input.wardIds);
+  const targets = await resolveAlertTargets(officer.id, input);
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
@@ -179,8 +218,8 @@ async function createAlert(officer, input) {
         recommendedActions: input.recommendedActions,
         validFrom: input.validFrom,
         expiresAt: input.expiresAt,
-        zoneIds: input.zoneIds,
-        wardIds: input.wardIds,
+        zoneIds: targets.zoneIds,
+        wardIds: targets.wardIds,
         officerId: officer.id
       });
     } catch (error) {
@@ -195,7 +234,7 @@ async function updateAlert(officer, alertId, input) {
   await jurisdictionService.requireAssignment(officer.id);
   assertValidityWindow(input.validFrom, input.expiresAt);
   await assertZonesAreActive(input.zoneIds);
-  await assertAlertTargetsAreAllowed(officer.id, input.zoneIds, input.wardIds);
+  const updatedTargets = await resolveAlertTargets(officer.id, input);
 
   const alert = await alertRepository.updateAlert({
     alertId,
@@ -206,8 +245,8 @@ async function updateAlert(officer, alertId, input) {
     recommendedActions: input.recommendedActions,
     validFrom: input.validFrom,
     expiresAt: input.expiresAt,
-    zoneIds: input.zoneIds,
-    wardIds: input.wardIds,
+    zoneIds: updatedTargets.zoneIds,
+    wardIds: updatedTargets.wardIds,
     officerId: officer.id
   });
 

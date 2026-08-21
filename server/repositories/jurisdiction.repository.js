@@ -249,6 +249,43 @@ async function canAccessWard(userId, wardId) {
   return result.rows[0].allowed;
 }
 
+/**
+ * Wards in the set that fall outside the officer's jurisdiction.
+ *
+ * Answered in one query rather than one per ward: a district-wide alert can
+ * carry seventy wards and a province-wide one over a thousand, and checking
+ * them individually would not survive that.
+ */
+async function findWardsOutsideJurisdiction(userId, wardIds) {
+  if (!wardIds.length) return [];
+
+  const result = await getPool().query(
+    `
+      SELECT w.id
+      FROM geo_wards w
+      INNER JOIN geo_local_levels ll ON ll.id = w.local_level_id
+      INNER JOIN geo_districts d ON d.id = ll.district_id
+      WHERE w.id = ANY($2::UUID[])
+        AND NOT EXISTS (
+          SELECT 1
+          FROM user_jurisdictions uj
+          WHERE uj.user_id = $1
+            AND (
+              uj.scope_level = 'NATIONAL'
+              OR (uj.scope_level = 'PROVINCE' AND uj.province_id = d.province_id)
+              OR (uj.scope_level = 'DISTRICT' AND uj.district_id = d.id)
+              OR (uj.scope_level = 'LOCAL_LEVEL' AND uj.local_level_id = ll.id)
+              OR (uj.scope_level = 'WARD' AND uj.ward_id = w.id)
+            )
+        )
+      LIMIT 5
+    `,
+    [userId, wardIds]
+  );
+
+  return result.rows.map((row) => row.id);
+}
+
 async function canAccessZone(userId, zoneId) {
   const result = await getPool().query(
     `
@@ -300,6 +337,7 @@ module.exports = {
   upsertForUser,
   removeForUser,
   canAccessWard,
+  findWardsOutsideJurisdiction,
   canAccessZone,
   isValidScopeTarget
 };
