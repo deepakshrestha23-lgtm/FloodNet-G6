@@ -20,6 +20,7 @@ const ROLE_CODES = new Set([
 ]);
 const USER_STATUSES = new Set(['ACTIVE', 'INACTIVE']);
 const JURISDICTION_LEVELS = new Set(['NATIONAL', 'PROVINCE', 'DISTRICT', 'LOCAL_LEVEL', 'WARD']);
+const ZONE_TYPES = new Set(['RIVER_CORRIDOR', 'FLOODPLAIN', 'URBAN_DRAINAGE', 'FLASH_FLOOD_AREA', 'OTHER']);
 
 function fail(next, errors) {
   return next(new AppError(400, 'VALIDATION_ERROR', 'The submitted data is invalid', errors));
@@ -215,7 +216,7 @@ function validateZoneBody(request, _response, next) {
   const body = request.body || {};
   const isCreate = request.method === 'POST';
 
-  rejectUnknownFields(errors, body, ['code', 'name', 'locality', 'description', 'isActive']);
+  rejectUnknownFields(errors, body, ['code', 'name', 'locality', 'description', 'zoneType', 'isActive']);
 
   // A zone code is permanent identity used across reports, alerts and centres,
   // so it is set at creation only.
@@ -239,6 +240,9 @@ function validateZoneBody(request, _response, next) {
     description = checkString(errors, body.description, 'Description', { min: 2, max: 2000 });
   }
 
+  const zoneType = body.zoneType || (isCreate ? 'OTHER' : undefined);
+  if (zoneType !== undefined) checkEnum(errors, zoneType, 'Risk-area type', ZONE_TYPES);
+
   if (body.isActive !== undefined && typeof body.isActive !== 'boolean') {
     errors.push('Active state must be true or false');
   }
@@ -250,6 +254,7 @@ function validateZoneBody(request, _response, next) {
     name,
     locality,
     description,
+    zoneType,
     isActive: body.isActive === undefined ? true : body.isActive
   };
 

@@ -1,30 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useFeedback } from '../context/FeedbackContext';
 import { roleHomePath } from '../routes/roleHome';
 import AuthLayout from '../layouts/AuthLayout';
 import Icon from '../components/common/Icon';
 
 function LoginPage() {
   const { login } = useAuth();
+  const { notify } = useFeedback();
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const justRegistered = location.state?.registered === true;
 
+  useEffect(() => {
+    if (justRegistered) {
+      notify({
+        tone: 'success',
+        title: 'Account created',
+        message: 'Your resident account is ready. Sign in to continue.',
+        icon: 'check'
+      });
+    }
+  }, [justRegistered, notify]);
+
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
-    setError('');
 
     try {
       const signedInUser = await login(form);
       navigate(location.state?.from?.pathname || roleHomePath(signedInUser), { replace: true });
     } catch (requestError) {
-      setError(requestError.message);
+      notify({
+        tone: 'danger',
+        title: 'Sign-in failed',
+        message: requestError.message || 'Check your credentials and try again.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -39,20 +56,6 @@ function LoginPage() {
 
       <h1 className="h3 fw-bold mt-3 mb-1">Welcome back</h1>
       <p className="text-secondary">Access your FloodNet reporting and information tools.</p>
-
-      {justRegistered && (
-        <div className="alert alert-success d-flex gap-2 align-items-center" role="alert">
-          <Icon name="check" size={18} strokeWidth={2.4} />
-          Your account has been created. Sign in to continue.
-        </div>
-      )}
-
-      {error && (
-        <div className="alert alert-danger d-flex gap-2 align-items-start" role="alert">
-          <Icon name="warning" size={18} strokeWidth={2} className="mt-1" />
-          <span>{error}</span>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} noValidate className="mt-4">
         <div className="mb-3">

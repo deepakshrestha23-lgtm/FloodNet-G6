@@ -369,7 +369,7 @@ async function transitionAlert({ alertId, actorId, newStatus, allowedFromStatuse
 
       if (targetCheck.rows[0].total === 0) {
         await client.query('ROLLBACK');
-        return { outcome: 'NO_ZONES' };
+        return { outcome: 'NO_TARGETS' };
       }
     }
 

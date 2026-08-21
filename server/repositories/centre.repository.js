@@ -1,6 +1,6 @@
 const { pool } = require('../db/pool');
 const { insertAuditLog } = require('../utils/audit');
-const { geographyPredicate } = require('./jurisdiction.repository');
+const { entityPredicate, geographyPredicate } = require('./jurisdiction.repository');
 
 function getPool() {
   if (!pool) {
@@ -131,6 +131,61 @@ async function listCentres({ zoneId, status, includeArchived, provinceId, distri
   );
 
   return result.rows.map(mapCentre);
+}
+
+/**
+ * Verified community observations an evacuation officer may use for situational
+ * awareness. The projection deliberately excludes reporter identity, evidence
+ * and review notes; those belong to the monitoring workflow.
+ */
+async function listVerifiedIncidentsInJurisdiction(officerId) {
+  const result = await getPool().query(
+    `
+      SELECT fr.report_ref, fr.location_description, fr.incident_description,
+             fr.observed_severity, fr.road_condition, fr.observed_at, fr.status,
+             fr.ward_id, w.ward_number, w.name AS ward_name,
+             ll.id AS local_level_id, ll.name AS local_level_name,
+             d.id AS district_id, d.name AS district_name,
+             gp.id AS province_id, gp.name AS province_name,
+             z.id AS zone_id, z.code AS zone_code, z.name AS zone_name
+      FROM flood_reports fr
+      LEFT JOIN flood_zones z ON z.id = fr.zone_id
+      LEFT JOIN geo_wards w ON w.id = fr.ward_id
+      LEFT JOIN geo_local_levels ll ON ll.id = w.local_level_id
+      LEFT JOIN geo_districts d ON d.id = ll.district_id
+      LEFT JOIN geo_provinces gp ON gp.id = d.province_id
+      WHERE fr.status IN ('VERIFIED', 'CLOSED')
+        AND ${entityPredicate('fr', 1)}
+      ORDER BY
+        CASE fr.observed_severity
+          WHEN 'SEVERE' THEN 1
+          WHEN 'HIGH' THEN 2
+          WHEN 'MODERATE' THEN 3
+          WHEN 'LOW' THEN 4
+          ELSE 5
+        END,
+        fr.observed_at DESC
+      LIMIT 100
+    `,
+    [officerId]
+  );
+
+  return result.rows.map((row) => ({
+    reportReference: row.report_ref,
+    locationDescription: row.location_description,
+    incidentDescription: row.incident_description,
+    observedSeverity: row.observed_severity,
+    roadCondition: row.road_condition,
+    observedAt: row.observed_at,
+    status: row.status,
+    zone: row.zone_id ? { id: row.zone_id, code: row.zone_code, name: row.zone_name } : null,
+    geography: row.ward_id ? {
+      ward: { id: row.ward_id, number: row.ward_number, name: row.ward_name },
+      localLevel: { id: row.local_level_id, name: row.local_level_name },
+      district: { id: row.district_id, name: row.district_name },
+      province: { id: row.province_id, name: row.province_name }
+    } : null
+  }));
 }
 
 async function replaceFacilities(client, centreId, facilities) {
@@ -472,6 +527,7 @@ async function findFacilityTypeIds(ids) {
 }
 
 module.exports = {
+  listVerifiedIncidentsInJurisdiction,
   findCentreById,
   listCentres,
   createCentre,

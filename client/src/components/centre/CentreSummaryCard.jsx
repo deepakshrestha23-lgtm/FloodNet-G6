@@ -13,6 +13,8 @@ function CentreSummaryCard({ centre }) {
     : 0;
 
   const isFull = centre.operationalStatus === 'FULL' || centre.availableSpace === 0;
+  const hasCoordinates = Number.isFinite(centre.latitude) && Number.isFinite(centre.longitude);
+  const hasDistance = Number.isFinite(centre.distanceKm);
 
   return (
     <article className="panel-card panel-card-interactive p-3 p-md-4 h-100 d-flex flex-column">
@@ -33,6 +35,16 @@ function CentreSummaryCard({ centre }) {
       </div>
 
       <p className="small mb-3">{centre.locationDescription}</p>
+
+      {(centre.locality || centre.nearestLandmark || hasDistance) && (
+        <p className="small text-secondary mb-3">
+          {centre.locality && <span>{centre.locality}</span>}
+          {centre.locality && centre.nearestLandmark && <span> · </span>}
+          {centre.nearestLandmark && <span>Near {centre.nearestLandmark}</span>}
+          {(centre.locality || centre.nearestLandmark) && hasDistance && <span> · </span>}
+          {hasDistance && <strong>{centre.distanceKm < 1 ? `${Math.round(centre.distanceKm * 1000)} m` : `${centre.distanceKm.toFixed(1)} km`} away</strong>}
+        </p>
+      )}
 
       <div className="d-flex justify-content-between align-items-center small fw-semibold mb-1">
         <span className="text-secondary">Occupancy</span>
@@ -69,12 +81,25 @@ function CentreSummaryCard({ centre }) {
         </>
       )}
 
-      {centre.contactPhone && (
-        <p className="small mb-0 mt-auto d-flex align-items-center gap-2">
-          <Icon name="phone" size={14} />
-          <a href={`tel:${centre.contactPhone}`}>{centre.contactPhone}</a>
-        </p>
-      )}
+      <div className="small mt-auto d-flex flex-wrap align-items-center gap-3">
+        {centre.contactPhone && (
+          <span className="d-flex align-items-center gap-2">
+            <Icon name="phone" size={14} />
+            <a href={`tel:${centre.contactPhone}`}>{centre.contactPhone}</a>
+          </span>
+        )}
+        {hasCoordinates && (
+          <a
+            className="d-flex align-items-center gap-1"
+            href={`https://www.openstreetmap.org/?mlat=${centre.latitude}&mlon=${centre.longitude}#map=16/${centre.latitude}/${centre.longitude}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <Icon name="map" size={14} />
+            View map
+          </a>
+        )}
+      </div>
     </article>
   );
 }

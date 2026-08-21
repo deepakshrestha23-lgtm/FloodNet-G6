@@ -458,11 +458,14 @@ async function listZones({ includeInactive }) {
   const result = await getPool().query(
     `
       SELECT
-        z.id, z.code, z.name, z.locality, z.description, z.is_active,
+        z.id, z.code, z.name, z.locality, z.description, z.zone_type,
+        z.is_demo_data, z.is_active,
         z.created_at, z.updated_at,
         (SELECT COUNT(*)::INTEGER FROM flood_reports fr WHERE fr.zone_id = z.id) AS report_count,
         (SELECT COUNT(*)::INTEGER FROM evacuation_centres ec
-          WHERE ec.zone_id = z.id AND ec.is_active = TRUE) AS centre_count
+          WHERE ec.zone_id = z.id AND ec.is_active = TRUE) AS centre_count,
+        (SELECT COUNT(*)::INTEGER FROM flood_zone_wards fzw
+          WHERE fzw.zone_id = z.id) AS ward_count
       FROM flood_zones z
       WHERE ($1::BOOLEAN IS TRUE OR z.is_active = TRUE)
       ORDER BY z.name ASC
@@ -476,15 +479,18 @@ async function listZones({ includeInactive }) {
     name: row.name,
     locality: row.locality,
     description: row.description,
+    zoneType: row.zone_type,
+    isDemoData: row.is_demo_data,
     isActive: row.is_active,
     reportCount: row.report_count,
     centreCount: row.centre_count,
+    wardCount: row.ward_count,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   }));
 }
 
-async function createZone({ actorId, code, name, locality, description }) {
+async function createZone({ actorId, code, name, locality, description, zoneType }) {
   const client = await getPool().connect();
 
   try {
@@ -492,11 +498,11 @@ async function createZone({ actorId, code, name, locality, description }) {
 
     const result = await client.query(
       `
-        INSERT INTO flood_zones (code, name, locality, description, created_by)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO flood_zones (code, name, locality, description, zone_type, created_by)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id
       `,
-      [code, name, locality || null, description || null, actorId]
+      [code, name, locality || null, description || null, zoneType, actorId]
     );
 
     const zoneId = result.rows[0].id;
@@ -506,7 +512,7 @@ async function createZone({ actorId, code, name, locality, description }) {
       action: 'ZONE_CREATED',
       entityType: 'FLOOD_ZONE',
       entityId: zoneId,
-      metadata: { code, name }
+      metadata: { code, name, zoneType }
     });
 
     await client.query('COMMIT');
@@ -519,7 +525,7 @@ async function createZone({ actorId, code, name, locality, description }) {
   }
 }
 
-async function updateZone({ actorId, zoneId, name, locality, description, isActive }) {
+async function updateZone({ actorId, zoneId, name, locality, description, zoneType, isActive }) {
   const client = await getPool().connect();
 
   try {
@@ -531,12 +537,13 @@ async function updateZone({ actorId, zoneId, name, locality, description, isActi
         SET name = $2,
             locality = $3,
             description = $4,
-            is_active = $5,
+            zone_type = $5,
+            is_active = $6,
             updated_at = NOW()
         WHERE id = $1
         RETURNING id
       `,
-      [zoneId, name, locality || null, description || null, isActive]
+      [zoneId, name, locality || null, description || null, zoneType, isActive]
     );
 
     if (result.rowCount === 0) {
@@ -549,7 +556,7 @@ async function updateZone({ actorId, zoneId, name, locality, description, isActi
       action: isActive ? 'ZONE_UPDATED' : 'ZONE_DEACTIVATED',
       entityType: 'FLOOD_ZONE',
       entityId: zoneId,
-      metadata: { name, isActive }
+      metadata: { name, zoneType, isActive }
     });
 
     await client.query('COMMIT');
@@ -564,7 +571,9 @@ async function updateZone({ actorId, zoneId, name, locality, description, isActi
 
 async function findZoneById(zoneId) {
   const result = await getPool().query(
-    'SELECT id, code, name, locality, description, is_active FROM flood_zones WHERE id = $1',
+    `SELECT id, code, name, locality, description, zone_type, is_demo_data, is_active,
+            (SELECT COUNT(*)::INTEGER FROM flood_zone_wards fzw WHERE fzw.zone_id = flood_zones.id) AS ward_count
+     FROM flood_zones WHERE id = $1`,
     [zoneId]
   );
 
@@ -578,6 +587,9 @@ async function findZoneById(zoneId) {
     name: row.name,
     locality: row.locality,
     description: row.description,
+    zoneType: row.zone_type,
+    isDemoData: row.is_demo_data,
+    wardCount: row.ward_count,
     isActive: row.is_active
   };
 }

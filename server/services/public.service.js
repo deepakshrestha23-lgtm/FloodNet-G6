@@ -5,7 +5,8 @@ const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}
 
 function validateUuidFilter(value, label) {
   if (value && !uuidPattern.test(value)) {
-    throw new AppError(400, `INVALID_${label.toUpperCase()}_FILTER`, `The ${label} filter must be a valid UUID`);
+    const codeLabel = label.toUpperCase().replace(/\s+/g, '_');
+    throw new AppError(400, `INVALID_${codeLabel}_FILTER`, `The ${label} filter must be a valid UUID`);
   }
 }
 
@@ -43,6 +44,30 @@ function parseArea(query = {}) {
   };
 }
 
+function parseCoordinates(query = {}) {
+  const hasLatitude = query.latitude !== undefined && query.latitude !== '';
+  const hasLongitude = query.longitude !== undefined && query.longitude !== '';
+
+  if (hasLatitude !== hasLongitude) {
+    throw new AppError(400, 'INVALID_COORDINATES', 'Latitude and longitude must be provided together');
+  }
+
+  if (!hasLatitude) return {};
+
+  const latitude = Number(query.latitude);
+  const longitude = Number(query.longitude);
+
+  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+    throw new AppError(400, 'INVALID_COORDINATES', 'Latitude must be a number between -90 and 90');
+  }
+
+  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+    throw new AppError(400, 'INVALID_COORDINATES', 'Longitude must be a number between -180 and 180');
+  }
+
+  return { latitude, longitude };
+}
+
 async function getAlerts(zoneId, wardId, area) {
   validateAreaFilters(zoneId, wardId);
   return publicRepository.listActiveAlerts(zoneId, wardId, parseArea(area));
@@ -62,7 +87,12 @@ async function getIncidents(zoneId, wardId, limit = 50, area) {
 
 async function getCentres(zoneId, wardId, area) {
   validateAreaFilters(zoneId, wardId);
-  return publicRepository.listActiveCentres(zoneId, wardId, parseArea(area));
+  return publicRepository.listActiveCentres(
+    zoneId,
+    wardId,
+    parseArea(area),
+    parseCoordinates(area)
+  );
 }
 
 async function getZones() {

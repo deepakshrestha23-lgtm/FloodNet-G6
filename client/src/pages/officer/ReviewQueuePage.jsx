@@ -99,7 +99,7 @@ function ReviewQueuePage() {
     },
     {
       name: 'zoneId',
-      label: 'Flood zone',
+      label: 'Operational risk area',
       type: 'select',
       options: zones.map((zone) => ({ value: zone.id, label: zone.name }))
     },

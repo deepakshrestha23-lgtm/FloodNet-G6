@@ -78,7 +78,15 @@ async function listActiveZones() {
     `SELECT id, code, name, locality, description, zone_type, is_demo_data
      FROM flood_zones WHERE is_active = TRUE ORDER BY name ASC`
   );
-  return result.rows;
+  return result.rows.map((row) => ({
+    id: row.id,
+    code: row.code,
+    name: row.name,
+    locality: row.locality,
+    description: row.description,
+    zoneType: row.zone_type,
+    isDemoData: row.is_demo_data
+  }));
 }
 
 /*
@@ -208,14 +216,26 @@ async function listVerifiedIncidents(zoneId, wardId, limit, area = {}) {
   }));
 }
 
-async function listActiveCentres(zoneId, wardId, area = {}) {
+async function listActiveCentres(zoneId, wardId, area = {}, coordinates = {}) {
   const result = await getPool().query(
     `
       SELECT ec.id, ec.name, ec.location_description, ec.contact_phone,
              ec.maximum_capacity, ec.current_occupancy, ec.available_space,
              ec.operational_status, ec.ward_id, w.ward_number, w.name AS ward_name,
              ll.name AS local_level_name, d.name AS district_name, p.name AS province_name,
+             ec.locality, ec.nearest_landmark, ec.latitude, ec.longitude,
              z.id AS zone_id, z.code AS zone_code, z.name AS zone_name,
+             CASE
+               WHEN $7::DOUBLE PRECISION IS NULL OR $8::DOUBLE PRECISION IS NULL
+                 OR ec.latitude IS NULL OR ec.longitude IS NULL
+               THEN NULL
+               ELSE 2 * 6371 * ASIN(SQRT(LEAST(1,
+                 POWER(SIN(RADIANS((ec.latitude::DOUBLE PRECISION - $7::DOUBLE PRECISION) / 2)), 2)
+                 + COS(RADIANS($7::DOUBLE PRECISION))
+                   * COS(RADIANS(ec.latitude::DOUBLE PRECISION))
+                   * POWER(SIN(RADIANS((ec.longitude::DOUBLE PRECISION - $8::DOUBLE PRECISION) / 2)), 2)
+               )))
+             END AS distance_km,
              COALESCE(JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
                'code', cft.code, 'name', cft.display_name, 'notes', cf.notes
              )) FILTER (WHERE cft.id IS NOT NULL), '[]'::JSON) AS facilities
@@ -242,6 +262,7 @@ async function listActiveCentres(zoneId, wardId, area = {}) {
           WHEN 'FULL' THEN 3
           ELSE 4
         END,
+        distance_km ASC NULLS LAST,
         ec.available_space DESC NULLS LAST,
         COALESCE(p.name, ''), COALESCE(d.name, ''), ec.name ASC
     `,
@@ -251,7 +272,9 @@ async function listActiveCentres(zoneId, wardId, area = {}) {
       area.provinceId || null,
       area.districtId || null,
       area.localLevelId || null,
-      null
+      null,
+      coordinates.latitude ?? null,
+      coordinates.longitude ?? null
     ]
   );
 
@@ -268,6 +291,11 @@ async function listActiveCentres(zoneId, wardId, area = {}) {
     currentOccupancy: row.current_occupancy,
     availableSpace: row.available_space,
     operationalStatus: row.operational_status,
+    locality: row.locality,
+    nearestLandmark: row.nearest_landmark,
+    latitude: row.latitude === null ? null : Number(row.latitude),
+    longitude: row.longitude === null ? null : Number(row.longitude),
+    distanceKm: row.distance_km === null ? null : Number(Number(row.distance_km).toFixed(2)),
     zone: row.zone_id ? { id: row.zone_id, code: row.zone_code, name: row.zone_name } : null,
     geography: row.ward_id ? {
       ward: { id: row.ward_id, number: row.ward_number, name: row.ward_name },

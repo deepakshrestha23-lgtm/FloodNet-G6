@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useFeedback } from '../../context/FeedbackContext';
 import { fetchPublicCentres, fetchZones } from '../../services/publicApi';
 import { useApiResource } from '../../hooks/useApiResource';
 import PageHeader from '../../components/common/PageHeader';
@@ -12,6 +13,7 @@ import CentreSummaryCard from '../../components/centre/CentreSummaryCard';
 import AreaScopeNotice from '../../components/common/AreaScopeNotice';
 import LocationFilter from '../../components/geography/LocationFilter';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
+import Icon from '../../components/common/Icon';
 import { CENTRE_STATUS, toOptions } from '../../utils/enums';
 
 /**
@@ -20,8 +22,11 @@ import { CENTRE_STATUS, toOptions } from '../../utils/enums';
  */
 function CentreDirectoryPage({ eyebrow = 'Resident' }) {
   const { user } = useAuth();
+  const { notify } = useFeedback();
   const [searchParams, setSearchParams] = useSearchParams();
   const [zones, setZones] = useState([]);
+  const [proximity, setProximity] = useState(null);
+  const [locating, setLocating] = useState(false);
 
   const zoneId = searchParams.get('zoneId') || '';
   const status = searchParams.get('status') || '';
@@ -45,10 +50,11 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
    * asked for everything or picked a zone, see the whole country.
    */
   const showingAll = searchParams.get('area') === 'all';
-  const homeWardId = user?.profile?.homeWardId;
   const homeWard = user?.profile?.homeWard;
-  const scopedToHome = Boolean(homeWardId) && !showingAll && !zoneId && !hasLocationFilter;
-  const wardId = scopedToHome ? homeWardId : (location.wardId || '');
+  const homeLocalLevelId = homeWard?.localLevel?.id;
+  const scopedToHome = Boolean(homeLocalLevelId) && !proximity && !showingAll && !zoneId && !hasLocationFilter;
+  const wardId = location.wardId || '';
+  const effectiveLocalLevelId = location.localLevelId || (scopedToHome ? homeLocalLevelId : '');
 
   const loader = useCallback(
     () => fetchPublicCentres({
@@ -56,9 +62,11 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
       wardId: wardId || undefined,
       provinceId: location.provinceId || undefined,
       districtId: location.districtId || undefined,
-      localLevelId: location.localLevelId || undefined
+      localLevelId: effectiveLocalLevelId || undefined,
+      latitude: proximity?.latitude,
+      longitude: proximity?.longitude
     }),
-    [zoneId, wardId, location.provinceId, location.districtId, location.localLevelId]
+    [zoneId, wardId, location.provinceId, location.districtId, effectiveLocalLevelId, proximity]
   );
 
   function updateLocation(next) {
@@ -84,14 +92,41 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
   }, [data, status]);
 
   const scopeLabel = scopedToHome && homeWard
-    ? `centres near ${homeWard.name}, ${homeWard.localLevel?.name}, ${homeWard.district?.name}`
+    ? `centres in ${homeWard.localLevel?.name}, ${homeWard.district?.name}`
     : '';
+
+  function useCurrentLocation() {
+    if (!navigator.geolocation) {
+      notify({ tone: 'warning', title: 'Location unavailable', message: 'This browser cannot read your position. Use the administrative filters instead.', icon: 'warning' });
+      return;
+    }
+
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setProximity({ latitude: coords.latitude, longitude: coords.longitude });
+        setLocating(false);
+        notify({ tone: 'success', title: 'Nearby centres ranked', message: 'Distances are straight-line estimates from your current position.', icon: 'pin' });
+      },
+      () => {
+        setLocating(false);
+        notify({ tone: 'warning', title: 'Location not available', message: 'Check browser location permission or use the district and local-level filters.', icon: 'warning', duration: 6000 });
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  }
 
   function showAllOfNepal() {
     const next = new URLSearchParams(searchParams);
     next.delete('zoneId');
     next.set('area', 'all');
+    setProximity(null);
     setSearchParams(next);
+  }
+
+  function resetFilters() {
+    setProximity(null);
+    setSearchParams(new URLSearchParams());
   }
 
   const totals = useMemo(() => centres.reduce((accumulator, centre) => ({
@@ -119,19 +154,32 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
           { name: 'status', label: 'Availability', type: 'select', options: toOptions(CENTRE_STATUS), columnClass: 'col-12 col-sm-6 col-lg-3' },
           {
             name: 'zoneId',
-            label: 'Operational zone',
+            label: 'Operational risk area',
             type: 'select',
-            placeholder: 'Any zone',
+            placeholder: 'Any risk area',
             columnClass: 'col-12 col-sm-6 col-lg-4',
             options: zones.map((zone) => ({ value: zone.id, label: zone.name }))
           }
         ]}
         values={{ ...location, status, zoneId }}
         onChange={updateFilter}
-        onReset={() => setSearchParams(new URLSearchParams())}
-        resultSummary={data ? `${centres.length} of ${data.totalActive} centres` : ''}
+        onReset={resetFilters}
+        resultSummary={data ? `${centres.length} of ${data.totalActive} centres${proximity ? ' ranked by proximity' : ''}` : ''}
       >
-        <LocationFilter value={location} onChange={updateLocation} labelPrefix="Where are you looking?" />
+        <div className="d-flex flex-wrap justify-content-between align-items-end gap-3">
+          <div className="flex-grow-1">
+            <LocationFilter value={location} onChange={updateLocation} labelPrefix="Where are you looking?" />
+          </div>
+          <button
+            type="button"
+            className={`btn btn-sm ${proximity ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={proximity ? () => setProximity(null) : useCurrentLocation}
+            disabled={locating}
+          >
+            <Icon name="pin" size={15} />
+            {locating ? 'Finding you...' : proximity ? 'Stop using location' : 'Use my current location'}
+          </button>
+        </div>
       </FilterBar>
 
       {loading && <LoadingState label="Loading evacuation centres..." />}
@@ -155,6 +203,16 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
             </div>
           </div>
 
+          {proximity && (
+            <div className="fn-scope-notice d-flex align-items-center gap-2 mb-3" role="status">
+              <Icon name="pin" size={16} />
+              <span className="small">
+                Centres are ranked using operational status, straight-line distance and available capacity.
+                Confirm current route conditions before travelling.
+              </span>
+            </div>
+          )}
+
           <AreaScopeNotice
             areaLabel={scopeLabel}
             shownCount={data.centres.length}
@@ -169,7 +227,7 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
               description={
                 scopeLabel && data.totalActive > 0
                   ? `Nothing matches near where you live. ${data.totalActive} centre${data.totalActive === 1 ? " is" : "s are"} listed elsewhere in Nepal.`
-                  : "Try clearing the filters or selecting a different flood zone."
+                  : "Try clearing the filters or selecting a different administrative area."
               }
             />
           ) : (

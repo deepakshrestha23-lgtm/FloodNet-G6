@@ -8,6 +8,7 @@ import {
 } from '../../services/officerApi';
 import { fetchZones } from '../../services/publicApi';
 import { useApiResource } from '../../hooks/useApiResource';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
@@ -53,7 +54,7 @@ function AlertsPage() {
   const [zones, setZones] = useState([]);
   const [pendingAction, setPendingAction] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [actionError, setActionError] = useState(null);
+  const { notify } = useFeedback();
 
   const geography = useMemo(() => ({
     provinceId: searchParams.get('provinceId') || '',
@@ -113,14 +114,27 @@ function AlertsPage() {
     if (!pendingAction) return;
 
     setBusy(true);
-    setActionError(null);
 
     try {
       await TRANSITIONS[pendingAction.type].run(pendingAction.alert.id);
       setPendingAction(null);
       await reload();
+      const actionLabels = { publish: 'published', expire: 'expired', cancel: 'cancelled' };
+      notify({
+        tone: 'success',
+        title: `Alert ${actionLabels[pendingAction.type]}`,
+        message: pendingAction.alert.title,
+        icon: 'check',
+        duration: 6000
+      });
     } catch (caughtError) {
-      setActionError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Alert action failed',
+        message: caughtError.message || 'We could not update this alert.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setBusy(false);
     }
@@ -144,7 +158,7 @@ function AlertsPage() {
     },
     {
       key: 'zones',
-      header: 'Zones',
+      header: 'Targets',
       render: (row) => (
         <span className="small">
           {[...(row.zones || []).map((zone) => zone.code), ...(row.wards || []).map(() => 'ward')].join(', ') || 'None'}
@@ -237,7 +251,7 @@ function AlertsPage() {
           { name: 'status', label: 'Status', type: 'select', options: toOptions(ALERT_STATUS) },
           {
             name: 'zoneId',
-            label: 'Affected zone',
+            label: 'Affected risk area',
             type: 'select',
             options: zones.map((zone) => ({ value: zone.id, label: zone.name }))
           }
@@ -295,11 +309,6 @@ function AlertsPage() {
             <span className="small text-secondary">
               {[...(pendingAction.alert.zones || []).map((zone) => zone.name), ...(pendingAction.alert.wards || []).map((ward) => `${ward.name}, ${ward.localLevel}`)].join(', ') || 'No geographic targets selected'}
             </span>
-          </div>
-        )}
-        {actionError && (
-          <div className="alert alert-danger mt-3 mb-0 py-2 small" role="alert">
-            {actionError.message}
           </div>
         )}
       </ConfirmationModal>

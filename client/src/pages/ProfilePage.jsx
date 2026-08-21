@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useFeedback } from '../context/FeedbackContext';
 import { apiRequest } from '../services/api';
-import { fetchZones } from '../services/publicApi';
 import PageHeader from '../components/common/PageHeader';
-import ErrorState from '../components/common/ErrorState';
 import Icon from '../components/common/Icon';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../components/geography/GeographySelector';
 import StatusBadge from '../components/common/StatusBadge';
@@ -20,15 +19,12 @@ const EMPTY_PASSWORD_FORM = { currentPassword: '', newPassword: '', confirmPassw
 function PasswordSection() {
   const [form, setForm] = useState(EMPTY_PASSWORD_FORM);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [changed, setChanged] = useState(false);
+  const { notify } = useFeedback();
 
   const mismatch = form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword;
 
   function updateField(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
-    setError(null);
-    setChanged(false);
   }
 
   async function handleSubmit(event) {
@@ -36,8 +32,6 @@ function PasswordSection() {
     if (mismatch) return;
 
     setSubmitting(true);
-    setError(null);
-    setChanged(false);
 
     try {
       await apiRequest('/api/auth/me/password', {
@@ -45,9 +39,21 @@ function PasswordSection() {
         body: { currentPassword: form.currentPassword, newPassword: form.newPassword }
       });
       setForm(EMPTY_PASSWORD_FORM);
-      setChanged(true);
+      notify({
+        tone: 'success',
+        title: 'Password changed',
+        message: 'Other signed-in devices have been signed out.',
+        icon: 'check',
+        duration: 6000
+      });
     } catch (requestError) {
-      setError(requestError);
+      notify({
+        tone: 'danger',
+        title: 'Password not changed',
+        message: requestError.message || 'We could not update your password.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -107,14 +113,6 @@ function PasswordSection() {
         </div>
       </div>
 
-      {error && <ErrorState message={error.message} details={error.details} />}
-
-      {changed && (
-        <div className="alert alert-success py-2 small" role="status">
-          Password changed. Any other signed-in devices have been signed out.
-        </div>
-      )}
-
       <button
         className="btn btn-primary"
         type="submit"
@@ -127,24 +125,21 @@ function PasswordSection() {
 }
 
 /**
- * Profile management for every signed-in role. The home flood zone matters
- * operationally: it is what scopes a resident's alerts and nearby evacuation
- * centres, so it is editable here rather than only at registration.
+ * Profile management for every signed-in role. A resident's official home ward
+ * personalises alerts and local-level centre discovery. Optional operational
+ * risk-area references remain in the database only for backward compatibility.
  */
 function ProfilePage() {
   const { user, refreshUser } = useAuth();
 
-  const [zones, setZones] = useState([]);
   const [form, setForm] = useState({
     ...EMPTY_GEOGRAPHY,
     firstName: '',
     lastName: '',
-    phone: '',
-    homeZoneId: ''
+    phone: ''
   });
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [savedAt, setSavedAt] = useState(null);
+  const { notify } = useFeedback();
 
   useEffect(() => {
     if (!user) return;
@@ -157,7 +152,6 @@ function ProfilePage() {
       firstName: user.profile?.firstName || '',
       lastName: user.profile?.lastName || '',
       phone: user.profile?.phone || '',
-      homeZoneId: user.profile?.homeZoneId || '',
       provinceId: homeWard?.province?.id || '',
       districtId: homeWard?.district?.id || '',
       localLevelId: homeWard?.localLevel?.id || '',
@@ -165,37 +159,41 @@ function ProfilePage() {
     });
   }, [user]);
 
-  useEffect(() => {
-    fetchZones()
-      .then((payload) => setZones(payload.data.zones))
-      .catch(() => setZones([]));
-  }, []);
-
   function updateField(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
-    setSavedAt(null);
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
-    setError(null);
-    setSavedAt(null);
 
     const body = {
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
       phone: form.phone.trim() || null,
-      homeZoneId: form.homeZoneId || null,
+      // Preserve any old optional risk-area reference without using it as the
+      // resident's location or silently deleting compatibility data.
+      homeZoneId: user.profile?.homeZoneId || null,
       homeWardId: form.wardId || null
     };
 
     try {
       await apiRequest('/api/auth/me', { method: 'PATCH', body });
       await refreshUser();
-      setSavedAt(new Date());
+      notify({
+        tone: 'success',
+        title: 'Profile saved',
+        message: 'Your account details and area preferences are up to date.',
+        icon: 'check'
+      });
     } catch (requestError) {
-      setError(requestError);
+      notify({
+        tone: 'danger',
+        title: 'Profile not saved',
+        message: requestError.message || 'We could not save your profile.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -209,7 +207,7 @@ function ProfilePage() {
         eyebrow="Account"
         title="Your profile"
         icon="user"
-        description="Keep your contact details and home flood zone up to date."
+        description="Keep your contact details and official home location up to date."
       />
 
       <div className="row g-3">
@@ -254,41 +252,14 @@ function ProfilePage() {
 
             <GeographySelector
               value={form}
-              onChange={(value) => { setForm((current) => ({ ...current, ...value })); setSavedAt(null); }}
+              onChange={(value) => { setForm((current) => ({ ...current, ...value })); }}
               required={false}
             />
             <p className="form-text mt-n2 mb-3">
-              Your home ward decides which official alerts and evacuation centres you are shown
-              first. Leave it unset to see alerts from across Nepal.
+              Your home ward decides which official alerts you see first. Evacuation-centre
+              discovery falls back to your local level when GPS is unavailable. Leave it unset
+              to browse nationwide.
             </p>
-
-            <div className="mb-3">
-              <label className="form-label fw-semibold" htmlFor="profile-home-zone">Home flood zone <span className="text-secondary fw-normal">(optional)</span></label>
-              <select
-                id="profile-home-zone"
-                className="form-select"
-                value={form.homeZoneId}
-                onChange={(event) => updateField('homeZoneId', event.target.value)}
-              >
-                <option value="">Not set</option>
-                {zones.map((zone) => (
-                  <option key={zone.id} value={zone.id}>
-                    {zone.name}{zone.locality ? `, ${zone.locality}` : ''}
-                  </option>
-                ))}
-              </select>
-              <p className="form-text">
-                Operational zones are separate from the official administrative location above.
-              </p>
-            </div>
-
-            {error && <ErrorState message={error.message} details={error.details} />}
-
-            {savedAt && (
-              <div className="alert alert-success py-2 small" role="status">
-                Profile saved at {formatDateTime(savedAt)}.
-              </div>
-            )}
 
             <button className="btn btn-primary" type="submit" disabled={submitting}>
               {submitting ? 'Saving...' : 'Save changes'}

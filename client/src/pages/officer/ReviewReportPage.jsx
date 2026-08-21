@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { fetchEvidenceUrl, fetchReportDossier, submitReview } from '../../services/officerApi';
 import { useApiResource } from '../../hooks/useApiResource';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
@@ -70,6 +71,7 @@ function DetailRow({ label, children }) {
 function ReviewReportPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { notify } = useFeedback();
 
   const loader = useCallback(() => fetchReportDossier(id), [id]);
   const { data, loading, error, reload } = useApiResource(loader);
@@ -77,7 +79,6 @@ function ReviewReportPage() {
   const [activeDecision, setActiveDecision] = useState(null);
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
 
   const [previewUrls, setPreviewUrls] = useState({});
   const [evidenceLoadingId, setEvidenceLoadingId] = useState(null);
@@ -116,19 +117,18 @@ function ReviewReportPage() {
   function openDecision(decision) {
     setActiveDecision(decision);
     setNotes('');
-    setSubmitError(null);
   }
 
   async function confirmDecision() {
     if (!activeDecision) return;
 
     if (activeDecision.notesRequired && notes.trim().length < 3) {
-      setSubmitError({ message: 'Review notes are required for this decision.' });
+      notify({ tone: 'warning', title: 'Review notes required', message: 'Add at least three characters before confirming this decision.', icon: 'warning' });
       return;
     }
 
     setSubmitting(true);
-    setSubmitError(null);
+    const decisionLabel = activeDecision.label;
 
     try {
       await submitReview(id, {
@@ -138,8 +138,21 @@ function ReviewReportPage() {
 
       setActiveDecision(null);
       await reload();
+      notify({
+        tone: 'success',
+        title: decisionLabel,
+        message: 'The report status and review history have been updated.',
+        icon: 'check',
+        duration: 6000
+      });
     } catch (caughtError) {
-      setSubmitError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Review not saved',
+        message: caughtError.message || 'We could not save this review decision.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -175,7 +188,7 @@ function ReviewReportPage() {
 
             <dl className="row g-0 mb-0">
               <DetailRow label="Administrative location">{describeArea(report)}</DetailRow>
-              <DetailRow label="Operational flood zone">
+              <DetailRow label="Operational risk area">
                 {report.zone
                   ? <>{report.zone.name} {report.zone.code && <span className="text-secondary">({report.zone.code})</span>}</>
                   : <span className="text-secondary">None selected</span>}
@@ -392,16 +405,6 @@ function ReviewReportPage() {
             onChange={(event) => setNotes(event.target.value)}
             placeholder="Explain the decision for the resident and the audit record."
           />
-          {submitError && (
-            <div className="alert alert-danger mt-3 mb-0 py-2 small" role="alert">
-              {submitError.message}
-              {Array.isArray(submitError.details) && (
-                <ul className="mb-0 mt-1">
-                  {submitError.details.map((detail) => <li key={detail}>{detail}</li>)}
-                </ul>
-              )}
-            </div>
-          )}
         </div>
       </ConfirmationModal>
     </>

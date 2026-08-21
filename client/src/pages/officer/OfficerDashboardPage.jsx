@@ -215,8 +215,8 @@ function OfficerDashboardPage() {
         </div>
         <div className="col-12 col-md-6 col-xl-6">
           <ChartCard
-            title="Reports by flood zone"
-            description="Pending and verified reports for each active zone."
+            title="Reports by operational risk area"
+            description="Pending and verified reports that also reference an optional risk area."
             type="bar"
             icon="map"
             data={zoneChart}

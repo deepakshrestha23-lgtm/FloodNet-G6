@@ -1,14 +1,17 @@
 import { useCallback, useState } from 'react';
 import { createZone, fetchZones, updateZone } from '../../services/adminApi';
 import { useApiResource } from '../../hooks/useApiResource';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import DataTable from '../../components/common/DataTable';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
+import StatusBadge from '../../components/common/StatusBadge';
 import { formatNumber } from '../../utils/formatters';
+import { RISK_AREA_TYPE, toOptions } from '../../utils/enums';
 
-const EMPTY_FORM = { code: '', name: '', locality: '', description: '' };
+const EMPTY_FORM = { code: '', name: '', locality: '', description: '', zoneType: 'OTHER' };
 
 function ZoneManagementPage() {
   const loader = useCallback(() => fetchZones(true), []);
@@ -17,10 +20,9 @@ function ZoneManagementPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingZone, setEditingZone] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
   const [pendingToggle, setPendingToggle] = useState(null);
   const [toggleBusy, setToggleBusy] = useState(false);
-  const [toggleError, setToggleError] = useState(null);
+  const { notify } = useFeedback();
 
   function updateField(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -32,24 +34,23 @@ function ZoneManagementPage() {
       code: zone.code,
       name: zone.name,
       locality: zone.locality || '',
-      description: zone.description || ''
+      description: zone.description || '',
+      zoneType: zone.zoneType || 'OTHER'
     });
-    setSubmitError(null);
   }
 
   function cancelEdit() {
     setEditingZone(null);
     setForm(EMPTY_FORM);
-    setSubmitError(null);
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
-    setSubmitError(null);
 
     const payload = {
       name: form.name.trim(),
+      zoneType: form.zoneType,
       ...(form.locality.trim() ? { locality: form.locality.trim() } : {}),
       ...(form.description.trim() ? { description: form.description.trim() } : {})
     };
@@ -63,8 +64,14 @@ function ZoneManagementPage() {
 
       cancelEdit();
       await reload();
+      notify({
+        tone: 'success',
+        title: editingZone ? 'Risk area updated' : 'Risk area created',
+        message: `${payload.name} is available as an optional operational grouping.`,
+        icon: 'check'
+      });
     } catch (caughtError) {
-      setSubmitError(caughtError);
+      notify({ tone: 'danger', title: 'Risk area not saved', message: caughtError.message || 'We could not save this operational risk area.', icon: 'warning', duration: 6000 });
     } finally {
       setSubmitting(false);
     }
@@ -74,11 +81,11 @@ function ZoneManagementPage() {
     if (!pendingToggle) return;
 
     setToggleBusy(true);
-    setToggleError(null);
 
     try {
       await updateZone(pendingToggle.id, {
         name: pendingToggle.name,
+        zoneType: pendingToggle.zoneType,
         ...(pendingToggle.locality ? { locality: pendingToggle.locality } : {}),
         ...(pendingToggle.description ? { description: pendingToggle.description } : {}),
         isActive: !pendingToggle.isActive
@@ -86,8 +93,14 @@ function ZoneManagementPage() {
 
       setPendingToggle(null);
       await reload();
+      notify({
+        tone: 'success',
+        title: pendingToggle.isActive ? 'Risk area deactivated' : 'Risk area activated',
+        message: `${pendingToggle.name} is now ${pendingToggle.isActive ? 'inactive' : 'active'}.`,
+        icon: 'check'
+      });
     } catch (caughtError) {
-      setToggleError(caughtError);
+      notify({ tone: 'danger', title: 'Risk-area status not changed', message: caughtError.message || 'We could not change this risk-area status.', icon: 'warning', duration: 6000 });
     } finally {
       setToggleBusy(false);
     }
@@ -96,13 +109,18 @@ function ZoneManagementPage() {
   const columns = [
     {
       key: 'name',
-      header: 'Zone',
+      header: 'Risk area',
       render: (row) => (
         <div>
           <span className="fw-semibold d-block">{row.name}</span>
           <span className="small text-secondary">{row.code}</span>
         </div>
       )
+    },
+    {
+      key: 'zoneType',
+      header: 'Type',
+      render: (row) => <StatusBadge map={RISK_AREA_TYPE} value={row.zoneType} />
     },
     { key: 'locality', header: 'Locality', render: (row) => row.locality || 'Not set' },
     {
@@ -148,20 +166,20 @@ function ZoneManagementPage() {
     <>
       <PageHeader
         eyebrow="Administration"
-        title="Flood zone management"
+        title="Operational risk areas"
         icon="map"
-        description="Zones are the shared reference used by reports, alerts and evacuation centres."
+        description="Optional river corridors, floodplains and other operational groupings. These never replace Nepal's administrative geography."
       />
 
       <div className="row g-3">
         <div className="col-12 col-xl-5">
           <form className="panel-card p-3 p-md-4 rounded-4" onSubmit={handleSubmit} noValidate>
             <h2 className="h6 fw-semibold mb-3">
-              {editingZone ? `Edit ${editingZone.code}` : 'Create a flood zone'}
+              {editingZone ? `Edit ${editingZone.code}` : 'Create an operational risk area'}
             </h2>
 
             <div className="mb-3">
-              <label className="form-label fw-semibold" htmlFor="zone-code">Zone code</label>
+              <label className="form-label fw-semibold" htmlFor="zone-code">Risk-area code</label>
               <input
                 id="zone-code"
                 className="form-control"
@@ -173,12 +191,12 @@ function ZoneManagementPage() {
                 placeholder="ZONE-D"
               />
               <p className="form-text">
-                Permanent identifier. It cannot be changed once records reference the zone.
+                Permanent identifier. It cannot be changed once records reference the risk area.
               </p>
             </div>
 
             <div className="mb-3">
-              <label className="form-label fw-semibold" htmlFor="zone-name">Zone name</label>
+              <label className="form-label fw-semibold" htmlFor="zone-name">Risk-area name</label>
               <input
                 id="zone-name"
                 className="form-control"
@@ -188,6 +206,13 @@ function ZoneManagementPage() {
                 value={form.name}
                 onChange={(event) => updateField('name', event.target.value)}
               />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold" htmlFor="zone-type">Operational type</label>
+              <select id="zone-type" className="form-select" value={form.zoneType} onChange={(event) => updateField('zoneType', event.target.value)}>
+                {toOptions(RISK_AREA_TYPE).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+              </select>
             </div>
 
             <div className="mb-3">
@@ -213,11 +238,9 @@ function ZoneManagementPage() {
               />
             </div>
 
-            {submitError && <ErrorState message={submitError.message} details={submitError.details} />}
-
             <div className="d-flex flex-wrap gap-2">
               <button type="submit" className="btn btn-primary" disabled={submitting}>
-                {submitting ? 'Saving...' : editingZone ? 'Save changes' : 'Create zone'}
+                {submitting ? 'Saving...' : editingZone ? 'Save changes' : 'Create risk area'}
               </button>
               {editingZone && (
                 <button type="button" className="btn btn-outline-secondary" onClick={cancelEdit} disabled={submitting}>
@@ -229,17 +252,17 @@ function ZoneManagementPage() {
         </div>
 
         <div className="col-12 col-xl-7">
-          {loading && <LoadingState label="Loading zones..." />}
+          {loading && <LoadingState label="Loading operational risk areas..." />}
           {error && <ErrorState message={error.message} details={error.details} onRetry={reload} />}
           {!loading && !error && data && (
             <div className="panel-card p-0 rounded-4 overflow-hidden">
               <DataTable
-                caption="FloodNet flood zones"
+                caption="FloodNet operational risk areas"
                 columns={columns}
                 rows={data.zones}
                 rowKey={(row) => row.id}
-                emptyTitle="No flood zones defined"
-                emptyDescription="Create the first zone so residents can submit reports."
+                emptyTitle="No operational risk areas defined"
+                emptyDescription="Risk areas are optional. Reports and centres continue to use official administrative geography."
               />
             </div>
           )}
@@ -248,13 +271,13 @@ function ZoneManagementPage() {
 
       <ConfirmationModal
         open={Boolean(pendingToggle)}
-        title={pendingToggle?.isActive ? 'Deactivate this zone?' : 'Activate this zone?'}
+        title={pendingToggle?.isActive ? 'Deactivate this risk area?' : 'Activate this risk area?'}
         description={
           pendingToggle?.isActive
-            ? 'A deactivated zone can no longer be selected for new reports, alerts or centres. Existing records keep their zone.'
-            : 'The zone becomes selectable again for new reports, alerts and centres.'
+            ? 'A deactivated risk area can no longer be selected for new reports, alerts or centres. Existing records keep their reference.'
+            : 'The risk area becomes selectable again for new reports, alerts and centres.'
         }
-        confirmLabel={pendingToggle?.isActive ? 'Deactivate zone' : 'Activate zone'}
+        confirmLabel={pendingToggle?.isActive ? 'Deactivate risk area' : 'Activate risk area'}
         confirmVariant={pendingToggle?.isActive ? 'danger' : 'success'}
         busy={toggleBusy}
         onCancel={() => setPendingToggle(null)}
@@ -264,12 +287,9 @@ function ZoneManagementPage() {
           <div className="alert alert-light border mb-0">
             <strong>{pendingToggle.name}</strong>
             <span className="d-block small text-secondary">
-              {formatNumber(pendingToggle.centreCount)} active evacuation centre(s) in this zone.
+              {formatNumber(pendingToggle.centreCount)} active evacuation centre(s) use this optional risk area.
             </span>
           </div>
-        )}
-        {toggleError && (
-          <div className="alert alert-danger mt-3 mb-0 py-2 small" role="alert">{toggleError.message}</div>
         )}
       </ConfirmationModal>
     </>

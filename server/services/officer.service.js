@@ -122,7 +122,7 @@ async function assertZonesAreActive(zoneIds) {
     const active = await userRepository.isActiveZone(zoneId);
 
     if (!active) {
-      throw new AppError(400, 'INVALID_ZONE', 'One or more selected flood zones are invalid or inactive');
+      throw new AppError(400, 'INVALID_ZONE', 'One or more selected operational risk areas are invalid or inactive');
     }
   }
 }
@@ -183,7 +183,7 @@ async function resolveAlertTargets(officerId, input) {
 
   for (const zoneId of zoneIds) {
     if (!(await jurisdictionRepository.canAccessZone(officerId, zoneId))) {
-      throw new AppError(403, 'JURISDICTION_FORBIDDEN', 'One or more alert zones are outside your assigned jurisdiction');
+      throw new AppError(403, 'JURISDICTION_FORBIDDEN', 'One or more alert risk areas are outside your assigned jurisdiction');
     }
   }
 
@@ -305,8 +305,8 @@ async function transitionAlert(officer, alertId, transitionName) {
     throw new AppError(404, 'ALERT_NOT_FOUND', 'The requested alert was not found');
   }
 
-  if (result.outcome === 'NO_ZONES') {
-    throw new AppError(400, 'ALERT_ZONES_REQUIRED', 'An alert must affect at least one flood zone before it is published');
+  if (result.outcome === 'NO_TARGETS') {
+    throw new AppError(400, 'ALERT_TARGETS_REQUIRED', 'An alert must affect at least one administrative area or operational risk area before it is published');
   }
 
   if (result.outcome === 'INVALID_TRANSITION') {

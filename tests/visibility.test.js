@@ -183,14 +183,16 @@ test('a zone-only centre is reachable by ward, and centres with room come first'
   const zone = zones.find((z) => z.code === 'ZONE-A');
   const coveredWard = await firstWardOfZone('ZONE-A');
 
-  const created = await request(evacuation, 'POST', '/api/centres', {
-    zoneId: zone.id,
-    name: 'Zone Only Shelter',
-    locationDescription: 'Recorded against a zone with no ward of its own',
-    maximumCapacity: 100,
-    facilities: []
-  });
-  assert.equal(created.status, 201, JSON.stringify(created.body));
+  // New writes require a ward, but existing Task 1 records may predate that
+  // rule. Insert a legacy row directly to prove the compatibility read path.
+  const { pool } = require('../server/db/pool');
+  await pool.query(
+    `INSERT INTO evacuation_centres (
+       zone_id, name, location_description, maximum_capacity,
+       current_occupancy, operational_status, updated_by
+     ) VALUES ($1, $2, $3, 100, 0, 'OPEN', $4)`,
+    [zone.id, 'Zone Only Shelter', 'Legacy record with an operational area but no ward', evacuation.user.id]
+  );
 
   const byWard = await request(createClient(), 'GET', `/api/public/centres?wardId=${coveredWard}`);
   assert.equal(byWard.status, 200);

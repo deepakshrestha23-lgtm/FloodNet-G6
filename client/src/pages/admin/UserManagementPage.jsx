@@ -10,6 +10,7 @@ import {
 } from '../../services/adminApi';
 import { useApiResource } from '../../hooks/useApiResource';
 import { useAuth } from '../../context/AuthContext';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
@@ -34,8 +35,7 @@ const PAGE_SIZE = 20;
 function PasswordResetEditor({ user, onDone, onCancel }) {
   const [form, setForm] = useState({ newPassword: '', confirmPassword: '' });
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [done, setDone] = useState(false);
+  const { notify } = useFeedback();
 
   const mismatch = form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword;
 
@@ -44,15 +44,26 @@ function PasswordResetEditor({ user, onDone, onCancel }) {
     if (mismatch) return;
 
     setSaving(true);
-    setError(null);
 
     try {
       await resetUserPassword(user.id, form.newPassword);
       setForm({ newPassword: '', confirmPassword: '' });
-      setDone(true);
       await onDone();
+      notify({
+        tone: 'success',
+        title: 'Password reset',
+        message: `A new password was set for ${user.firstName} ${user.lastName}.`,
+        icon: 'check',
+        duration: 6000
+      });
     } catch (caughtError) {
-      setError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Password not reset',
+        message: caughtError.message || 'We could not reset this account password.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSaving(false);
     }
@@ -85,7 +96,7 @@ function PasswordResetEditor({ user, onDone, onCancel }) {
             minLength={8}
             maxLength={72}
             value={form.newPassword}
-            onChange={(event) => { setForm((c) => ({ ...c, newPassword: event.target.value })); setDone(false); }}
+            onChange={(event) => setForm((c) => ({ ...c, newPassword: event.target.value }))}
           />
         </div>
         <div className="col-12 col-md-6">
@@ -97,20 +108,11 @@ function PasswordResetEditor({ user, onDone, onCancel }) {
             autoComplete="new-password"
             required
             value={form.confirmPassword}
-            onChange={(event) => { setForm((c) => ({ ...c, confirmPassword: event.target.value })); setDone(false); }}
+            onChange={(event) => setForm((c) => ({ ...c, confirmPassword: event.target.value }))}
           />
           {mismatch && <div className="invalid-feedback">Both fields must match.</div>}
         </div>
       </div>
-
-      {error && <ErrorState message={error.message} details={error.details} />}
-
-      {done && (
-        <div className="alert alert-success py-2 small" role="status">
-          Password reset. Give it to {user.firstName} privately and ask them to change it from their
-          profile at their next sign-in.
-        </div>
-      )}
 
       <button
         className="btn btn-primary"
@@ -133,24 +135,40 @@ function JurisdictionEditor({ user, onSaved, onCancel }) {
     wardId: user.jurisdiction?.ward?.id || ''
   });
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  const { notify } = useFeedback();
 
   async function save(event) {
     event.preventDefault();
     const field = { PROVINCE: 'provinceId', DISTRICT: 'districtId', LOCAL_LEVEL: 'localLevelId', WARD: 'wardId' }[scopeLevel];
     if (scopeLevel !== 'NATIONAL' && !geography[field]) {
-      setError({ message: `Select the ${scopeLevel.toLowerCase().replace('_', ' ')} before saving.` });
+      notify({
+        tone: 'warning',
+        title: 'Location required',
+        message: `Select the ${scopeLevel.toLowerCase().replace('_', ' ')} before saving.`,
+        icon: 'warning'
+      });
       return;
     }
     setSaving(true);
-    setError(null);
     const payload = { scopeLevel };
     if (field) payload[field] = geography[field];
     try {
       await updateUserJurisdiction(user.id, payload);
       await onSaved();
+      notify({
+        tone: 'success',
+        title: 'Jurisdiction saved',
+        message: `Operational coverage updated for ${user.firstName} ${user.lastName}.`,
+        icon: 'check'
+      });
     } catch (caughtError) {
-      setError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Jurisdiction not saved',
+        message: caughtError.message || 'We could not update this operational coverage.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSaving(false);
     }
@@ -164,7 +182,6 @@ function JurisdictionEditor({ user, onSaved, onCancel }) {
         <div className="col-12 col-md-8"><p className="small text-secondary mb-0">National officers can work across Nepal. Narrower assignments limit every operational query and write action on the server.</p></div>
       </div>
       {scopeLevel !== 'NATIONAL' && <div className="mt-3"><GeographySelector value={geography} onChange={setGeography} required={false} /></div>}
-      {error && <ErrorState message={error.message} details={error.details} />}
       <button className="btn btn-primary" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save jurisdiction'}</button>
     </form>
   );
@@ -180,7 +197,7 @@ function CreateUserForm({ onCreated, onCancel }) {
     phone: ''
   });
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const { notify } = useFeedback();
 
   function updateField(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -189,7 +206,6 @@ function CreateUserForm({ onCreated, onCancel }) {
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
-    setError(null);
 
     const payload = {
       email: form.email.trim().toLowerCase(),
@@ -204,8 +220,20 @@ function CreateUserForm({ onCreated, onCancel }) {
     try {
       await createUser(payload);
       await onCreated();
+      notify({
+        tone: 'success',
+        title: 'Account created',
+        message: `${payload.firstName} ${payload.lastName} can now sign in.`,
+        icon: 'check'
+      });
     } catch (caughtError) {
-      setError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Account not created',
+        message: caughtError.message || 'We could not create this account.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -288,8 +316,6 @@ function CreateUserForm({ onCreated, onCancel }) {
         </div>
       </div>
 
-      {error && <div className="mt-3"><ErrorState message={error.message} details={error.details} /></div>}
-
       <div className="d-flex flex-wrap gap-2 mt-3">
         <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? 'Creating...' : 'Create account'}
@@ -308,7 +334,7 @@ function UserManagementPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [actionError, setActionError] = useState(null);
+  const { notify } = useFeedback();
   const [jurisdictionTarget, setJurisdictionTarget] = useState(null);
   const [passwordTarget, setPasswordTarget] = useState(null);
 
@@ -344,7 +370,6 @@ function UserManagementPage() {
     if (!pendingAction) return;
 
     setBusy(true);
-    setActionError(null);
 
     try {
       if (pendingAction.type === 'status') {
@@ -355,8 +380,20 @@ function UserManagementPage() {
 
       setPendingAction(null);
       await reload();
+      notify({
+        tone: 'success',
+        title: pendingAction.type === 'status' ? 'Account status updated' : 'Role updated',
+        message: `${pendingAction.user.firstName} ${pendingAction.user.lastName} was updated successfully.`,
+        icon: 'check'
+      });
     } catch (caughtError) {
-      setActionError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Change not saved',
+        message: caughtError.message || 'We could not update this account.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setBusy(false);
     }
@@ -553,9 +590,6 @@ function UserManagementPage() {
             <strong>{pendingAction.user.firstName} {pendingAction.user.lastName}</strong>
             <span className="d-block small text-secondary">{pendingAction.user.email}</span>
           </div>
-        )}
-        {actionError && (
-          <div className="alert alert-danger mt-3 mb-0 py-2 small" role="alert">{actionError.message}</div>
         )}
       </ConfirmationModal>
     </>

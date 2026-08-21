@@ -7,6 +7,7 @@ import {
   updateCentre
 } from '../../services/centreApi';
 import { fetchZones } from '../../services/publicApi';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
@@ -17,13 +18,13 @@ function CentreFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
+  const { notify } = useFeedback();
 
   const [zones, setZones] = useState([]);
   const [facilityTypes, setFacilityTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
   const [currentOccupancy, setCurrentOccupancy] = useState(0);
 
   const [form, setForm] = useState({
@@ -129,7 +130,6 @@ function CentreFormPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
-    setSubmitError(null);
 
     const payload = {
       zoneId: form.zoneId || undefined,
@@ -164,9 +164,21 @@ function CentreFormPage() {
         await createCentre(payload);
       }
 
+      notify({
+        tone: 'success',
+        title: isEditing ? 'Centre updated' : 'Centre created',
+        message: `${payload.name} is ready for evacuation coordination.`,
+        icon: 'check'
+      });
       navigate('/evacuation/centres');
     } catch (caughtError) {
-      setSubmitError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Centre not saved',
+        message: caughtError.message || 'We could not save this evacuation centre.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -185,12 +197,12 @@ function CentreFormPage() {
       />
 
       <form className="panel-card p-3 p-md-4 rounded-4" onSubmit={handleSubmit} noValidate>
-        <GeographySelector value={form} onChange={updateGeography} required={!isEditing} disabled={false} />
+        <GeographySelector value={form} onChange={updateGeography} required disabled={false} />
         <div className="row g-3 mb-3">
           <div className="col-12 col-md-6">
-            <label className="form-label fw-semibold" htmlFor="centre-zone">Operational flood zone <span className="text-secondary fw-normal">(optional)</span></label>
+            <label className="form-label fw-semibold" htmlFor="centre-zone">Operational risk area <span className="text-secondary fw-normal">(optional)</span></label>
             <select id="centre-zone" className="form-select" value={form.zoneId} onChange={(event) => updateField('zoneId', event.target.value)}>
-              <option value="">No operational zone selected</option>
+              <option value="">No operational risk area selected</option>
               {zones.map((zone) => <option key={zone.id} value={zone.id}>{zone.name} ({zone.code})</option>)}
             </select>
           </div>
@@ -320,8 +332,6 @@ function CentreFormPage() {
             })}
           </div>
         </fieldset>
-
-        {submitError && <ErrorState message={submitError.message} details={submitError.details} />}
 
         <div className="d-flex flex-wrap gap-2">
           <button type="submit" className="btn btn-primary" disabled={submitting}>

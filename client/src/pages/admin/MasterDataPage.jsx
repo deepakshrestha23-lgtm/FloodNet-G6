@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { fetchFacilityTypes, saveFacilityType } from '../../services/adminApi';
 import { useApiResource } from '../../hooks/useApiResource';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
@@ -18,13 +19,12 @@ function MasterDataPage() {
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
   const [busyId, setBusyId] = useState(null);
+  const { notify } = useFeedback();
 
   async function handleCreate(event) {
     event.preventDefault();
     setSubmitting(true);
-    setSubmitError(null);
 
     try {
       await saveFacilityType({
@@ -35,8 +35,9 @@ function MasterDataPage() {
 
       setForm(EMPTY_FORM);
       await reload();
+      notify({ tone: 'success', title: 'Facility type added', message: 'The new facility type is available for evacuation centres.', icon: 'check' });
     } catch (caughtError) {
-      setSubmitError(caughtError);
+      notify({ tone: 'danger', title: 'Facility type not added', message: caughtError.message || 'We could not add this facility type.', icon: 'warning', duration: 6000 });
     } finally {
       setSubmitting(false);
     }
@@ -44,7 +45,6 @@ function MasterDataPage() {
 
   async function toggleActive(facilityType) {
     setBusyId(facilityType.id);
-    setSubmitError(null);
 
     try {
       await saveFacilityType({
@@ -54,8 +54,14 @@ function MasterDataPage() {
       });
 
       await reload();
+      notify({
+        tone: 'success',
+        title: facilityType.isActive ? 'Facility type retired' : 'Facility type restored',
+        message: `${facilityType.name} is now ${facilityType.isActive ? 'unavailable for new centres' : 'available again'}.`,
+        icon: 'check'
+      });
     } catch (caughtError) {
-      setSubmitError(caughtError);
+      notify({ tone: 'danger', title: 'Facility type not updated', message: caughtError.message || 'We could not update this facility type.', icon: 'warning', duration: 6000 });
     } finally {
       setBusyId(null);
     }
@@ -144,8 +150,6 @@ function MasterDataPage() {
                 placeholder="Baby and infant supplies"
               />
             </div>
-
-            {submitError && <ErrorState message={submitError.message} details={submitError.details} />}
 
             <button type="submit" className="btn btn-primary" disabled={submitting}>
               {submitting ? 'Saving...' : 'Add facility type'}

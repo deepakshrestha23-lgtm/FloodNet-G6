@@ -52,3 +52,8 @@ export function archiveCentre(centreId) {
 export function fetchEvacuationAlerts() {
   return apiRequest('/api/centres/alerts');
 }
+
+/** Verified, non-personal incident information inside the officer's jurisdiction. */
+export function fetchEvacuationIncidents() {
+  return apiRequest('/api/centres/incidents');
+}

@@ -31,7 +31,7 @@ function validateReportFields(body, { allowZone }) {
   if (allowZone) {
     if (body.zoneId && !uuidPattern.test(body.zoneId)) errors.push('The zone ID must be a valid UUID');
     if (body.wardId && !uuidPattern.test(body.wardId)) errors.push('The ward ID must be a valid UUID');
-    if (!body.zoneId && !body.wardId) errors.push('A flood zone or administrative ward is required');
+    if (!body.wardId) errors.push('An administrative ward is required');
   }
   if (typeof body.locationDescription !== 'string' || body.locationDescription.trim().length < 3 || body.locationDescription.trim().length > 500) {
     errors.push('Location description must be between 3 and 500 characters');

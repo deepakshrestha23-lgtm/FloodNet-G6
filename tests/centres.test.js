@@ -13,10 +13,12 @@ const {
 let evacuation;
 let zones;
 let facilityTypes;
+let defaultWardId;
 
 async function createCentre(overrides = {}) {
   const result = await request(evacuation, 'POST', '/api/centres', {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     name: `Test Centre ${Math.random().toString(36).slice(2, 8)}`,
     locationDescription: 'Test centre location description',
     contactPhone: '+60123456700',
@@ -35,6 +37,16 @@ test.before(async () => {
 
   evacuation = await signIn('evacuation@test.local');
   zones = await getZones();
+
+  const { pool } = require('../server/db/pool');
+  const wardResult = await pool.query(
+    `SELECT ward_id FROM flood_zone_wards
+     WHERE zone_id = $1
+     ORDER BY is_primary DESC, ward_id
+     LIMIT 1`,
+    [zones[0].id]
+  );
+  defaultWardId = wardResult.rows[0].ward_id;
 
   const types = await request(evacuation, 'GET', '/api/centres/facility-types');
   facilityTypes = types.body.data.facilityTypes;
@@ -61,6 +73,13 @@ test('occupancy may not exceed capacity when a centre is created', async () => {
 test('a negative capacity is rejected', async () => {
   const result = await createCentre({ maximumCapacity: -5 });
   assert.equal(result.status, 400);
+});
+
+test('a new centre must use an official administrative ward', async () => {
+  const result = await createCentre({ wardId: undefined });
+
+  assert.equal(result.status, 400);
+  assert.ok(result.body.error.details.includes('An administrative ward is required'));
 });
 
 test('a negative occupancy is rejected', async () => {
@@ -129,6 +148,7 @@ test('capacity cannot be reduced below the recorded occupancy', async () => {
 
   const shrink = await request(evacuation, 'PATCH', `/api/centres/${centreId}`, {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     name: created.body.data.centre.name,
     locationDescription: 'Attempting to shrink below occupancy',
     maximumCapacity: 50,
@@ -140,6 +160,7 @@ test('capacity cannot be reduced below the recorded occupancy', async () => {
 
   const allowed = await request(evacuation, 'PATCH', `/api/centres/${centreId}`, {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     name: created.body.data.centre.name,
     locationDescription: 'Reducing capacity to exactly the occupancy is allowed',
     maximumCapacity: 80,
@@ -154,6 +175,7 @@ test('occupancy cannot be changed through the centre edit form', async () => {
 
   const result = await request(evacuation, 'PATCH', `/api/centres/${created.body.data.centre.id}`, {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     name: created.body.data.centre.name,
     locationDescription: 'Trying to change occupancy here',
     maximumCapacity: 100,
@@ -207,6 +229,7 @@ test('an archived centre is hidden from the public and becomes read-only', async
 
   const edit = await request(evacuation, 'PATCH', `/api/centres/${centreId}`, {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     name: 'Archived edit attempt',
     locationDescription: 'Editing an archived centre must fail',
     maximumCapacity: 100,

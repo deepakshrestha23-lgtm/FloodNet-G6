@@ -66,9 +66,9 @@ function validateCentreBody(request, _response, next) {
     'facilities'
   ]);
 
-  if (body.zoneId !== undefined && body.zoneId !== null && body.zoneId !== '') checkUuid(errors, body.zoneId, 'Flood zone');
+  if (body.zoneId !== undefined && body.zoneId !== null && body.zoneId !== '') checkUuid(errors, body.zoneId, 'Operational risk area');
   if (body.wardId !== undefined && body.wardId !== null && body.wardId !== '') checkUuid(errors, body.wardId, 'Administrative ward');
-  if (!body.zoneId && !body.wardId) errors.push('A flood zone or administrative ward is required');
+  if (!body.wardId) errors.push('An administrative ward is required');
   const name = checkString(errors, body.name, 'Centre name', { min: 3, max: 160 });
   const locationDescription = checkString(errors, body.locationDescription, 'Location description', { min: 3, max: 500 });
 

@@ -31,6 +31,7 @@ router.get('/facility-types', asyncHandler(centreController.facilityTypes));
  * the monitoring officer.
  */
 router.get('/alerts', requireEvacuationOfficer, asyncHandler(centreController.listActiveAlerts));
+router.get('/incidents', requireEvacuationOfficer, asyncHandler(centreController.listVerifiedIncidents));
 
 router.get('/', validateCentreListQuery, asyncHandler(centreController.list));
 router.get('/:id', validateCentreId, asyncHandler(centreController.get));

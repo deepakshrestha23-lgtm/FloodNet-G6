@@ -108,8 +108,19 @@ async function listActiveAlerts(request, response) {
   });
 }
 
+async function listVerifiedIncidents(request, response) {
+  const incidents = await centreService.listVerifiedIncidents(request.user);
+
+  response.status(200).json({
+    success: true,
+    data: { incidents },
+    message: 'Verified incidents retrieved successfully'
+  });
+}
+
 module.exports = {
   listActiveAlerts,
+  listVerifiedIncidents,
   list,
   get,
   create,

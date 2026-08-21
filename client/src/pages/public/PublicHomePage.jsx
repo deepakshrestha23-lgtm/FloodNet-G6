@@ -35,7 +35,7 @@ const FLOW_STEPS = [
   {
     icon: 'megaphone',
     title: 'Alerts reach you',
-    text: 'Official alerts go out to affected zones, with live evacuation centre capacity beside them.'
+    text: 'Official alerts target affected Nepal administrative areas, with live evacuation-centre capacity beside them.'
   }
 ];
 
@@ -53,7 +53,7 @@ const FEATURES = [
   {
     icon: 'map',
     title: 'Built around your zone',
-    text: 'Set your home flood zone once and the alerts and centres for your area are always shown first.'
+    text: 'Set your home ward once to see affected-area alerts first, while nationwide browsing always remains available.'
   }
 ];
 

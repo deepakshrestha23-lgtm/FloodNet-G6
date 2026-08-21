@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { apiRequest } from '../../services/api';
+import { useFeedback } from '../../context/FeedbackContext';
 import {
   ALLOWED_EVIDENCE_TYPES,
   MAX_EVIDENCE_FILE_SIZE_BYTES,
@@ -36,6 +37,7 @@ const initialForm = {
 function ReportFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { notify } = useFeedback();
   const editing = Boolean(id);
   const [form, setForm] = useState({ ...initialForm, observedAt: toDateTimeLocalValue(new Date()) });
   const [zones, setZones] = useState([]);
@@ -45,7 +47,6 @@ function ReportFormPage() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileError, setFileError] = useState('');
   const [uploadProgress, setUploadProgress] = useState(null);
-  const [savedReportId, setSavedReportId] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -103,11 +104,9 @@ function ReportFormPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
-    setError(null);
-    setSavedReportId(null);
 
     if (selectedFiles.length > 0 && !isEvidenceServiceConfigured()) {
-      setError({ message: 'Photograph uploads are not enabled in this environment. Remove the selected images to continue.' });
+      notify({ tone: 'warning', title: 'Photograph upload unavailable', message: 'Remove the selected images or configure the evidence service before submitting.', icon: 'warning', duration: 6000 });
       setSubmitting(false);
       return;
     }
@@ -139,15 +138,27 @@ function ReportFormPage() {
         body
       });
       const savedId = payload.data.report.id;
-      setSavedReportId(savedId);
 
       if (selectedFiles.length > 0) {
         setUploadProgress({ completed: 0, total: selectedFiles.length });
         await uploadEvidenceFiles(savedId, selectedFiles, (completed, total) => setUploadProgress({ completed, total }));
       }
+      notify({
+        tone: 'success',
+        title: editing ? 'Report resubmitted' : 'Report submitted',
+        message: selectedFiles.length > 0 ? 'Your report and photographs are ready for review.' : 'Your report is ready for review.',
+        icon: 'check',
+        duration: 6000
+      });
       navigate(`/resident/reports/${savedId}`, { replace: true });
     } catch (requestError) {
-      setError(requestError);
+      notify({
+        tone: 'danger',
+        title: editing ? 'Report not resubmitted' : 'Report not submitted',
+        message: requestError.message || 'We could not submit this report.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
       setUploadProgress(null);
@@ -171,8 +182,6 @@ function ReportFormPage() {
       />
 
       {error && <ErrorState message={error.message} details={error.details} />}
-      {savedReportId && error && <Link className="d-block small mb-3" to={`/resident/reports/${savedReportId}`}>Your report was saved. Open it to check the photographs.</Link>}
-
       <form className="panel-card p-3 p-md-4 rounded-4" onSubmit={handleSubmit} noValidate>
         <GeographySelector
           value={form}
@@ -183,12 +192,12 @@ function ReportFormPage() {
         {editing && <p className="form-text mt-n2">The official administrative location cannot be changed after submission.</p>}
 
         <div className="mb-3">
-          <label className="form-label fw-semibold" htmlFor="report-zone">Operational flood zone <span className="text-secondary fw-normal">(optional)</span></label>
+          <label className="form-label fw-semibold" htmlFor="report-zone">Operational risk area <span className="text-secondary fw-normal">(optional)</span></label>
           <select id="report-zone" className="form-select" disabled={editing} value={form.zoneId} onChange={(event) => updateField('zoneId', event.target.value)}>
-            <option value="">No operational zone selected</option>
-            {zones.map((zone) => <option key={zone.id} value={zone.id}>{zone.name}{zone.isDemoData ? ' (demonstration data)' : ''}</option>)}
+            <option value="">No operational risk area selected</option>
+            {zones.map((zone) => <option key={zone.id} value={zone.id}>{zone.name}</option>)}
           </select>
-          <p className="form-text">Administrative geography is the official location. Flood zones are separate operational areas used by officers.</p>
+          <p className="form-text">Your ward is the official report location. Risk areas are optional analysis groupings such as river corridors or floodplains.</p>
         </div>
 
         <div className="row g-3 mb-3">

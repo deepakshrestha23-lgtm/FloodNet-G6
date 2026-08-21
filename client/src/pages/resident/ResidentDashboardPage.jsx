@@ -16,9 +16,9 @@ import { describeArea, formatRelative, formatNumber } from '../../utils/formatte
 
 function ResidentDashboardPage() {
   const { user } = useAuth();
-  const homeZoneId = user?.profile?.homeZoneId;
   const homeWardId = user?.profile?.homeWardId;
-  const hasHomeArea = Boolean(homeZoneId || homeWardId);
+  const homeLocalLevelId = user?.profile?.homeWard?.localLevel?.id;
+  const hasHomeArea = Boolean(homeWardId);
 
   const [state, setState] = useState({ loading: true, error: null, reports: null, alerts: [], centres: [] });
 
@@ -27,19 +27,10 @@ function ResidentDashboardPage() {
 
     async function load() {
       try {
-        // Scoped to the resident's home area when they have set one, so the
-        // first thing they see is what affects where they live. The ward is the
-        // official location; the operational zone is matched as well, so an
-        // alert published against either still reaches them.
-        const homeArea = {
-          zoneId: homeZoneId || undefined,
-          wardId: homeWardId || undefined
-        };
-
         const [reportPayload, alertPayload, centrePayload] = await Promise.all([
           fetchMyReports({ limit: 5 }),
-          fetchActiveAlerts(homeArea),
-          fetchPublicCentres(homeArea)
+          fetchActiveAlerts({ wardId: homeWardId || undefined }),
+          fetchPublicCentres({ localLevelId: homeLocalLevelId || undefined })
         ]);
 
         if (!active) return;
@@ -58,7 +49,7 @@ function ResidentDashboardPage() {
 
     load();
     return () => { active = false; };
-  }, [homeZoneId, homeWardId]);
+  }, [homeLocalLevelId, homeWardId]);
 
   if (state.loading) return <LoadingState label="Loading your dashboard..." />;
   if (state.error) return <ErrorState message={state.error.message} details={state.error.details} />;
@@ -105,13 +96,13 @@ function ResidentDashboardPage() {
           <DashboardStatCard
             label="Active alerts"
             value={alerts.length}
-            hint={hasHomeArea ? 'In your home area' : 'Across all of Nepal'}
+            hint={hasHomeArea ? 'Affecting your home ward' : 'Across all of Nepal'}
             tone={alerts.length > 0 ? 'danger' : 'default'}
             icon="bell"
           />
         </div>
         <div className="col-6 col-lg-3">
-          <DashboardStatCard label="Centres available" value={openCentres} hint={`${centres.length} nearby`} icon="shelter" />
+          <DashboardStatCard label="Centres available" value={openCentres} hint={`${centres.length} in your local-level view`} icon="shelter" />
         </div>
         <div className="col-6 col-lg-3">
           <DashboardStatCard

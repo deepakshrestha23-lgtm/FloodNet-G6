@@ -17,7 +17,7 @@ const ENTITY_TYPES = [
   { value: 'FLOOD_REPORT', label: 'Flood report' },
   { value: 'FLOOD_ALERT', label: 'Flood alert' },
   { value: 'EVACUATION_CENTRE', label: 'Evacuation centre' },
-  { value: 'FLOOD_ZONE', label: 'Flood zone' },
+  { value: 'FLOOD_ZONE', label: 'Operational risk area' },
   { value: 'CENTRE_FACILITY_TYPE', label: 'Facility type' },
   { value: 'FLOOD_EVIDENCE', label: 'Evidence' }
 ];

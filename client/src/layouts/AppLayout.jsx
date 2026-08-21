@@ -26,14 +26,14 @@ const NAVIGATION = {
   ],
   EVACUATION_OFFICER: [
     { to: '/evacuation', label: 'Dashboard', icon: 'dashboard', end: true },
-    { to: '/evacuation/alerts', label: 'Active alerts', icon: 'bell' },
+    { to: '/evacuation/alerts', label: 'Alerts & incidents', icon: 'bell' },
     { to: '/evacuation/centres', label: 'Centres', icon: 'shelter' },
     { to: '/evacuation/centres/new', label: 'Add centre', icon: 'plus' }
   ],
   ADMINISTRATOR: [
     { to: '/admin', label: 'Overview', icon: 'dashboard', end: true },
     { to: '/admin/users', label: 'Users', icon: 'users' },
-    { to: '/admin/zones', label: 'Flood zones', icon: 'map' },
+    { to: '/admin/zones', label: 'Operational risk areas', icon: 'map' },
     { to: '/admin/master-data', label: 'Master data', icon: 'database' },
     { to: '/admin/audit', label: 'Audit log', icon: 'history' }
   ]

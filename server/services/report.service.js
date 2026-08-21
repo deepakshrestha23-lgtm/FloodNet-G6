@@ -28,15 +28,15 @@ async function submitReport(residentId, input) {
   const validWard = input.wardId ? await userRepository.isActiveWard(input.wardId) : true;
 
   if (!validZone) {
-    throw new AppError(400, 'INVALID_ZONE', 'The selected flood zone is invalid or inactive');
+    throw new AppError(400, 'INVALID_ZONE', 'The selected operational risk area is invalid or inactive');
   }
 
   if (!validWard) {
     throw new AppError(400, 'INVALID_WARD', 'The selected administrative ward is invalid or inactive');
   }
 
-  if (!input.zoneId && !input.wardId) {
-    throw new AppError(400, 'LOCATION_REQUIRED', 'A flood zone or administrative ward is required');
+  if (!input.wardId) {
+    throw new AppError(400, 'LOCATION_REQUIRED', 'An administrative ward is required for a new flood report');
   }
 
   for (let attempt = 0; attempt < 3; attempt += 1) {

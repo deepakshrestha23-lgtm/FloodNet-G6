@@ -226,13 +226,14 @@ async function createZone(admin, input) {
       code: input.code,
       name: input.name,
       locality: input.locality,
-      description: input.description
+      description: input.description,
+      zoneType: input.zoneType
     });
 
     return adminRepository.findZoneById(zoneId);
   } catch (error) {
     if (error.code === '23505') {
-      throw new AppError(409, 'ZONE_CODE_IN_USE', 'A flood zone with that code already exists');
+      throw new AppError(409, 'ZONE_CODE_IN_USE', 'An operational risk area with that code already exists');
     }
 
     throw error;
@@ -248,7 +249,7 @@ async function updateZone(admin, zoneId, input) {
   const existing = await adminRepository.findZoneById(zoneId);
 
   if (!existing) {
-    throw new AppError(404, 'ZONE_NOT_FOUND', 'The requested flood zone was not found');
+    throw new AppError(404, 'ZONE_NOT_FOUND', 'The requested operational risk area was not found');
   }
 
   if (existing.isActive && input.isActive === false) {
@@ -258,7 +259,7 @@ async function updateZone(admin, zoneId, input) {
       throw new AppError(
         409,
         'ZONE_HAS_ACTIVE_CENTRES',
-        `This zone still has ${activeCentres} active evacuation centre(s). Archive them before deactivating the zone.`
+        `This risk area still has ${activeCentres} active evacuation centre(s). Archive them before deactivating the risk area.`
       );
     }
   }
@@ -269,11 +270,12 @@ async function updateZone(admin, zoneId, input) {
     name: input.name,
     locality: input.locality,
     description: input.description,
+    zoneType: input.zoneType || existing.zoneType,
     isActive: input.isActive
   });
 
   if (!updatedId) {
-    throw new AppError(404, 'ZONE_NOT_FOUND', 'The requested flood zone was not found');
+    throw new AppError(404, 'ZONE_NOT_FOUND', 'The requested operational risk area was not found');
   }
 
   return adminRepository.findZoneById(zoneId);

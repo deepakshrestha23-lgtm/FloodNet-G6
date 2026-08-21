@@ -158,8 +158,8 @@ function EvacuationDashboardPage() {
       <div className="row g-3 mb-4">
         <div className="col-12 col-xl-8">
           <ChartCard
-            title="Capacity by flood zone"
-            description="Occupied versus available spaces in each zone."
+            title="Capacity by operational risk area"
+            description="Occupied versus available spaces for optional risk-area groupings."
             type="bar"
             icon="map"
             data={capacityChart}
@@ -182,14 +182,14 @@ function EvacuationDashboardPage() {
       <section className="panel-card p-0 overflow-hidden">
         <h2 className="h6 fw-bold fn-section-title p-3 p-md-4 mb-0">
           <Icon name="map" size={18} />
-          Zone breakdown
+          Operational risk-area breakdown
         </h2>
         <DataTable
-          caption="Evacuation capacity by flood zone"
+          caption="Evacuation capacity by operational risk area"
           columns={zoneColumns}
           rows={data.byZone}
           rowKey={(row) => row.zoneCode}
-          emptyTitle="No zone data available"
+          emptyTitle="No operational risk-area data available"
         />
       </section>
     </>

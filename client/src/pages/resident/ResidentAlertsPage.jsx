@@ -20,7 +20,9 @@ function ResidentAlertsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [zones, setZones] = useState([]);
 
-  const zoneId = searchParams.get('zoneId') || user?.profile?.homeZoneId || '';
+  // Operational risk areas are available as an explicit browsing filter only.
+  // Personal alert matching is based on the resident's official home ward.
+  const zoneId = searchParams.get('zoneId') || '';
   // An explicit zone filter from the URL is a deliberate override, so the
   // resident's home ward is only applied while they are not filtering.
   const wardId = searchParams.get('zoneId') ? '' : (user?.profile?.homeWardId || '');
@@ -117,7 +119,7 @@ function ResidentAlertsPage() {
       <FilterBar
         filters={[{
           name: 'zoneId',
-          label: 'Operational zone',
+          label: 'Operational risk area',
           type: 'select',
           placeholder: 'Any zone',
           columnClass: 'col-12 col-md-6 col-lg-4',

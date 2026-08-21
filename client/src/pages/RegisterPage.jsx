@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { fetchZones } from '../services/publicApi';
+import { useFeedback } from '../context/FeedbackContext';
 import AuthLayout from '../layouts/AuthLayout';
 import Icon from '../components/common/Icon';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../components/geography/GeographySelector';
@@ -12,24 +12,16 @@ const initialForm = {
   lastName: '',
   email: '',
   phone: '',
-  homeZoneId: '',
   password: '',
   confirmPassword: ''
 };
 
 function RegisterPage() {
   const { register } = useAuth();
+  const { notify } = useFeedback();
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
-  const [zones, setZones] = useState([]);
-  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    fetchZones()
-      .then((payload) => setZones(payload.data.zones))
-      .catch(() => setZones([]));
-  }, []);
 
   function updateField(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -37,10 +29,13 @@ function RegisterPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setError('');
-
     if (form.password !== form.confirmPassword) {
-      setError('The passwords do not match.');
+      notify({
+        tone: 'warning',
+        title: 'Check the form',
+        message: 'The passwords do not match.',
+        icon: 'warning'
+      });
       return;
     }
 
@@ -54,14 +49,19 @@ function RegisterPage() {
     };
 
     if (form.phone.trim()) details.phone = form.phone.trim();
-    if (form.homeZoneId) details.homeZoneId = form.homeZoneId;
     if (form.wardId) details.homeWardId = form.wardId;
 
     try {
       await register(details);
       navigate('/login', { replace: true, state: { registered: true } });
     } catch (requestError) {
-      setError(requestError.details?.join('. ') || requestError.message);
+      notify({
+        tone: 'danger',
+        title: 'Registration failed',
+        message: requestError.details?.join('. ') || requestError.message || 'We could not create your account.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -79,13 +79,6 @@ function RegisterPage() {
         Residents can report flooding and follow alerts for their area. Officer and administrator
         accounts are created by a FloodNet administrator.
       </p>
-
-      {error && (
-        <div className="alert alert-danger d-flex gap-2 align-items-start" role="alert">
-          <Icon name="warning" size={18} strokeWidth={2} className="mt-1" />
-          <span>{error}</span>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} noValidate className="mt-4">
           <div className="row g-3 mb-3">
@@ -150,27 +143,6 @@ function RegisterPage() {
             Setting your ward means alerts and evacuation centres for where you live are shown
             first. You can add or change it later from your profile.
           </p>
-          <div className="mb-3">
-            <label className="form-label fw-semibold" htmlFor="register-home-zone">Home flood zone (optional)</label>
-            <select
-              id="register-home-zone"
-              className="form-select"
-              value={form.homeZoneId}
-              onChange={(event) => updateField('homeZoneId', event.target.value)}
-            >
-              <option value="">Not set</option>
-              {zones.map((zone) => (
-                <option key={zone.id} value={zone.id}>
-                  {zone.name}{zone.locality ? `, ${zone.locality}` : ''}
-                </option>
-              ))}
-            </select>
-            <p className="form-text">
-              Setting this shows the alerts and evacuation centres for your area first. You can
-              change it later from your profile.
-            </p>
-          </div>
-
           <div className="row g-3 mb-4">
             <div className="col-12 col-md-6">
               <label className="form-label fw-semibold" htmlFor="register-password">Password</label>

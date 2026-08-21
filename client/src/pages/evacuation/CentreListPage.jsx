@@ -8,6 +8,7 @@ import {
 } from '../../services/centreApi';
 import { fetchZones } from '../../services/publicApi';
 import { useApiResource } from '../../hooks/useApiResource';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
@@ -16,7 +17,7 @@ import FilterBar from '../../components/common/FilterBar';
 import StatusBadge from '../../components/common/StatusBadge';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import { CENTRE_STATUS, toOptions } from '../../utils/enums';
-import { describeArea, formatDateTime, formatNumber } from '../../utils/formatters';
+import { describeArea, formatNumber } from '../../utils/formatters';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 /**
@@ -26,8 +27,7 @@ import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/G
 function CentreCard({ centre, onSaved, onArchiveRequest }) {
   const [occupancy, setOccupancy] = useState(String(centre.currentOccupancy));
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [savedAt, setSavedAt] = useState(null);
+  const { notify } = useFeedback();
 
   useEffect(() => {
     setOccupancy(String(centre.currentOccupancy));
@@ -42,24 +42,23 @@ function CentreCard({ centre, onSaved, onArchiveRequest }) {
     const value = Number(occupancy);
 
     if (!Number.isInteger(value) || value < 0) {
-      setError({ message: 'Occupancy must be zero or a positive whole number.' });
+      notify({ tone: 'warning', title: 'Check occupancy', message: 'Occupancy must be zero or a positive whole number.', icon: 'warning' });
       return;
     }
 
     if (value > centre.maximumCapacity) {
-      setError({ message: `Occupancy cannot exceed the capacity of ${centre.maximumCapacity}.` });
+      notify({ tone: 'warning', title: 'Capacity exceeded', message: `Occupancy cannot exceed the capacity of ${centre.maximumCapacity}.`, icon: 'warning' });
       return;
     }
 
     setSaving(true);
-    setError(null);
 
     try {
       await updateOccupancy(centre.id, value);
-      setSavedAt(new Date());
       await onSaved();
+      notify({ tone: 'success', title: 'Occupancy saved', message: `${centre.name} now records ${value.toLocaleString()} people.`, icon: 'check' });
     } catch (caughtError) {
-      setError(caughtError);
+      notify({ tone: 'danger', title: 'Occupancy not saved', message: caughtError.message || 'We could not update this centre.', icon: 'warning', duration: 6000 });
     } finally {
       setSaving(false);
     }
@@ -67,13 +66,13 @@ function CentreCard({ centre, onSaved, onArchiveRequest }) {
 
   async function changeStatus(status) {
     setSaving(true);
-    setError(null);
 
     try {
       await updateCentreStatus(centre.id, status);
       await onSaved();
+      notify({ tone: 'success', title: 'Centre status updated', message: `${centre.name} is now ${status.toLowerCase()}.`, icon: 'check' });
     } catch (caughtError) {
-      setError(caughtError);
+      notify({ tone: 'danger', title: 'Status not updated', message: caughtError.message || 'We could not update this centre.', icon: 'warning', duration: 6000 });
     } finally {
       setSaving(false);
     }
@@ -177,16 +176,6 @@ function CentreCard({ centre, onSaved, onArchiveRequest }) {
           </button>
         </div>
 
-        {savedAt && !error && (
-          <p className="small text-success mb-0 mt-2" role="status">
-            Saved at {formatDateTime(savedAt)}
-          </p>
-        )}
-        {error && (
-          <div className="alert alert-danger py-2 small mt-2 mb-0" role="alert">
-            {error.message}
-          </div>
-        )}
       </form>
     </article>
   );
@@ -198,7 +187,7 @@ function CentreListPage() {
   const [zones, setZones] = useState([]);
   const [archiveTarget, setArchiveTarget] = useState(null);
   const [archiving, setArchiving] = useState(false);
-  const [archiveError, setArchiveError] = useState(null);
+  const { notify } = useFeedback();
 
   const geography = useMemo(() => ({
     provinceId: searchParams.get('provinceId') || '',
@@ -244,14 +233,14 @@ function CentreListPage() {
     if (!archiveTarget) return;
 
     setArchiving(true);
-    setArchiveError(null);
 
     try {
       await archiveCentre(archiveTarget.id);
       setArchiveTarget(null);
       await reload();
+      notify({ tone: 'success', title: 'Centre archived', message: `${archiveTarget.name} is no longer available for new operations.`, icon: 'check' });
     } catch (caughtError) {
-      setArchiveError(caughtError);
+      notify({ tone: 'danger', title: 'Centre not archived', message: caughtError.message || 'We could not archive this centre.', icon: 'warning', duration: 6000 });
     } finally {
       setArchiving(false);
     }
@@ -271,7 +260,7 @@ function CentreListPage() {
         filters={[
           {
             name: 'zoneId',
-            label: 'Flood zone',
+            label: 'Operational risk area',
             type: 'select',
             options: zones.map((zone) => ({ value: zone.id, label: zone.name }))
           },
@@ -332,9 +321,6 @@ function CentreListPage() {
               Currently {formatNumber(archiveTarget.currentOccupancy)} people recorded as accommodated.
             </span>
           </div>
-        )}
-        {archiveError && (
-          <div className="alert alert-danger mt-3 mb-0 py-2 small" role="alert">{archiveError.message}</div>
         )}
       </ConfirmationModal>
     </>

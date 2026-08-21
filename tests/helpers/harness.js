@@ -120,10 +120,10 @@ async function resetDatabase() {
   `);
 
   await pool.query(`
-    INSERT INTO flood_zones (code, name, locality, description) VALUES
-      ('ZONE-A', 'Riverbank North', 'North District', 'Northern riverbank communities'),
-      ('ZONE-B', 'Central Lowlands', 'Central District', 'Central low-lying communities'),
-      ('ZONE-C', 'South Valley', 'South District', 'Southern valley communities')
+    INSERT INTO flood_zones (code, name, locality, description, zone_type, is_demo_data) VALUES
+      ('ZONE-A', 'Riverbank North (demonstration data)', 'Demo operational area', 'Fictional demonstration river corridor. Not an official administrative boundary.', 'RIVER_CORRIDOR', TRUE),
+      ('ZONE-B', 'Central Lowlands (demonstration data)', 'Demo operational area', 'Fictional demonstration floodplain. Not an official administrative boundary.', 'FLOODPLAIN', TRUE),
+      ('ZONE-C', 'South Valley (demonstration data)', 'Demo operational area', 'Fictional demonstration flood area. Not an official administrative boundary.', 'FLASH_FLOOD_AREA', TRUE)
   `);
 
   await pool.query(`
@@ -273,8 +273,26 @@ async function getZones() {
 
 /** Creates a report owned by the given resident and returns the report object. */
 async function createReport(residentClient, zoneId, overrides = {}) {
+  const { pool } = require('../../server/db/pool');
+  let wardId = overrides.wardId;
+
+  // New reports always use official administrative geography. Most older
+  // tests name a demonstration risk area, so resolve its primary ward here
+  // instead of keeping those tests coupled to fixture UUIDs.
+  if (!wardId && zoneId) {
+    const wardResult = await pool.query(
+      `SELECT ward_id FROM flood_zone_wards
+       WHERE zone_id = $1
+       ORDER BY is_primary DESC, ward_id
+       LIMIT 1`,
+      [zoneId]
+    );
+    wardId = wardResult.rows[0]?.ward_id;
+  }
+
   const result = await request(residentClient, 'POST', '/api/reports', {
     zoneId,
+    wardId,
     locationDescription: 'Test location beside the bridge',
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',

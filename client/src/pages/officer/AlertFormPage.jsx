@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createAlert, fetchAlert, updateAlert } from '../../services/officerApi';
 import { fetchZones } from '../../services/publicApi';
+import { useFeedback } from '../../context/FeedbackContext';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
@@ -30,12 +31,12 @@ function AlertFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
+  const { notify } = useFeedback();
 
   const [zones, setZones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
   const [selectedGeography, setSelectedGeography] = useState(EMPTY_GEOGRAPHY);
 
   const [form, setForm] = useState(() => ({
@@ -174,7 +175,6 @@ function AlertFormPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
-    setSubmitError(null);
 
     const payload = {
       title: form.title.trim(),
@@ -198,9 +198,21 @@ function AlertFormPage() {
         await createAlert(payload);
       }
 
+      notify({
+        tone: 'success',
+        title: isEditing ? 'Alert draft updated' : 'Alert draft saved',
+        message: 'Review the draft before publishing it to residents.',
+        icon: 'check'
+      });
       navigate('/officer/alerts');
     } catch (caughtError) {
-      setSubmitError(caughtError);
+      notify({
+        tone: 'danger',
+        title: 'Alert not saved',
+        message: caughtError.message || 'We could not save this alert draft.',
+        icon: 'warning',
+        duration: 6000
+      });
     } finally {
       setSubmitting(false);
     }
@@ -270,7 +282,7 @@ function AlertFormPage() {
         <fieldset className="mb-3">
           <legend className="form-label fw-semibold">Affected areas</legend>
           {zones.length === 0 ? (
-            <p className="text-secondary mb-0">No active flood zones are available.</p>
+            <p className="text-secondary mb-0">No active operational risk areas are available.</p>
           ) : (
             <div className="row g-2">
               {zones.map((zone) => (
@@ -291,7 +303,7 @@ function AlertFormPage() {
               ))}
             </div>
           )}
-          <p className="form-text">Operational zones cover broad areas. Add official locations below when the warning must reach specific communities.</p>
+          <p className="form-text">Risk areas are optional operational groupings. Official Nepal locations below are the primary warning targets.</p>
 
           <div className="border-top pt-3 mt-3">
             <GeographySelector
@@ -390,10 +402,6 @@ function AlertFormPage() {
             />
           </div>
         </div>
-
-        {submitError && (
-          <ErrorState message={submitError.message} details={submitError.details} />
-        )}
 
         <div className="d-flex flex-wrap gap-2">
           <button type="submit" className="btn btn-primary" disabled={submitting || (form.zoneIds.length === 0 && form.wardIds.length === 0)}>

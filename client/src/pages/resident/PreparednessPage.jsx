@@ -21,7 +21,7 @@ const GUIDANCE = [
     tone: 'info',
     icon: 'shield',
     items: [
-      'Know your flood zone and check FloodNet alerts for your area regularly.',
+      'Know your ward and local level, and check FloodNet alerts for your area regularly.',
       'Agree a meeting point with your household in case you are separated.',
       'Keep an emergency bag ready: water, medication, torch, power bank, copies of identity documents.',
       'Store important documents and valuables above expected water levels.',

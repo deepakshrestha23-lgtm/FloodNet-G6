@@ -71,7 +71,7 @@ function AdminOverviewPage() {
         </div>
         <div className="col-6 col-lg-3">
           <DashboardStatCard
-            label="Active flood zones"
+            label="Active risk areas"
             value={summary.activeZones}
             hint={`${summary.inactiveZones} inactive`}
             icon="map"
@@ -114,7 +114,7 @@ function AdminOverviewPage() {
               <dd className="text-secondary">Maintains evacuation centres, capacity, occupancy and facilities.</dd>
               <dt>Administrator</dt>
               <dd className="text-secondary mb-0">
-                Manages accounts, roles, flood zones and master data, and reviews the audit trail.
+                Manages accounts, roles, jurisdictions, operational risk areas and master data, and reviews the audit trail.
                 Administrators cannot verify reports or publish alerts.
               </dd>
             </dl>

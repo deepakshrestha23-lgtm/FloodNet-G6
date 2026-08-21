@@ -154,7 +154,7 @@ function validateAlertBody(request, _response, next) {
   const localLevelIds = body.localLevelIds || [];
 
   const areaLists = [
-    [zoneIds, 'Affected zone', 50, 'flood zones'],
+    [zoneIds, 'Affected risk area', 50, 'operational risk areas'],
     [wardIds, 'Affected ward', 200, 'administrative wards'],
     [provinceIds, 'Affected province', 7, 'provinces'],
     [districtIds, 'Affected district', 77, 'districts'],

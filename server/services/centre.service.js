@@ -27,7 +27,7 @@ async function assertZoneIsActive(zoneId) {
   const active = await userRepository.isActiveZone(zoneId);
 
   if (!active) {
-    throw new AppError(400, 'INVALID_ZONE', 'The selected flood zone is invalid or inactive');
+    throw new AppError(400, 'INVALID_ZONE', 'The selected operational risk area is invalid or inactive');
   }
 }
 
@@ -88,6 +88,11 @@ async function resolveFacilities(facilities) {
 async function listActiveAlerts(officer) {
   await jurisdictionService.requireAssignment(officer.id);
   return alertRepository.listActiveAlertsInJurisdiction(officer.id);
+}
+
+async function listVerifiedIncidents(officer) {
+  await jurisdictionService.requireAssignment(officer.id);
+  return centreRepository.listVerifiedIncidentsInJurisdiction(officer.id);
 }
 
 async function listCentres(query) {
@@ -276,6 +281,7 @@ async function getDashboard(officer, geographyQuery) {
 
 module.exports = {
   listActiveAlerts,
+  listVerifiedIncidents,
   NEAR_CAPACITY_THRESHOLD,
   suggestOperationalStatus,
   listCentres,

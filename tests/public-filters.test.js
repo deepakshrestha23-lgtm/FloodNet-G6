@@ -147,3 +147,54 @@ test('combining a location with an operational zone narrows to both', async () =
     'the covering zone plus the correct district must still match'
   );
 });
+
+test('current coordinates rank centres by straight-line distance without exposing secrets', async () => {
+  const near = await request(evacuation, 'POST', '/api/centres', {
+    wardId: geography.wards[0].id,
+    name: 'Near GPS Shelter',
+    locationDescription: 'Close to the test position',
+    latitude: 27.7173,
+    longitude: 85.3241,
+    maximumCapacity: 100,
+    facilities: []
+  });
+  const far = await request(evacuation, 'POST', '/api/centres', {
+    wardId: geography.wards[0].id,
+    name: 'Far GPS Shelter',
+    locationDescription: 'Farther from the test position',
+    latitude: 27.8,
+    longitude: 85.4,
+    maximumCapacity: 100,
+    facilities: []
+  });
+  assert.equal(near.status, 201);
+  assert.equal(far.status, 201);
+
+  const result = await request(
+    createClient(),
+    'GET',
+    '/api/public/centres?latitude=27.7172&longitude=85.3240'
+  );
+  assert.equal(result.status, 200);
+
+  const nearIndex = result.body.data.centres.findIndex((centre) => centre.name === 'Near GPS Shelter');
+  const farIndex = result.body.data.centres.findIndex((centre) => centre.name === 'Far GPS Shelter');
+  assert.ok(nearIndex >= 0 && farIndex >= 0);
+  assert.ok(nearIndex < farIndex, 'the nearer open centre must be ranked first');
+  assert.ok(result.body.data.centres[nearIndex].distanceKm < result.body.data.centres[farIndex].distanceKm);
+  assert.equal(typeof result.body.data.centres[nearIndex].latitude, 'number');
+  assert.ok(!JSON.stringify(result.body).includes('AWS_ACCESS_KEY_ID'));
+});
+
+test('centre proximity requires a valid latitude and longitude pair', async () => {
+  for (const query of [
+    'latitude=27.7',
+    'latitude=91&longitude=85',
+    'latitude=27&longitude=181',
+    'latitude=hello&longitude=85'
+  ]) {
+    const result = await request(createClient(), 'GET', `/api/public/centres?${query}`);
+    assert.equal(result.status, 400, `expected invalid coordinates for ${query}`);
+    assert.equal(result.body.error.code, 'INVALID_COORDINATES');
+  }
+});

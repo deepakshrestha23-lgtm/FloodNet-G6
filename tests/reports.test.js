@@ -15,6 +15,7 @@ let resident;
 let otherResident;
 let officer;
 let zones;
+let defaultWardId;
 
 test.before(async () => {
   await startServer();
@@ -24,6 +25,16 @@ test.before(async () => {
   otherResident = await signIn('resident2@test.local');
   officer = await signIn('officer@test.local');
   zones = await getZones();
+
+  const { pool } = require('../server/db/pool');
+  const wardResult = await pool.query(
+    `SELECT ward_id FROM flood_zone_wards
+     WHERE zone_id = $1
+     ORDER BY is_primary DESC, ward_id
+     LIMIT 1`,
+    [zones[0].id]
+  );
+  defaultWardId = wardResult.rows[0].ward_id;
 });
 
 test.after(async () => {
@@ -40,6 +51,7 @@ test('a submitted report starts as PENDING_REVIEW with a generated reference', a
 test('a report must reference a valid active zone', async () => {
   const result = await request(resident, 'POST', '/api/reports', {
     zoneId: '00000000-0000-4000-8000-000000000000',
+    wardId: defaultWardId,
     locationDescription: 'Somewhere',
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',
@@ -54,6 +66,7 @@ test('a report must reference a valid active zone', async () => {
 test('an observation cannot be dated in the future', async () => {
   const result = await request(resident, 'POST', '/api/reports', {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     locationDescription: 'Somewhere',
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',
@@ -67,6 +80,7 @@ test('an observation cannot be dated in the future', async () => {
 test('invalid enum values are rejected server-side', async () => {
   const result = await request(resident, 'POST', '/api/reports', {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     locationDescription: 'Somewhere',
     observedSeverity: 'CATASTROPHIC',
     roadCondition: 'BLOCKED',
@@ -80,6 +94,7 @@ test('invalid enum values are rejected server-side', async () => {
 test('a resident cannot set the status of their own report', async () => {
   const result = await request(resident, 'POST', '/api/reports', {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     locationDescription: 'Somewhere',
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',
@@ -193,6 +208,7 @@ test('an officer cannot review a report they submitted themselves', async () => 
   // The officer account also submits a report, which no role may self-verify.
   const officerReport = await request(officer, 'POST', '/api/reports', {
     zoneId: zones[0].id,
+    wardId: defaultWardId,
     locationDescription: 'Officer observation',
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',

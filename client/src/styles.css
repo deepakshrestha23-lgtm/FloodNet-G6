@@ -2112,6 +2112,127 @@ a.fn-facility-chip:focus-visible {
   letter-spacing: 0.02em;
 }
 
+/* ---------------------------------------------------------- action feedback
+   Short-lived outcomes sit above the app chrome instead of pushing page
+   content down. Persistent context, validation and load errors remain in the
+   component that owns them so the user can still act on them. */
+
+@keyframes fn-feedback-enter {
+  from { opacity: 0; transform: translate3d(0, 0.65rem, 0) scale(0.97); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.fn-feedback-viewport {
+  position: fixed;
+  z-index: 1090;
+  right: 1.25rem;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.65rem;
+  width: min(26rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.fn-feedback-chip {
+  --fn-feedback-accent: var(--fn-cyan-600);
+  --fn-feedback-surface: #f3fbfd;
+  --fn-feedback-ink: #0a5f74;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.65rem 0.65rem 0.65rem 0.8rem;
+  overflow: hidden;
+  color: var(--fn-feedback-ink);
+  background: var(--fn-feedback-surface);
+  border: 1px solid color-mix(in srgb, var(--fn-feedback-accent) 25%, white);
+  border-left: 0.28rem solid var(--fn-feedback-accent);
+  border-radius: 0.95rem;
+  box-shadow: var(--fn-shadow-lg);
+  pointer-events: auto;
+  animation: fn-feedback-enter 0.3s var(--fn-ease) both;
+}
+
+.fn-feedback-chip-success {
+  --fn-feedback-accent: var(--fn-green);
+  --fn-feedback-surface: var(--fn-green-soft);
+  --fn-feedback-ink: #086b4b;
+}
+
+.fn-feedback-chip-danger {
+  --fn-feedback-accent: var(--fn-red);
+  --fn-feedback-surface: var(--fn-red-soft);
+  --fn-feedback-ink: #8f1226;
+}
+
+.fn-feedback-chip-warning {
+  --fn-feedback-accent: var(--fn-amber);
+  --fn-feedback-surface: var(--fn-amber-soft);
+  --fn-feedback-ink: #8a4f08;
+}
+
+.fn-feedback-chip-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  color: var(--fn-feedback-accent);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid color-mix(in srgb, var(--fn-feedback-accent) 22%, white);
+  border-radius: 0.7rem;
+}
+
+.fn-feedback-chip-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  gap: 0.08rem;
+  line-height: 1.35;
+}
+
+.fn-feedback-chip-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+}
+
+.fn-feedback-chip-message {
+  overflow-wrap: anywhere;
+  font-size: 0.82rem;
+}
+
+.fn-feedback-chip-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: currentColor;
+  background: transparent;
+  border: 0;
+  border-radius: 0.55rem;
+  opacity: 0.7;
+}
+
+.fn-feedback-chip-close:hover,
+.fn-feedback-chip-close:focus-visible {
+  background: rgba(255, 255, 255, 0.65);
+  opacity: 1;
+}
+
+@media (max-width: 575.98px) {
+  .fn-feedback-viewport {
+    right: 0.75rem;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    width: calc(100vw - 1.5rem);
+  }
+}
+
 @media (max-width: 575.98px) {
   .public-page-head {
     padding: 2.25rem 0 2rem;

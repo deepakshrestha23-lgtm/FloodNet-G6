@@ -49,6 +49,14 @@ export const CENTRE_STATUS = {
   CLOSED: { label: 'Closed', variant: 'secondary', symbol: '■' }
 };
 
+export const RISK_AREA_TYPE = {
+  RIVER_CORRIDOR: { label: 'River corridor', variant: 'primary', symbol: '~' },
+  FLOODPLAIN: { label: 'Floodplain', variant: 'info', symbol: '=' },
+  URBAN_DRAINAGE: { label: 'Urban drainage area', variant: 'warning', symbol: '!' },
+  FLASH_FLOOD_AREA: { label: 'Flash-flood area', variant: 'danger', symbol: '▲' },
+  OTHER: { label: 'Other operational area', variant: 'secondary', symbol: '●' }
+};
+
 export const USER_STATUS = {
   ACTIVE: { label: 'Active', variant: 'success', symbol: '✓' },
   INACTIVE: { label: 'Inactive', variant: 'secondary', symbol: '□' }

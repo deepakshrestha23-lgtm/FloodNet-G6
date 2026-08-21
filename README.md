@@ -27,7 +27,7 @@ The Task 1 application functionality is implemented across all four roles and ha
 | Flood Monitoring Officer review and alerting | Implemented |
 | Evacuation Officer centre management | Implemented |
 | System Administrator governance and audit | Implemented |
-| Task 1 private S3 photo evidence | Implemented and live-tested |
+| Task 1 private S3 photo evidence | Implemented; live access requires an active AWS lab role |
 | Elastic Beanstalk and RDS deployment | Prepared, not yet fully validated in AWS |
 | Task 2 Evidence Service | Scaffolded, not yet deployed |
 | Task 2 Notification Service with SNS | Not started |
@@ -36,7 +36,9 @@ Latest local verification recorded during this development cycle:
 
 - `npm run build`: passed;
 - `npm audit --omit=dev --audit-level=high`: 0 vulnerabilities;
-- `npm test`: 126 passed, 0 failures.
+- `npm run db:migrate`: migration 006 applied successfully;
+- `npm test`: 175 passed, 0 failures;
+- `npm run aws:check`: application configuration passed, but the current AWS Academy role is explicitly denied S3 access until the lab credentials are refreshed.
 
 ## Product roles
 
@@ -45,7 +47,7 @@ Latest local verification recorded during this development cycle:
 | **Resident** | Create and manage personal flood reports, select an official Nepal ward, attach optional evidence, view report history and read public flood and evacuation information. |
 | **Flood Monitoring Officer** | Review reports within the assigned jurisdiction, inspect evidence, verify/reject/request information, publish alerts and monitor filtered situation dashboards. |
 | **Evacuation Officer** | Manage geographically assigned evacuation centres, capacity, occupancy, operational status and facilities. |
-| **System Administrator** | Manage users, staff roles, operational zones, officer jurisdictions, facility master data and audit records. Administrators do not make operational flood decisions. |
+| **System Administrator** | Manage users, staff roles, operational risk areas, officer jurisdictions, authoritative geography reference data, facility master data and audit records. Administrators do not make operational flood decisions. |
 
 Public visitors can read safe public information through unauthenticated public endpoints. They never receive resident identity, private officer notes, evidence metadata or audit information.
 
@@ -87,7 +89,7 @@ The frontend and backend remain logically separated in the repository. Express s
 FloodNet uses two deliberately separate location concepts:
 
 - **Administrative geography:** Nepal's seven provinces, 77 districts, 753 local levels and 6,743 wards. These normalized reference tables are the official reporting, routing and dashboard filter hierarchy.
-- **Operational flood zones:** application-managed river corridors, floodplains, urban drainage areas or flash-flood areas. A zone can cover one or more wards and is never treated as an administrative boundary.
+- **Operational risk areas:** optional application-managed river corridors, floodplains, urban drainage areas or flash-flood areas. A risk area can cover one or more wards and is never treated as an administrative boundary or authorization scope.
 
 Residents select Province → District → Local Level → Ward, then optionally add a locality, Tole, landmark and GPS coordinates. Reports and evacuation centres store the ward as their canonical location. Legacy zone-only records remain supported through the `flood_zone_wards` mapping table.
 
@@ -125,7 +127,7 @@ Task 2 moves evidence-management responsibility from Express to an independent E
 - registration, login, logout and session refresh;
 - profile viewing and editing;
 - resident dashboard;
-- flood report creation with official Province/District/Local Level/Ward, optional locality/landmark/GPS, operational flood zone, severity, road condition, description and observation time;
+- flood report creation with required official Province/District/Local Level/Ward, optional locality/landmark/GPS and operational risk area, severity, road condition, description and observation time;
 - generated report references;
 - personal report list, filtering, details and status history;
 - additional-information workflow when an officer requests more information;
@@ -163,7 +165,8 @@ Residents can never set their own report status or review their own report.
 - evacuation dashboard;
 - cascading administrative dashboard filters;
 - centre creation, editing and archiving;
-- official administrative geography, optional operational zone, locality, landmark and GPS information;
+- official administrative geography, optional operational risk area, locality, landmark and GPS information;
+- read-only active alerts and verified incidents limited to the officer's assigned jurisdiction;
 - maximum capacity and current occupancy;
 - calculated available space;
 - occupancy validation and threshold-based operational status;
@@ -321,9 +324,9 @@ Important table groups:
 Important database rules include:
 
 - new reports start as `PENDING_REVIEW`;
-- reports and centres must reference an active ward or operational zone;
+- every new report and centre must reference an active official ward; an operational risk area is optional;
 - official ward IDs, not free-text names, drive routing and jurisdiction checks;
-- operational zones remain separate from administrative geography;
+- operational risk areas remain separate from administrative geography and staff authorization;
 - operational accounts must have a valid server-side jurisdiction assignment;
 - review notes are required for rejection and information requests;
 - alert expiry must be later than its start time;
@@ -524,7 +527,7 @@ npm run db:migrate
 npm run db:seed
 ```
 
-The SQL seed creates roles, clearly labelled fictional operational zones and facility types. The JavaScript geography seed then loads the normalized Nepal reference hierarchy and maps the three demo zones to sample wards. To create demonstration accounts and sample centres, reports and alerts, set a private local password first:
+The SQL seed creates roles, clearly labelled fictional operational risk areas and facility types. The JavaScript geography seed then loads the normalized Nepal reference hierarchy and maps the three demo risk areas to sample wards. To create demonstration accounts and sample centres, reports and alerts, set a private local password first:
 
 ```env
 DEMO_PASSWORD=private-local-demo-password

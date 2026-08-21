@@ -111,7 +111,7 @@ async function listZones(request, response) {
   response.status(200).json({
     success: true,
     data: { zones },
-    message: 'Flood zones retrieved successfully'
+    message: 'Operational risk areas retrieved successfully'
   });
 }
 
@@ -121,7 +121,7 @@ async function createZone(request, response) {
   response.status(201).json({
     success: true,
     data: { zone },
-    message: 'Flood zone created successfully'
+    message: 'Operational risk area created successfully'
   });
 }
 
@@ -131,7 +131,7 @@ async function updateZone(request, response) {
   response.status(200).json({
     success: true,
     data: { zone },
-    message: 'Flood zone updated successfully'
+    message: 'Operational risk area updated successfully'
   });
 }
 

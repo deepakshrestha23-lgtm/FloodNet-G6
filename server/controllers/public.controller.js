@@ -4,7 +4,7 @@ async function zones(_request, response) {
   response.status(200).json({
     success: true,
     data: { zones: await publicService.getZones() },
-    message: 'Flood zones retrieved successfully'
+    message: 'Operational risk areas retrieved successfully'
   });
 }
 

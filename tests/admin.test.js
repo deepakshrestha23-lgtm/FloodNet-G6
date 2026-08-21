@@ -16,6 +16,7 @@ let resident;
 let officer;
 let evacuation;
 let zones;
+let defaultWardId;
 
 test.before(async () => {
   await startServer();
@@ -26,6 +27,16 @@ test.before(async () => {
   officer = await signIn('officer@test.local');
   evacuation = await signIn('evacuation@test.local');
   zones = await getZones();
+
+  const { pool } = require('../server/db/pool');
+  const wardResult = await pool.query(
+    `SELECT ward_id FROM flood_zone_wards
+     WHERE zone_id = $1
+     ORDER BY is_primary DESC, ward_id
+     LIMIT 1`,
+    [zones[0].id]
+  );
+  defaultWardId = wardResult.rows[0].ward_id;
 });
 
 test.after(async () => {
@@ -179,19 +190,23 @@ test('an administrator can create and update flood zones', async () => {
     code,
     name: 'Test Zone',
     locality: 'Test District',
+    zoneType: 'RIVER_CORRIDOR',
     description: 'Created by the automated test suite'
   });
   assert.equal(created.status, 201);
+  assert.equal(created.body.data.zone.zoneType, 'RIVER_CORRIDOR');
 
   const zoneId = created.body.data.zone.id;
 
   const updated = await request(admin, 'PATCH', `/api/admin/zones/${zoneId}`, {
     name: 'Renamed Test Zone',
     locality: 'Test District',
+    zoneType: 'FLOODPLAIN',
     isActive: true
   });
   assert.equal(updated.status, 200);
   assert.equal(updated.body.data.zone.name, 'Renamed Test Zone');
+  assert.equal(updated.body.data.zone.zoneType, 'FLOODPLAIN');
 });
 
 test('a zone code is unique and cannot be changed after creation', async () => {
@@ -235,6 +250,7 @@ test('a deactivated zone disappears from public listings and blocks new reports'
 
   const report = await request(resident, 'POST', '/api/reports', {
     zoneId,
+    wardId: defaultWardId,
     locationDescription: 'Report in an inactive zone',
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',
@@ -247,6 +263,7 @@ test('a deactivated zone disappears from public listings and blocks new reports'
 test('a zone with active centres cannot be deactivated', async () => {
   const created = await request(evacuation, 'POST', '/api/centres', {
     zoneId: zones[1].id,
+    wardId: defaultWardId,
     name: `Zone Guard Centre ${Date.now()}`,
     locationDescription: 'Centre that blocks zone deactivation',
     maximumCapacity: 50,
