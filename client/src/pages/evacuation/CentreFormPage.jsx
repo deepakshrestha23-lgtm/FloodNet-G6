@@ -10,6 +10,7 @@ import { fetchZones } from '../../services/publicApi';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
+import CoordinateField from '../../components/common/CoordinateField';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 function CentreFormPage() {
@@ -209,12 +210,14 @@ function CentreFormPage() {
 
         <div className="row g-3 mb-3">
           <div className="col-12 col-md-6"><label className="form-label fw-semibold" htmlFor="centre-locality">Locality / Tole</label><input id="centre-locality" className="form-control" maxLength={160} value={form.locality} onChange={(event) => updateField('locality', event.target.value)} /></div>
-          <div className="col-12 col-md-6"><label className="form-label fw-semibold" htmlFor="centre-landmark">Nearest landmark</label><input id="centre-landmark" className="form-control" maxLength={240} value={form.nearestLandmark} onChange={(event) => updateField('nearestLandmark', event.target.value)} /></div>
+          <div className="col-12 col-md-6"><label className="form-label fw-semibold" htmlFor="centre-landmark">Nearest landmark</label><input id="centre-landmark" className="form-control" maxLength={240} value={form.nearestLandmark} onChange={(event) => updateField('nearestLandmark', event.target.value)} placeholder="Bridge, school, temple or road junction" /></div>
         </div>
-        <div className="row g-3 mb-3">
-          <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="centre-latitude">Latitude</label><input id="centre-latitude" className="form-control" type="number" step="0.000001" min="-90" max="90" value={form.latitude} onChange={(event) => updateField('latitude', event.target.value)} /></div>
-          <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="centre-longitude">Longitude</label><input id="centre-longitude" className="form-control" type="number" step="0.000001" min="-180" max="180" value={form.longitude} onChange={(event) => updateField('longitude', event.target.value)} /></div>
-        </div>
+        <CoordinateField
+          latitude={form.latitude}
+          longitude={form.longitude}
+          onChange={(value) => setForm((current) => ({ ...current, ...value }))}
+          helpText="Helps responders and drivers reach the centre. You can leave this empty."
+        />
 
         <div className="mb-3">
           <label className="form-label fw-semibold" htmlFor="centre-location">Location description</label>

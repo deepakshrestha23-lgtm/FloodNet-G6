@@ -13,6 +13,7 @@ import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/G
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
+import CoordinateField from '../../components/common/CoordinateField';
 import { FLOOD_TYPE, OBSERVED_SEVERITY, ROAD_CONDITION, toOptions } from '../../utils/enums';
 import { toDateTimeLocalValue } from '../../utils/formatters';
 
@@ -45,7 +46,6 @@ function ReportFormPage() {
   const [fileError, setFileError] = useState('');
   const [uploadProgress, setUploadProgress] = useState(null);
   const [savedReportId, setSavedReportId] = useState(null);
-  const [locationError, setLocationError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -91,22 +91,6 @@ function ReportFormPage() {
 
   function updateGeography(value) {
     setForm((current) => ({ ...current, ...value }));
-  }
-
-  function captureLocation() {
-    setLocationError('');
-    if (!navigator.geolocation) {
-      setLocationError('Location is not available in this browser. You can continue with the administrative location.');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (position) => setForm((current) => ({
-        ...current,
-        latitude: position.coords.latitude.toFixed(6),
-        longitude: position.coords.longitude.toFixed(6)
-      })),
-      () => setLocationError('We could not read your location. Check browser permission or enter the location without GPS.')
-    );
   }
 
   function handleFileSelection(event) {
@@ -219,19 +203,21 @@ function ReportFormPage() {
         </div>
 
         <div className="mb-3">
-          <div className="d-flex justify-content-between align-items-center gap-2">
-            <label className="form-label fw-semibold mb-1" htmlFor="report-location">Specific location</label>
-            <button className="btn btn-sm btn-outline-secondary" type="button" onClick={captureLocation} disabled={editing}>Use my GPS location</button>
-          </div>
+          <label className="form-label fw-semibold" htmlFor="report-location">Specific location</label>
           <input id="report-location" className="form-control" maxLength={500} required value={form.locationDescription} onChange={(event) => updateField('locationDescription', event.target.value)} placeholder="Road, landmark or community location" />
-          {locationError && <p className="form-text text-danger mb-0">{locationError}</p>}
         </div>
 
+        <CoordinateField
+          latitude={form.latitude}
+          longitude={form.longitude}
+          onChange={(value) => setForm((current) => ({ ...current, ...value }))}
+          disabled={editing}
+          helpText="Pinpoints what you saw. Never put yourself at risk to capture it. You can leave this empty."
+        />
+
         <div className="row g-3 mb-3">
-          <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="report-latitude">Latitude</label><input id="report-latitude" className="form-control" type="number" step="0.000001" min="-90" max="90" value={form.latitude} onChange={(event) => updateField('latitude', event.target.value)} placeholder="Optional" /></div>
-          <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="report-longitude">Longitude</label><input id="report-longitude" className="form-control" type="number" step="0.000001" min="-180" max="180" value={form.longitude} onChange={(event) => updateField('longitude', event.target.value)} placeholder="Optional" /></div>
-          <div className="col-12 col-md-3"><label className="form-label fw-semibold" htmlFor="report-flood-type">Flood type</label><select id="report-flood-type" className="form-select" value={form.floodType} onChange={(event) => updateField('floodType', event.target.value)}>{toOptions(FLOOD_TYPE).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></div>
-          <div className="col-12 col-md-3"><label className="form-label fw-semibold" htmlFor="report-risk">People immediately at risk</label><input id="report-risk" className="form-control" type="number" min="0" max="1000000" value={form.peopleAtRisk} onChange={(event) => updateField('peopleAtRisk', event.target.value)} /></div>
+          <div className="col-12 col-md-6"><label className="form-label fw-semibold" htmlFor="report-flood-type">Flood type</label><select id="report-flood-type" className="form-select" value={form.floodType} onChange={(event) => updateField('floodType', event.target.value)}>{toOptions(FLOOD_TYPE).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></div>
+          <div className="col-12 col-md-6"><label className="form-label fw-semibold" htmlFor="report-risk">People immediately at risk</label><input id="report-risk" className="form-control" type="number" min="0" max="1000000" value={form.peopleAtRisk} onChange={(event) => updateField('peopleAtRisk', event.target.value)} /></div>
         </div>
 
         <div className="row g-3 mb-3">
