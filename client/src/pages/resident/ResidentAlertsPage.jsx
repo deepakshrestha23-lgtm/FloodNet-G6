@@ -10,6 +10,7 @@ import EmptyState from '../../components/common/EmptyState';
 import FilterBar from '../../components/common/FilterBar';
 import AlertCard from '../../components/alert/AlertCard';
 import AreaScopeNotice from '../../components/common/AreaScopeNotice';
+import LocationFilter from '../../components/geography/LocationFilter';
 import StatusBadge from '../../components/common/StatusBadge';
 import { OBSERVED_SEVERITY, ROAD_CONDITION } from '../../utils/enums';
 import { formatDateTime } from '../../utils/formatters';
@@ -26,14 +27,35 @@ function ResidentAlertsPage() {
 
   // "showAll" is an explicit override the resident can reach from the notice
   // below, so being scoped to a home area is never a dead end.
-  const showingAll = searchParams.get('area') === 'all';
+  const location = {
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || ''
+  };
+  const hasLocationFilter = Object.values(location).some(Boolean);
+
+  const showingAll = searchParams.get('area') === 'all' || hasLocationFilter;
   const effectiveZoneId = showingAll ? '' : zoneId;
   const effectiveWardId = showingAll ? '' : wardId;
 
   const loader = useCallback(async () => {
     const [alertPayload, incidentPayload] = await Promise.all([
-      fetchActiveAlerts({ zoneId: effectiveZoneId || undefined, wardId: effectiveWardId || undefined }),
-      fetchVerifiedIncidents({ zoneId: effectiveZoneId || undefined, wardId: effectiveWardId || undefined, limit: 25 })
+      fetchActiveAlerts({
+        zoneId: effectiveZoneId || undefined,
+        wardId: effectiveWardId || location.wardId || undefined,
+        provinceId: location.provinceId || undefined,
+        districtId: location.districtId || undefined,
+        localLevelId: location.localLevelId || undefined
+      }),
+      fetchVerifiedIncidents({
+        zoneId: effectiveZoneId || undefined,
+        wardId: effectiveWardId || location.wardId || undefined,
+        provinceId: location.provinceId || undefined,
+        districtId: location.districtId || undefined,
+        localLevelId: location.localLevelId || undefined,
+        limit: 25
+      })
     ]);
 
     return {
@@ -43,7 +65,15 @@ function ResidentAlertsPage() {
         incidents: incidentPayload.data.incidents
       }
     };
-  }, [effectiveZoneId, effectiveWardId]);
+  }, [effectiveZoneId, effectiveWardId, location.provinceId, location.districtId, location.localLevelId, location.wardId]);
+
+  function updateLocation(next) {
+    const params = new URLSearchParams(searchParams);
+    for (const [key, val] of Object.entries(next)) {
+      if (val) params.set(key, val); else params.delete(key);
+    }
+    setSearchParams(params);
+  }
 
   const { data, loading, error, reload } = useApiResource(loader);
 
@@ -87,16 +117,19 @@ function ResidentAlertsPage() {
       <FilterBar
         filters={[{
           name: 'zoneId',
-          label: 'Flood zone',
+          label: 'Operational zone',
           type: 'select',
-          placeholder: 'All zones',
+          placeholder: 'Any zone',
           columnClass: 'col-12 col-md-6 col-lg-4',
           options: zones.map((zone) => ({ value: zone.id, label: zone.name }))
         }]}
-        values={filters}
+        values={{ ...location, ...filters }}
         onChange={updateFilter}
         onReset={() => setSearchParams(new URLSearchParams())}
-      />
+        resultSummary={data ? `${data.alerts.length} of ${data.totalActive} active alerts` : ''}
+      >
+        <LocationFilter value={location} onChange={updateLocation} labelPrefix="Filter by location" />
+      </FilterBar>
 
       {loading && <LoadingState label="Loading alerts..." />}
       {error && <ErrorState message={error.message} details={error.details} onRetry={reload} />}

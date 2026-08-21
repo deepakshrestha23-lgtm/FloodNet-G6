@@ -1,4 +1,5 @@
 const { pool } = require('../db/pool');
+const { geographyPredicate, alertGeographyPredicate } = require('./jurisdiction.repository');
 
 function getPool() {
   if (!pool) throw new Error('Database pool is not configured');
@@ -80,7 +81,18 @@ async function listActiveZones() {
   return result.rows;
 }
 
-async function listActiveAlerts(zoneId, wardId) {
+/*
+ * Area filters carry two independent axes.
+ *
+ * The reach predicate answers "does this concern someone standing in this zone
+ * or ward", which is a union and is what a resident's home area uses. The
+ * geography predicate narrows to an administrative level, which is a filter and
+ * is what browsing uses: picking a district must return everything in it
+ * without naming a single ward.
+ *
+ * Parameters are $1 zone, $2 ward, $3 province, $4 district, $5 local level.
+ */
+async function listActiveAlerts(zoneId, wardId, area = {}) {
   const result = await getPool().query(
     `
       SELECT a.id, a.alert_ref, a.title, a.severity, a.warning_description,
@@ -104,14 +116,24 @@ async function listActiveAlerts(zoneId, wardId) {
       LEFT JOIN flood_zones z ON z.id = az.zone_id
       WHERE ${ALERT_IS_LIVE}
         AND ${alertReachPredicate('a')}
+        AND ${alertGeographyPredicate('a', {
+          provinceParameter: 3, districtParameter: 4, localLevelParameter: 5, wardParameter: 6
+        })}
       GROUP BY a.id
       ORDER BY a.severity DESC, a.valid_from DESC
     `,
-    [zoneId || null, wardId || null]
+    [
+      zoneId || null,
+      wardId || null,
+      area.provinceId || null,
+      area.districtId || null,
+      area.localLevelId || null,
+      null
+    ]
   );
 
   /*
-   * Counted without the area filter so a resident is never shown a bare "no
+   * Counted without any area filter so a resident is never shown a bare "no
    * alerts" that they cannot tell apart from "all clear". The screen can say
    * how many are live elsewhere and offer to show them.
    */
@@ -135,7 +157,7 @@ async function listActiveAlerts(zoneId, wardId) {
   return { alerts, totalActive: total.rows[0].total };
 }
 
-async function listVerifiedIncidents(zoneId, wardId, limit) {
+async function listVerifiedIncidents(zoneId, wardId, limit, area = {}) {
   const result = await getPool().query(
     `
       SELECT fr.report_ref, z.id AS zone_id, z.code AS zone_code, z.name AS zone_name,
@@ -151,10 +173,21 @@ async function listVerifiedIncidents(zoneId, wardId, limit) {
       LEFT JOIN geo_provinces p ON p.id = d.province_id
       WHERE fr.status IN ('VERIFIED', 'CLOSED')
         AND ${areaReachPredicate('fr')}
+        AND ${geographyPredicate('fr', {
+          provinceParameter: 4, districtParameter: 5, localLevelParameter: 6, wardParameter: 7
+        })}
       ORDER BY fr.observed_at DESC
       LIMIT $3
     `,
-    [zoneId || null, wardId || null, limit]
+    [
+      zoneId || null,
+      wardId || null,
+      limit,
+      area.provinceId || null,
+      area.districtId || null,
+      area.localLevelId || null,
+      null
+    ]
   );
 
   return result.rows.map((row) => ({
@@ -175,7 +208,7 @@ async function listVerifiedIncidents(zoneId, wardId, limit) {
   }));
 }
 
-async function listActiveCentres(zoneId, wardId) {
+async function listActiveCentres(zoneId, wardId, area = {}) {
   const result = await getPool().query(
     `
       SELECT ec.id, ec.name, ec.location_description, ec.contact_phone,
@@ -196,6 +229,9 @@ async function listActiveCentres(zoneId, wardId) {
       LEFT JOIN centre_facility_types cft ON cft.id = cf.facility_type_id
       WHERE ec.is_active = TRUE
         AND ${areaReachPredicate('ec')}
+        AND ${geographyPredicate('ec', {
+          provinceParameter: 3, districtParameter: 4, localLevelParameter: 5, wardParameter: 6
+        })}
       GROUP BY ec.id, z.id, w.id, ll.id, d.id, p.id
       -- Somewhere with room comes first. A resident looking for shelter should
       -- not have to read past centres that cannot take them.
@@ -209,7 +245,14 @@ async function listActiveCentres(zoneId, wardId) {
         ec.available_space DESC NULLS LAST,
         COALESCE(p.name, ''), COALESCE(d.name, ''), ec.name ASC
     `,
-    [zoneId || null, wardId || null]
+    [
+      zoneId || null,
+      wardId || null,
+      area.provinceId || null,
+      area.districtId || null,
+      area.localLevelId || null,
+      null
+    ]
   );
 
   const total = await getPool().query(

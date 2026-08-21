@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { fetchActiveAlerts, fetchVerifiedIncidents } from '../../services/publicApi';
 import { useApiResource } from '../../hooks/useApiResource';
 import AlertCard from '../../components/alert/AlertCard';
@@ -8,6 +8,8 @@ import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
 import StatusBadge from '../../components/common/StatusBadge';
 import Icon from '../../components/common/Icon';
+import FilterBar from '../../components/common/FilterBar';
+import LocationFilter from '../../components/geography/LocationFilter';
 import { OBSERVED_SEVERITY, ROAD_CONDITION } from '../../utils/enums';
 import { describeArea, formatDateTime } from '../../utils/formatters';
 
@@ -21,21 +23,47 @@ import { describeArea, formatDateTime } from '../../utils/formatters';
  * what the platform actually knows.
  */
 function PublicAlertsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Kept in the URL so a filtered view can be sent to someone else.
+  const location = {
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || ''
+  };
+
   const loader = useCallback(async () => {
+    const area = {
+      provinceId: location.provinceId || undefined,
+      districtId: location.districtId || undefined,
+      localLevelId: location.localLevelId || undefined,
+      wardId: location.wardId || undefined
+    };
+
     const [alertPayload, incidentPayload] = await Promise.all([
-      fetchActiveAlerts(),
-      fetchVerifiedIncidents({ limit: 30 })
+      fetchActiveAlerts(area),
+      fetchVerifiedIncidents({ ...area, limit: 30 })
     ]);
 
     return {
       data: {
         alerts: alertPayload.data.alerts,
+        totalActive: alertPayload.data.totalActive,
         incidents: incidentPayload.data.incidents
       }
     };
-  }, []);
+  }, [location.provinceId, location.districtId, location.localLevelId, location.wardId]);
 
   const { data, loading, error, reload } = useApiResource(loader);
+
+  function updateLocation(next) {
+    const params = new URLSearchParams(searchParams);
+    for (const [key, val] of Object.entries(next)) {
+      if (val) params.set(key, val); else params.delete(key);
+    }
+    setSearchParams(params);
+  }
 
   return (
     <>
@@ -55,6 +83,14 @@ function PublicAlertsPage() {
 
       <section className="public-section">
         <div className="container">
+          <FilterBar
+            values={location}
+            onReset={() => setSearchParams(new URLSearchParams())}
+            resultSummary={data ? `${data.alerts.length} of ${data.totalActive} active alerts` : ''}
+          >
+            <LocationFilter value={location} onChange={updateLocation} labelPrefix="Filter by location" />
+          </FilterBar>
+
           {loading && <LoadingState label="Loading alerts..." />}
           {error && <ErrorState message={error.message} details={error.details} onRetry={reload} />}
 
@@ -70,8 +106,16 @@ function PublicAlertsPage() {
 
               {data.alerts.length === 0 ? (
                 <EmptyState
-                  title="No active alerts anywhere in Nepal"
-                  description="No published FloodNet alerts are in effect right now. This page updates as officers publish them."
+                  title={
+                    Object.values(location).some(Boolean)
+                      ? 'No active alerts for the selected area'
+                      : 'No active alerts anywhere in Nepal'
+                  }
+                  description={
+                    Object.values(location).some(Boolean) && data.totalActive > 0
+                      ? `Nothing is in effect there. ${data.totalActive} alert${data.totalActive === 1 ? ' is' : 's are'} active elsewhere in Nepal.`
+                      : 'No published FloodNet alerts are in effect right now. This page updates as officers publish them.'
+                  }
                 />
               ) : (
                 <div className="row g-4">
