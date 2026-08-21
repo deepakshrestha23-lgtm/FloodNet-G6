@@ -6,12 +6,13 @@ import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
+import Icon from '../../components/common/Icon';
 import ChartCard from '../../components/chart/ChartCard';
 import { REPORT_STATUS, OBSERVED_SEVERITY, describe } from '../../utils/enums';
 import { formatDate } from '../../utils/formatters';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
-const CHART_COLOURS = ['#0d6efd', '#20c997', '#fd7e14', '#dc3545', '#6f42c1', '#6c757d'];
+const CHART_COLOURS = ['#0891b2', '#0f9d6f', '#e8820c', '#dc2743', '#7c5cf0', '#64748b'];
 
 function OfficerDashboardPage() {
   const [geography, setGeography] = useState(EMPTY_GEOGRAPHY);
@@ -27,16 +28,16 @@ function OfficerDashboardPage() {
         {
           label: 'Reports submitted',
           data: data.trend.map((point) => point.submitted),
-          borderColor: '#0d6efd',
-          backgroundColor: 'rgba(13, 110, 253, 0.15)',
+          borderColor: '#0891b2',
+          backgroundColor: 'rgba(8, 145, 178, 0.16)',
           fill: true,
           tension: 0.3
         },
         {
           label: 'Verified',
           data: data.trend.map((point) => point.verified),
-          borderColor: '#20c997',
-          backgroundColor: 'rgba(32, 201, 151, 0.15)',
+          borderColor: '#0f9d6f',
+          backgroundColor: 'rgba(15, 157, 111, 0.16)',
           fill: true,
           tension: 0.3
         }
@@ -53,12 +54,12 @@ function OfficerDashboardPage() {
         {
           label: 'Pending',
           data: data.reportsByZone.map((row) => row.pending),
-          backgroundColor: '#fd7e14'
+          backgroundColor: '#e8820c'
         },
         {
           label: 'Verified',
           data: data.reportsByZone.map((row) => row.verified),
-          backgroundColor: '#20c997'
+          backgroundColor: '#0f9d6f'
         }
       ]
     };
@@ -87,7 +88,7 @@ function OfficerDashboardPage() {
         {
           label: 'Reports',
           data: data.reportsBySeverity.map((row) => row.total),
-          backgroundColor: '#0d6efd'
+          backgroundColor: '#0891b2'
         }
       ]
     };
@@ -126,12 +127,17 @@ function OfficerDashboardPage() {
         eyebrow="Flood monitoring"
         title="Situation dashboard"
         description="Live figures aggregated from community reports and published alerts."
+        icon="radar"
         actions={
           <>
             <Link className="btn btn-outline-primary" to="/officer/reports?status=PENDING_REVIEW">
+              <Icon name="inbox" size={16} />
               Open review queue
             </Link>
-            <Link className="btn btn-primary" to="/officer/alerts/new">Create alert</Link>
+            <Link className="btn btn-primary" to="/officer/alerts/new">
+              <Icon name="megaphone" size={16} />
+              Create alert
+            </Link>
           </>
         }
       />
@@ -154,6 +160,7 @@ function OfficerDashboardPage() {
             value={summary.pendingReports}
             hint="Awaiting an officer decision"
             tone={summary.pendingReports > 0 ? 'warning' : 'default'}
+            icon="clock"
           />
         </div>
         <div className="col-6 col-lg-3">
@@ -161,6 +168,7 @@ function OfficerDashboardPage() {
             label="Awaiting information"
             value={summary.awaitingInformation}
             hint="Returned to the resident"
+            icon="inbox"
           />
         </div>
         <div className="col-6 col-lg-3">
@@ -169,6 +177,7 @@ function OfficerDashboardPage() {
             value={summary.verifiedToday}
             hint={`${summary.verifiedReports} verified in total`}
             tone="success"
+            icon="check"
           />
         </div>
         <div className="col-6 col-lg-3">
@@ -177,6 +186,7 @@ function OfficerDashboardPage() {
             value={summary.activeAlerts}
             hint="Published and within their validity window"
             tone={summary.activeAlerts > 0 ? 'danger' : 'default'}
+            icon="megaphone"
           />
         </div>
       </div>
@@ -197,6 +207,7 @@ function OfficerDashboardPage() {
             title="Report status distribution"
             description="Where reports currently sit in the review workflow."
             type="doughnut"
+            icon="radar"
             data={statusChart}
             options={doughnutOptions}
             isEmpty={data.reportsByStatus.length === 0}
@@ -207,6 +218,7 @@ function OfficerDashboardPage() {
             title="Reports by flood zone"
             description="Pending and verified reports for each active zone."
             type="bar"
+            icon="map"
             data={zoneChart}
             options={barOptions}
             isEmpty={data.reportsByZone.length === 0}
@@ -217,6 +229,7 @@ function OfficerDashboardPage() {
             title="Resident-observed severity"
             description="Severity as described by residents, before officer assessment."
             type="bar"
+            icon="warning"
             data={severityChart}
             options={singleBarOptions}
             isEmpty={data.reportsBySeverity.length === 0}

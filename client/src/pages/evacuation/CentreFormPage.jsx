@@ -179,6 +179,7 @@ function CentreFormPage() {
       <PageHeader
         eyebrow="Evacuation coordination"
         title={isEditing ? 'Edit evacuation centre' : 'Add evacuation centre'}
+        icon="shelter"
         description="Capacity and facility information residents rely on when deciding where to go."
       />
 

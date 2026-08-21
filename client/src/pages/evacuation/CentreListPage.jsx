@@ -262,6 +262,7 @@ function CentreListPage() {
       <PageHeader
         eyebrow="Evacuation coordination"
         title="Evacuation centres"
+        icon="shelter"
         description="Maintain centre details, capacity and live occupancy."
         actions={<Link className="btn btn-primary" to="/evacuation/centres/new">Add centre</Link>}
       />

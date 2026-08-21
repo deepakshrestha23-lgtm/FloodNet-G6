@@ -190,6 +190,7 @@ function ReportFormPage() {
       <PageHeader
         eyebrow="Resident"
         title={editing ? 'Provide additional information' : 'Report flooding'}
+        icon="report"
         description={editing ? 'Update the detail the officer requested and resubmit it for review.' : 'Describe what you can see safely. Your official location helps the right team act quickly.'}
         actions={<Link className="btn btn-outline-secondary" to={editing ? `/resident/reports/${id}` : '/resident/reports'}>Cancel</Link>}
       />

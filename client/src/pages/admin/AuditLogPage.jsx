@@ -109,7 +109,7 @@ function AuditLogPage() {
       render: (row) => {
         const entries = Object.entries(row.metadata || {});
 
-        if (entries.length === 0) return <span className="text-secondary">—</span>;
+        if (entries.length === 0) return <span className="text-secondary">None</span>;
 
         return (
           <ul className="list-unstyled small mb-0">
@@ -129,6 +129,7 @@ function AuditLogPage() {
       <PageHeader
         eyebrow="Administration"
         title="Audit log"
+        icon="history"
         description="Every state-changing action is recorded in the same transaction as the change itself."
       />
 

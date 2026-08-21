@@ -361,6 +361,7 @@ function UserManagementPage() {
       <PageHeader
         eyebrow="Administration"
         title="User management"
+        icon="users"
         description="Manage accounts and role assignments for the platform."
         actions={
           <button type="button" className="btn btn-primary" onClick={() => setShowCreate((open) => !open)}>

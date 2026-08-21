@@ -80,6 +80,7 @@ function ProfilePage() {
       <PageHeader
         eyebrow="Account"
         title="Your profile"
+        icon="user"
         description="Keep your contact details and home flood zone up to date."
       />
 
@@ -134,7 +135,7 @@ function ProfilePage() {
                 <option value="">Not set</option>
                 {zones.map((zone) => (
                   <option key={zone.id} value={zone.id}>
-                    {zone.name}{zone.locality ? ` — ${zone.locality}` : ''}
+                    {zone.name}{zone.locality ? `, ${zone.locality}` : ''}
                   </option>
                 ))}
               </select>
@@ -158,8 +159,20 @@ function ProfilePage() {
         </div>
 
         <div className="col-12 col-lg-5">
-          <section className="panel-card p-3 p-md-4 rounded-4">
-            <h2 className="h6 fw-semibold mb-3">Account</h2>
+          <section className="panel-card p-3 p-md-4">
+            <div className="d-flex align-items-center gap-3 mb-4">
+              <span className="fn-avatar" style={{ width: '3.2rem', height: '3.2rem', fontSize: '1.05rem' }}>
+                {`${user.profile?.firstName?.[0] || ''}${user.profile?.lastName?.[0] || ''}`.toUpperCase() || 'FN'}
+              </span>
+              <div>
+                <p className="fw-bold mb-0">
+                  {user.profile?.firstName} {user.profile?.lastName}
+                </p>
+                <p className="small text-secondary mb-0">FloodNet account</p>
+              </div>
+            </div>
+
+            <h2 className="h6 fw-bold mb-3">Account</h2>
             <dl className="mb-0">
               <dt className="small text-secondary fw-semibold">Email address</dt>
               <dd className="mb-3 text-break">{user.email}</dd>

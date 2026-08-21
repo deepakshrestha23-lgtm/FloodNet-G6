@@ -155,6 +155,7 @@ function ReviewReportPage() {
       <PageHeader
         eyebrow="Report review"
         title={report.reportReference}
+        icon="inbox"
         description={`Submitted ${formatRelative(report.createdAt)} for ${describeArea(report)}.`}
         actions={
           <button type="button" className="btn btn-outline-secondary" onClick={() => navigate(-1)}>

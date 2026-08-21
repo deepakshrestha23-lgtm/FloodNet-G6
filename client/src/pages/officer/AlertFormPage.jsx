@@ -150,6 +150,7 @@ function AlertFormPage() {
       <PageHeader
         eyebrow="Flood monitoring"
         title={isEditing ? 'Edit alert' : 'Create alert'}
+        icon="megaphone"
         description="Alerts are saved as drafts. Publishing is a separate, confirmed action."
       />
 

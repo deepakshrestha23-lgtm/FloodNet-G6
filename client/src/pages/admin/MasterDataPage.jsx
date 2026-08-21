@@ -102,6 +102,7 @@ function MasterDataPage() {
       <PageHeader
         eyebrow="Administration"
         title="Master data"
+        icon="database"
         description="Controlled values used across FloodNet so records stay consistent."
       />
 

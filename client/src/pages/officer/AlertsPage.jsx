@@ -227,6 +227,7 @@ function AlertsPage() {
       <PageHeader
         eyebrow="Flood monitoring"
         title="FloodNet alerts"
+        icon="megaphone"
         description="Alerts are authored as drafts and published separately, so verification never issues a warning on its own."
         actions={<Link className="btn btn-primary" to="/officer/alerts/new">Create alert</Link>}
       />
