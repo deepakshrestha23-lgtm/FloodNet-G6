@@ -6,6 +6,7 @@ import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
+import RiverWatchPanel from '../../components/conditions/RiverWatchPanel';
 import Icon from '../../components/common/Icon';
 import ChartCard from '../../components/chart/ChartCard';
 import { REPORT_STATUS, OBSERVED_SEVERITY, describe } from '../../utils/enums';
@@ -188,6 +189,12 @@ function OfficerDashboardPage() {
             tone={summary.activeAlerts > 0 ? 'danger' : 'default'}
             icon="megaphone"
           />
+        </div>
+      </div>
+
+      <div className="row g-3 mb-4">
+        <div className="col-12">
+          <RiverWatchPanel />
         </div>
       </div>
 

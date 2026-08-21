@@ -13,7 +13,7 @@ const DEMO_ACCOUNTS = [
     roleCode: 'RESIDENT',
     firstName: 'Rina',
     lastName: 'Alvarez',
-    phone: '+60123456701',
+    phone: '+9779801000701',
     homeZoneCode: 'ZONE-A'
   },
   {
@@ -21,21 +21,21 @@ const DEMO_ACCOUNTS = [
     roleCode: 'FLOOD_MONITORING_OFFICER',
     firstName: 'Daniel',
     lastName: 'Okafor',
-    phone: '+60123456702'
+    phone: '+9779801000702'
   },
   {
     email: 'evacuation@floodnet.local',
     roleCode: 'EVACUATION_OFFICER',
     firstName: 'Mei',
     lastName: 'Tan',
-    phone: '+60123456703'
+    phone: '+9779801000703'
   },
   {
     email: 'admin@floodnet.local',
     roleCode: 'ADMINISTRATOR',
     firstName: 'Sofia',
     lastName: 'Haddad',
-    phone: '+60123456704'
+    phone: '+9779801000704'
   }
 ];
 
@@ -43,8 +43,8 @@ const DEMO_CENTRES = [
   {
     zoneCode: 'ZONE-A',
     name: 'Riverbank Community Hall',
-    locationDescription: 'Jalan Sungai Utara 12, beside the north district clinic',
-    contactPhone: '+60123456710',
+    locationDescription: 'Riverside road 12, beside the north district clinic',
+    contactPhone: '+9779801000710',
     maximumCapacity: 250,
     currentOccupancy: 40,
     facilityCodes: ['DRINKING_WATER', 'FOOD', 'TOILETS', 'FIRST_AID', 'SHELTER']
@@ -53,7 +53,7 @@ const DEMO_CENTRES = [
     zoneCode: 'ZONE-B',
     name: 'Central Sports Complex',
     locationDescription: 'Central district sports complex, main indoor arena',
-    contactPhone: '+60123456711',
+    contactPhone: '+9779801000711',
     maximumCapacity: 500,
     currentOccupancy: 430,
     facilityCodes: ['DRINKING_WATER', 'FOOD', 'TOILETS', 'CHARGING', 'DISABILITY_ACCESS', 'SHELTER']
@@ -62,7 +62,7 @@ const DEMO_CENTRES = [
     zoneCode: 'ZONE-C',
     name: 'South Valley Secondary School',
     locationDescription: 'South Valley secondary school assembly hall',
-    contactPhone: '+60123456712',
+    contactPhone: '+9779801000712',
     maximumCapacity: 180,
     currentOccupancy: 0,
     facilityCodes: ['DRINKING_WATER', 'TOILETS', 'SHELTER']
@@ -72,16 +72,24 @@ const DEMO_CENTRES = [
 const DEMO_REPORTS = [
   {
     zoneCode: 'ZONE-A',
-    locationDescription: 'Jalan Sungai Utara, near the pedestrian bridge',
+    locationDescription: 'Riverside road near the pedestrian bridge, Thapathali',
+    latitude: 27.6939,
+    longitude: 85.3140,
+    floodType: 'RIVER_OVERFLOW',
+    peopleAtRisk: 24,
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',
-    incidentDescription: 'Water has risen above the kerb and covers both lanes. Several cars have turned back.',
+    incidentDescription: 'Water has risen above the kerb and covers both lanes. Several vehicles have turned back.',
     hoursAgo: 5,
     status: 'PENDING_REVIEW'
   },
   {
     zoneCode: 'ZONE-B',
-    locationDescription: 'Central market car park, lower level',
+    locationDescription: 'Market car park, lower level',
+    latitude: 26.8690,
+    longitude: 87.1560,
+    floodType: 'URBAN_DRAINAGE',
+    peopleAtRisk: 0,
     observedSeverity: 'MODERATE',
     roadCondition: 'RESTRICTED',
     incidentDescription: 'Ankle-deep water across the lower car park. Drains appear to be backing up.',
@@ -91,6 +99,10 @@ const DEMO_REPORTS = [
   {
     zoneCode: 'ZONE-B',
     locationDescription: 'Residential lane behind the community centre',
+    latitude: 26.8712,
+    longitude: 87.1601,
+    floodType: 'URBAN_DRAINAGE',
+    peopleAtRisk: 0,
     observedSeverity: 'LOW',
     roadCondition: 'CLEAR',
     incidentDescription: 'Shallow pooling near the drain outlet. Passable but worth monitoring.',
@@ -99,10 +111,14 @@ const DEMO_REPORTS = [
   },
   {
     zoneCode: 'ZONE-C',
-    locationDescription: 'South Valley main road at the river crossing',
+    locationDescription: 'Main road at the river crossing',
+    latitude: 28.0500,
+    longitude: 81.6167,
+    floodType: 'RIVER_OVERFLOW',
+    peopleAtRisk: 150,
     observedSeverity: 'SEVERE',
     roadCondition: 'BLOCKED',
-    incidentDescription: 'River has overtopped the crossing. The road is impassable to all vehicles.',
+    incidentDescription: 'The river has overtopped the crossing. The road is impassable to all vehicles.',
     hoursAgo: 74,
     status: 'VERIFIED'
   }
@@ -248,14 +264,17 @@ async function seedReports(client, residentId, officerId) {
     const reportResult = await client.query(
       `
         INSERT INTO flood_reports (
-          report_ref, resident_id, zone_id, location_description,
+          report_ref, resident_id, zone_id, ward_id, location_description,
+          latitude, longitude, flood_type, people_at_risk,
           observed_severity, road_condition, incident_description,
           observed_at, status, created_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7,
-          NOW() - ($8 || ' hours')::INTERVAL,
-          $9,
-          NOW() - ($8 || ' hours')::INTERVAL)
+        VALUES ($1, $2, $3,
+          (SELECT ward_id FROM flood_zone_wards WHERE zone_id = $3 ORDER BY is_primary DESC LIMIT 1),
+          $4, $5, $6, $7, $8, $9, $10, $11,
+          NOW() - ($12 || ' hours')::INTERVAL,
+          $13,
+          NOW() - ($12 || ' hours')::INTERVAL)
         RETURNING id
       `,
       [
@@ -263,6 +282,10 @@ async function seedReports(client, residentId, officerId) {
         residentId,
         zoneId,
         report.locationDescription,
+        report.latitude,
+        report.longitude,
+        report.floodType,
+        report.peopleAtRisk,
         report.observedSeverity,
         report.roadCondition,
         report.incidentDescription,

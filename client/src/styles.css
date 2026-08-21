@@ -2010,3 +2010,42 @@ a.fn-facility-chip:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .fn-reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* River and rainfall conditions: supporting context, so it reads quieter than
+   the operational panels it sits beside rather than competing with them. */
+.fn-conditions {
+  border-left: 3px solid var(--fn-current, #0891b2);
+}
+
+.fn-conditions-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bs-secondary-color, #64748b);
+}
+
+.fn-conditions-value {
+  font-family: var(--fn-font-display, inherit);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.fn-conditions-unit {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--bs-secondary-color, #64748b);
+}
+
+.fn-conditions-spark {
+  display: block;
+  width: 100%;
+  height: 28px;
+  opacity: 0.85;
+}
+
+.fn-conditions-source {
+  font-size: 0.72rem;
+  color: var(--bs-secondary-color, #64748b);
+}
