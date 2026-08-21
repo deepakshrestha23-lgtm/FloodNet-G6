@@ -19,7 +19,7 @@ async function createCentre(overrides = {}) {
     zoneId: zones[0].id,
     name: `Test Centre ${Math.random().toString(36).slice(2, 8)}`,
     locationDescription: 'Test centre location description',
-    contactPhone: '+60123456700',
+    contactPhone: '+9779801000700',
     maximumCapacity: 100,
     currentOccupancy: 0,
     facilities: [],

@@ -120,9 +120,9 @@ async function resetDatabase() {
 
   await pool.query(`
     INSERT INTO flood_zones (code, name, locality, description) VALUES
-      ('ZONE-A', 'Riverbank North', 'North District', 'Northern riverbank communities'),
-      ('ZONE-B', 'Central Lowlands', 'Central District', 'Central low-lying communities'),
-      ('ZONE-C', 'South Valley', 'South District', 'Southern valley communities')
+      ('ZONE-A', 'Bagmati Riverside', 'Kathmandu', 'Settlements along the Bagmati river corridor'),
+      ('ZONE-B', 'Koshi Basin', 'Sunsari', 'Low-lying wards near the Koshi barrage'),
+      ('ZONE-C', 'West Rapti Valley', 'Banke', 'West Rapti floodplain around Nepalgunj')
   `);
 
   await pool.query(`

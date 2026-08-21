@@ -10,99 +10,135 @@ const DEMO_ACCOUNTS = [
   {
     email: 'resident@floodnet.local',
     roleCode: 'RESIDENT',
-    firstName: 'Rina',
-    lastName: 'Alvarez',
-    phone: '+60123456701',
+    firstName: 'Anisha',
+    lastName: 'Shrestha',
+    phone: '+9779801000701',
     homeZoneCode: 'ZONE-A'
   },
   {
     email: 'officer@floodnet.local',
     roleCode: 'FLOOD_MONITORING_OFFICER',
-    firstName: 'Daniel',
-    lastName: 'Okafor',
-    phone: '+60123456702'
+    firstName: 'Bikash',
+    lastName: 'Tamang',
+    phone: '+9779801000702'
   },
   {
     email: 'evacuation@floodnet.local',
     roleCode: 'EVACUATION_OFFICER',
-    firstName: 'Mei',
-    lastName: 'Tan',
-    phone: '+60123456703'
+    firstName: 'Sunita',
+    lastName: 'Gurung',
+    phone: '+9779801000703'
   },
   {
     email: 'admin@floodnet.local',
     roleCode: 'ADMINISTRATOR',
-    firstName: 'Sofia',
-    lastName: 'Haddad',
-    phone: '+60123456704'
+    firstName: 'Rajesh',
+    lastName: 'Adhikari',
+    phone: '+9779801000704'
   }
 ];
 
 const DEMO_CENTRES = [
   {
     zoneCode: 'ZONE-A',
-    name: 'Riverbank Community Hall',
-    locationDescription: 'Jalan Sungai Utara 12, beside the north district clinic',
-    contactPhone: '+60123456710',
+    name: 'Tribhuvan Higher Secondary School',
+    locationDescription: 'Ward 10, Thapathali, opposite the Bagmati bridge in Kathmandu',
+    contactPhone: '+9779801000710',
     maximumCapacity: 250,
     currentOccupancy: 40,
     facilityCodes: ['DRINKING_WATER', 'FOOD', 'TOILETS', 'FIRST_AID', 'SHELTER']
   },
   {
     zoneCode: 'ZONE-B',
-    name: 'Central Sports Complex',
-    locationDescription: 'Central district sports complex, main indoor arena',
-    contactPhone: '+60123456711',
+    name: 'Inaruwa Community Hall',
+    locationDescription: 'Inaruwa Municipality ward office compound, Sunsari',
+    contactPhone: '+9779801000711',
     maximumCapacity: 500,
     currentOccupancy: 430,
     facilityCodes: ['DRINKING_WATER', 'FOOD', 'TOILETS', 'CHARGING', 'DISABILITY_ACCESS', 'SHELTER']
   },
   {
     zoneCode: 'ZONE-C',
-    name: 'South Valley Secondary School',
-    locationDescription: 'South Valley secondary school assembly hall',
-    contactPhone: '+60123456712',
+    name: 'Nepalgunj Sports Complex',
+    locationDescription: 'Covered hall at the Nepalgunj sports complex, Banke',
+    contactPhone: '+9779801000712',
     maximumCapacity: 180,
     currentOccupancy: 0,
     facilityCodes: ['DRINKING_WATER', 'TOILETS', 'SHELTER']
+  },
+  {
+    zoneCode: 'ZONE-D',
+    name: 'Rajapur Secondary School',
+    locationDescription: 'Rajapur Municipality school assembly hall, Bardiya',
+    contactPhone: '+9779801000713',
+    maximumCapacity: 320,
+    currentOccupancy: 185,
+    facilityCodes: ['DRINKING_WATER', 'FOOD', 'TOILETS', 'FIRST_AID', 'SHELTER']
+  },
+  {
+    zoneCode: 'ZONE-E',
+    name: 'Bharatpur Community Centre',
+    locationDescription: 'Bharatpur Metropolitan City ward 11 community building, Chitwan',
+    contactPhone: '+9779801000714',
+    maximumCapacity: 400,
+    currentOccupancy: 96,
+    facilityCodes: ['DRINKING_WATER', 'FOOD', 'TOILETS', 'CHARGING', 'DISABILITY_ACCESS', 'SHELTER']
   }
 ];
 
 const DEMO_REPORTS = [
   {
     zoneCode: 'ZONE-A',
-    locationDescription: 'Jalan Sungai Utara, near the pedestrian bridge',
+    locationDescription: 'Thapathali, near the Bagmati pedestrian bridge',
     observedSeverity: 'HIGH',
     roadCondition: 'BLOCKED',
-    incidentDescription: 'Water has risen above the kerb and covers both lanes. Several cars have turned back.',
+    incidentDescription: 'Water has risen above the kerb and covers both lanes of the ring road service lane. Several vehicles have turned back.',
     hoursAgo: 5,
     status: 'PENDING_REVIEW'
   },
   {
     zoneCode: 'ZONE-B',
-    locationDescription: 'Central market car park, lower level',
+    locationDescription: 'Inaruwa bazaar, lower market area',
     observedSeverity: 'MODERATE',
     roadCondition: 'RESTRICTED',
-    incidentDescription: 'Ankle-deep water across the lower car park. Drains appear to be backing up.',
+    incidentDescription: 'Ankle-deep water across the lower bazaar. Drains near the embankment appear to be backing up.',
     hoursAgo: 26,
     status: 'VERIFIED'
   },
   {
     zoneCode: 'ZONE-B',
-    locationDescription: 'Residential lane behind the community centre',
+    locationDescription: 'Residential lane behind the Inaruwa ward office',
     observedSeverity: 'LOW',
     roadCondition: 'CLEAR',
-    incidentDescription: 'Shallow pooling near the drain outlet. Passable but worth monitoring.',
+    incidentDescription: 'Shallow pooling near the drain outlet. Passable but worth monitoring if rain continues.',
     hoursAgo: 50,
     status: 'MORE_INFORMATION_REQUIRED'
   },
   {
     zoneCode: 'ZONE-C',
-    locationDescription: 'South Valley main road at the river crossing',
+    locationDescription: 'Nepalgunj to Kohalpur road at the West Rapti crossing',
     observedSeverity: 'SEVERE',
     roadCondition: 'BLOCKED',
-    incidentDescription: 'River has overtopped the crossing. The road is impassable to all vehicles.',
+    incidentDescription: 'The West Rapti has overtopped the crossing. The road is impassable to all vehicles.',
     hoursAgo: 74,
+    status: 'VERIFIED'
+  },
+  {
+    zoneCode: 'ZONE-D',
+    locationDescription: 'Rajapur island, eastern embankment road',
+    observedSeverity: 'HIGH',
+    roadCondition: 'RESTRICTED',
+    incidentDescription: 'Karnali water is seeping through the embankment and spreading across the approach road. Only tractors are getting through.',
+    hoursAgo: 12,
+    status: 'PENDING_REVIEW'
+  },
+  {
+    zoneCode: 'ZONE-E',
+    locationDescription: 'Narayani riverbank near Kasara, Chitwan',
+    observedSeverity: 'MODERATE',
+    roadCondition: 'CLEAR',
+    incidentDescription: 'River level is noticeably higher than yesterday and has reached the lower farmland. Road is still clear.',
+    hoursAgo: 33,
     status: 'VERIFIED'
   }
 ];
@@ -302,10 +338,10 @@ async function seedAlert(client, officerId) {
     [
       alertRef,
       officerId,
-      'Rising river levels in South Valley',
+      'Rising West Rapti levels at the Nepalgunj crossing',
       'WARNING',
-      'The river crossing on South Valley main road has been overtopped and water levels are continuing to rise. Verified reports confirm the road is impassable.',
-      'Avoid the South Valley river crossing. If you are in a low-lying property, move valuables and important documents to an upper level and be ready to leave. Follow instructions from evacuation officers.'
+      'The West Rapti has overtopped the Nepalgunj to Kohalpur crossing and levels are continuing to rise. Verified reports confirm the road is impassable to all vehicles.',
+      'Avoid the West Rapti crossing on the Nepalgunj to Kohalpur road. If you are in a low-lying property, move valuables and important documents to an upper floor and be ready to leave. Follow instructions from evacuation officers and your ward representatives.'
     ]
   );
 

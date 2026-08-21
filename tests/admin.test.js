@@ -207,7 +207,7 @@ test('a zone code is unique and cannot be changed after creation', async () => {
 
   const renameCode = await request(admin, 'PATCH', `/api/admin/zones/${existing.id}`, {
     code: 'ZONE-RENAMED',
-    name: 'Riverbank North',
+    name: 'Bagmati Riverside',
     isActive: true
   });
   assert.equal(renameCode.status, 400, 'a zone code is permanent identity');
@@ -255,8 +255,8 @@ test('a zone with active centres cannot be deactivated', async () => {
   assert.equal(created.status, 201);
 
   const result = await request(admin, 'PATCH', `/api/admin/zones/${zones[1].id}`, {
-    name: 'Central Lowlands',
-    locality: 'Central District',
+    name: 'Koshi Basin',
+    locality: 'Sunsari',
     isActive: false
   });
 
