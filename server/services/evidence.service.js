@@ -10,6 +10,7 @@ const {
   hasValidImageSignature
 } = require('../config/evidence');
 const reportRepository = require('../repositories/report.repository');
+const reviewRepository = require('../repositories/review.repository');
 const evidenceRepository = require('../repositories/evidence.repository');
 const {
   putEvidenceObject,
@@ -204,7 +205,12 @@ async function getDownloadUrl(residentId, reportId, evidenceId) {
  * route is what authorizes it. The image itself is never proxied through the
  * API: the caller receives a short-lived presigned URL to the private bucket.
  */
-async function getDownloadUrlForOfficer(reportId, evidenceId) {
+async function getDownloadUrlForOfficer(officerId, reportId, evidenceId) {
+  const report = await reviewRepository.findReportById(reportId, officerId);
+  if (!report) {
+    throw new AppError(404, 'REPORT_NOT_FOUND', 'The requested report was not found');
+  }
+
   const evidence = await evidenceRepository.findEvidenceForReport(evidenceId, reportId);
 
   if (!evidence) {

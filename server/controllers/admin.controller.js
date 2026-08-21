@@ -65,6 +65,20 @@ async function updateUserRole(request, response) {
   });
 }
 
+async function updateUserJurisdiction(request, response) {
+  const user = await adminService.updateUserJurisdiction(
+    request.user,
+    request.params.id,
+    request.jurisdictionInput
+  );
+
+  response.status(200).json({
+    success: true,
+    data: { user },
+    message: 'User jurisdiction updated successfully'
+  });
+}
+
 async function listRoles(_request, response) {
   const roles = await adminService.listRoles();
 
@@ -170,6 +184,7 @@ module.exports = {
   createUser,
   updateUserStatus,
   updateUserRole,
+  updateUserJurisdiction,
   listRoles,
   listZones,
   createZone,

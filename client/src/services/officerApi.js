@@ -1,8 +1,8 @@
 import { apiRequest } from './api';
 import { buildQuery } from './query';
 
-export function fetchDashboard() {
-  return apiRequest('/api/officer/dashboard');
+export function fetchDashboard(params = {}) {
+  return apiRequest(`/api/officer/dashboard${buildQuery(params)}`);
 }
 
 export function fetchReviewQueue(params = {}) {

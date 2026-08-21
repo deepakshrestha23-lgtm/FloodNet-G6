@@ -1,5 +1,6 @@
 const { pool } = require('../db/pool');
 const { insertAuditLog } = require('../utils/audit');
+const { entityPredicate, geographyPredicate } = require('./jurisdiction.repository');
 
 function getPool() {
   if (!pool) {
@@ -14,6 +15,13 @@ const officerReportSelect = `
     fr.id,
     fr.report_ref,
     fr.zone_id,
+    fr.ward_id,
+    fr.locality,
+    fr.nearest_landmark,
+    fr.latitude,
+    fr.longitude,
+    fr.flood_type,
+    fr.people_at_risk,
     fr.location_description,
     fr.observed_severity,
     fr.road_condition,
@@ -25,17 +33,33 @@ const officerReportSelect = `
     z.code AS zone_code,
     z.name AS zone_name,
     z.locality AS zone_locality,
+    w.ward_number,
+    w.name AS ward_name,
+    ll.id AS local_level_id,
+    ll.code AS local_level_code,
+    ll.name AS local_level_name,
+    ll.type AS local_level_type,
+    d.id AS district_id,
+    d.code AS district_code,
+    d.name AS district_name,
+    gp.id AS province_id,
+    gp.code AS province_code,
+    gp.name AS province_name,
     fr.resident_id,
-    p.first_name AS resident_first_name,
-    p.last_name AS resident_last_name,
+    rp.first_name AS resident_first_name,
+    rp.last_name AS resident_last_name,
     u.email AS resident_email,
-    p.phone AS resident_phone,
+    rp.phone AS resident_phone,
     (SELECT COUNT(*)::INTEGER FROM flood_evidence_metadata e
       WHERE e.report_id = fr.id AND e.upload_status = 'UPLOADED') AS evidence_count
   FROM flood_reports fr
-  INNER JOIN flood_zones z ON z.id = fr.zone_id
+  LEFT JOIN flood_zones z ON z.id = fr.zone_id
+  LEFT JOIN geo_wards w ON w.id = fr.ward_id
+  LEFT JOIN geo_local_levels ll ON ll.id = w.local_level_id
+  LEFT JOIN geo_districts d ON d.id = ll.district_id
+  LEFT JOIN geo_provinces gp ON gp.id = d.province_id
   INNER JOIN users u ON u.id = fr.resident_id
-  LEFT JOIN user_profiles p ON p.user_id = fr.resident_id
+  LEFT JOIN user_profiles rp ON rp.user_id = fr.resident_id
 `;
 
 function mapOfficerReport(row) {
@@ -44,12 +68,24 @@ function mapOfficerReport(row) {
   return {
     id: row.id,
     reportReference: row.report_ref,
-    zone: {
+    zone: row.zone_id ? {
       id: row.zone_id,
       code: row.zone_code,
       name: row.zone_name,
       locality: row.zone_locality
-    },
+    } : null,
+    geography: row.ward_id ? {
+      province: { id: row.province_id, code: row.province_code, name: row.province_name },
+      district: { id: row.district_id, code: row.district_code, name: row.district_name },
+      localLevel: { id: row.local_level_id, code: row.local_level_code, name: row.local_level_name, type: row.local_level_type },
+      ward: { id: row.ward_id, number: row.ward_number, name: row.ward_name }
+    } : null,
+    locality: row.locality,
+    nearestLandmark: row.nearest_landmark,
+    latitude: row.latitude === null ? null : Number(row.latitude),
+    longitude: row.longitude === null ? null : Number(row.longitude),
+    floodType: row.flood_type,
+    peopleAtRisk: row.people_at_risk,
     reporter: {
       id: row.resident_id,
       firstName: row.resident_first_name,
@@ -69,23 +105,49 @@ function mapOfficerReport(row) {
   };
 }
 
-async function listReports({ status, zoneId, severity, from, to, sort, limit, offset }) {
+async function listReports({
+  officerId,
+  status,
+  zoneId,
+  provinceId,
+  districtId,
+  localLevelId,
+  wardId,
+  severity,
+  from,
+  to,
+  sort,
+  limit,
+  offset
+}) {
   const parameters = [
+    officerId,
     status || null,
     zoneId || null,
     severity || null,
     from || null,
     to || null,
+    provinceId || null,
+    districtId || null,
+    localLevelId || null,
+    wardId || null,
     limit,
     offset
   ];
 
   const filterClause = `
-    WHERE ($1::VARCHAR IS NULL OR fr.status = $1)
-      AND ($2::UUID IS NULL OR fr.zone_id = $2)
-      AND ($3::VARCHAR IS NULL OR fr.observed_severity = $3)
-      AND ($4::TIMESTAMPTZ IS NULL OR fr.observed_at >= $4)
-      AND ($5::TIMESTAMPTZ IS NULL OR fr.observed_at <= $5)
+    WHERE ${entityPredicate('fr', 1)}
+      AND ($2::VARCHAR IS NULL OR fr.status = $2)
+      AND ($3::UUID IS NULL OR fr.zone_id = $3)
+      AND ($4::VARCHAR IS NULL OR fr.observed_severity = $4)
+      AND ($5::TIMESTAMPTZ IS NULL OR fr.observed_at >= $5)
+      AND ($6::TIMESTAMPTZ IS NULL OR fr.observed_at <= $6)
+      AND ${geographyPredicate('fr', {
+        provinceParameter: 7,
+        districtParameter: 8,
+        localLevelParameter: 9,
+        wardParameter: 10
+      })}
   `;
 
   const result = await getPool().query(
@@ -93,7 +155,7 @@ async function listReports({ status, zoneId, severity, from, to, sort, limit, of
       ${officerReportSelect}
       ${filterClause}
       ORDER BY fr.created_at ${sort === 'oldest' ? 'ASC' : 'DESC'}
-      LIMIT $6 OFFSET $7
+      LIMIT $11 OFFSET $12
     `,
     parameters
   );
@@ -104,7 +166,7 @@ async function listReports({ status, zoneId, severity, from, to, sort, limit, of
       FROM flood_reports fr
       ${filterClause}
     `,
-    parameters.slice(0, 5)
+    parameters.slice(0, 10)
   );
 
   return {
@@ -113,17 +175,23 @@ async function listReports({ status, zoneId, severity, from, to, sort, limit, of
   };
 }
 
-async function findReportById(reportId) {
+async function findReportById(reportId, officerId) {
+  const parameters = [reportId];
+  let authorization = '';
+  if (officerId) {
+    parameters.push(officerId);
+    authorization = ` AND ${entityPredicate('fr', 2)}`;
+  }
   const result = await getPool().query(
-    `${officerReportSelect} WHERE fr.id = $1`,
-    [reportId]
+    `${officerReportSelect} WHERE fr.id = $1${authorization}`,
+    parameters
   );
 
   return mapOfficerReport(result.rows[0]);
 }
 
-async function getReportDossier(reportId) {
-  const report = await findReportById(reportId);
+async function getReportDossier(reportId, officerId) {
+  const report = await findReportById(reportId, officerId);
 
   if (!report) return null;
 
@@ -199,8 +267,10 @@ async function applyReview({ reportId, reviewerId, action, newStatus, notes, all
     await client.query('BEGIN');
 
     const currentResult = await client.query(
-      'SELECT status FROM flood_reports WHERE id = $1 FOR UPDATE',
-      [reportId]
+      `SELECT status FROM flood_reports fr
+       WHERE fr.id = $1 AND ${entityPredicate('fr', 2)}
+       FOR UPDATE`,
+      [reportId, reviewerId]
     );
 
     if (currentResult.rowCount === 0) {

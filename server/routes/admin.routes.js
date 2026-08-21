@@ -6,6 +6,7 @@ const {
   validateStaffUserBody,
   validateUserStatusBody,
   validateUserRoleBody,
+  validateJurisdictionBody,
   validateZoneBody,
   validateFacilityTypeBody,
   validateAuditQuery,
@@ -31,6 +32,7 @@ router.post('/users', validateStaffUserBody, asyncHandler(adminController.create
 router.get('/users/:id', validateUserId, asyncHandler(adminController.getUser));
 router.patch('/users/:id/status', validateUserId, validateUserStatusBody, asyncHandler(adminController.updateUserStatus));
 router.patch('/users/:id/role', validateUserId, validateUserRoleBody, asyncHandler(adminController.updateUserRole));
+router.patch('/users/:id/jurisdiction', validateUserId, validateJurisdictionBody, asyncHandler(adminController.updateUserJurisdiction));
 
 router.get('/roles', asyncHandler(adminController.listRoles));
 

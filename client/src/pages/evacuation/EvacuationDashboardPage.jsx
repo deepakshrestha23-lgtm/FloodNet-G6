@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCentreDashboard } from '../../services/centreApi';
 import { useApiResource } from '../../hooks/useApiResource';
@@ -9,9 +9,11 @@ import DashboardStatCard from '../../components/common/DashboardStatCard';
 import ChartCard from '../../components/chart/ChartCard';
 import DataTable from '../../components/common/DataTable';
 import { formatNumber, formatPercent } from '../../utils/formatters';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 function EvacuationDashboardPage() {
-  const loader = useCallback(() => fetchCentreDashboard(), []);
+  const [geography, setGeography] = useState(EMPTY_GEOGRAPHY);
+  const loader = useCallback(() => fetchCentreDashboard(geography), [geography]);
   const { data, loading, error, reload } = useApiResource(loader);
 
   const capacityChart = useMemo(() => {
@@ -105,6 +107,17 @@ function EvacuationDashboardPage() {
           </>
         }
       />
+
+      <section className="panel-card p-3 p-md-4 rounded-4 mb-4">
+        <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div>
+            <h2 className="h6 fw-semibold mb-1">Dashboard geography</h2>
+            <p className="small text-secondary mb-0">Filter capacity figures from province down to ward within your assigned coverage.</p>
+          </div>
+          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setGeography(EMPTY_GEOGRAPHY)}>Clear filter</button>
+        </div>
+        <div className="mt-3 mb-0"><GeographySelector value={geography} onChange={setGeography} required={false} /></div>
+      </section>
 
       <div className="row g-3 mb-4">
         <div className="col-6 col-lg-3">

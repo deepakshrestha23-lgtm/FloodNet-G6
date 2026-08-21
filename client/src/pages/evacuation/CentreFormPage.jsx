@@ -10,6 +10,7 @@ import { fetchZones } from '../../services/publicApi';
 import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 function CentreFormPage() {
   const { id } = useParams();
@@ -25,7 +26,12 @@ function CentreFormPage() {
   const [currentOccupancy, setCurrentOccupancy] = useState(0);
 
   const [form, setForm] = useState({
+    ...EMPTY_GEOGRAPHY,
     zoneId: '',
+    locality: '',
+    nearestLandmark: '',
+    latitude: '',
+    longitude: '',
     name: '',
     locationDescription: '',
     contactPhone: '',
@@ -59,7 +65,16 @@ function CentreFormPage() {
           const centre = centrePayload.data.centre;
           setCurrentOccupancy(centre.currentOccupancy);
           setForm({
-            zoneId: centre.zone.id,
+            ...EMPTY_GEOGRAPHY,
+            provinceId: centre.geography?.province?.id || '',
+            districtId: centre.geography?.district?.id || '',
+            localLevelId: centre.geography?.localLevel?.id || '',
+            wardId: centre.geography?.ward?.id || '',
+            zoneId: centre.zone?.id || '',
+            locality: centre.locality || '',
+            nearestLandmark: centre.nearestLandmark || '',
+            latitude: centre.latitude ?? '',
+            longitude: centre.longitude ?? '',
             name: centre.name,
             locationDescription: centre.locationDescription,
             contactPhone: centre.contactPhone || '',
@@ -69,8 +84,6 @@ function CentreFormPage() {
               centre.facilities.map((facility) => [facility.id, facility.notes || ''])
             )
           });
-        } else if (zonePayload.data.zones.length > 0) {
-          setForm((current) => ({ ...current, zoneId: zonePayload.data.zones[0].id }));
         }
       } catch (caughtError) {
         if (active) setLoadError(caughtError);
@@ -85,6 +98,10 @@ function CentreFormPage() {
 
   function updateField(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
+  }
+
+  function updateGeography(value) {
+    setForm((current) => ({ ...current, ...value }));
   }
 
   function toggleFacility(facilityTypeId) {
@@ -114,7 +131,12 @@ function CentreFormPage() {
     setSubmitError(null);
 
     const payload = {
-      zoneId: form.zoneId,
+      zoneId: form.zoneId || undefined,
+      wardId: form.wardId || undefined,
+      locality: form.locality.trim() || undefined,
+      nearestLandmark: form.nearestLandmark.trim() || undefined,
+      latitude: form.latitude === '' ? undefined : Number(form.latitude),
+      longitude: form.longitude === '' ? undefined : Number(form.longitude),
       name: form.name.trim(),
       locationDescription: form.locationDescription.trim(),
       maximumCapacity: Number(form.maximumCapacity),
@@ -161,20 +183,13 @@ function CentreFormPage() {
       />
 
       <form className="panel-card p-3 p-md-4 rounded-4" onSubmit={handleSubmit} noValidate>
+        <GeographySelector value={form} onChange={updateGeography} required={!isEditing} disabled={false} />
         <div className="row g-3 mb-3">
           <div className="col-12 col-md-6">
-            <label className="form-label fw-semibold" htmlFor="centre-zone">Flood zone</label>
-            <select
-              id="centre-zone"
-              className="form-select"
-              required
-              value={form.zoneId}
-              onChange={(event) => updateField('zoneId', event.target.value)}
-            >
-              <option value="" disabled>Select a zone</option>
-              {zones.map((zone) => (
-                <option key={zone.id} value={zone.id}>{zone.name} ({zone.code})</option>
-              ))}
+            <label className="form-label fw-semibold" htmlFor="centre-zone">Operational flood zone <span className="text-secondary fw-normal">(optional)</span></label>
+            <select id="centre-zone" className="form-select" value={form.zoneId} onChange={(event) => updateField('zoneId', event.target.value)}>
+              <option value="">No operational zone selected</option>
+              {zones.map((zone) => <option key={zone.id} value={zone.id}>{zone.name} ({zone.code})</option>)}
             </select>
           </div>
           <div className="col-12 col-md-6">
@@ -189,6 +204,15 @@ function CentreFormPage() {
               onChange={(event) => updateField('name', event.target.value)}
             />
           </div>
+        </div>
+
+        <div className="row g-3 mb-3">
+          <div className="col-12 col-md-6"><label className="form-label fw-semibold" htmlFor="centre-locality">Locality / Tole</label><input id="centre-locality" className="form-control" maxLength={160} value={form.locality} onChange={(event) => updateField('locality', event.target.value)} /></div>
+          <div className="col-12 col-md-6"><label className="form-label fw-semibold" htmlFor="centre-landmark">Nearest landmark</label><input id="centre-landmark" className="form-control" maxLength={240} value={form.nearestLandmark} onChange={(event) => updateField('nearestLandmark', event.target.value)} /></div>
+        </div>
+        <div className="row g-3 mb-3">
+          <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="centre-latitude">Latitude</label><input id="centre-latitude" className="form-control" type="number" step="0.000001" min="-90" max="90" value={form.latitude} onChange={(event) => updateField('latitude', event.target.value)} /></div>
+          <div className="col-6 col-md-3"><label className="form-label fw-semibold" htmlFor="centre-longitude">Longitude</label><input id="centre-longitude" className="form-control" type="number" step="0.000001" min="-180" max="180" value={form.longitude} onChange={(event) => updateField('longitude', event.target.value)} /></div>
         </div>
 
         <div className="mb-3">

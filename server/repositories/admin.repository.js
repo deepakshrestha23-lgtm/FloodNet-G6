@@ -26,11 +26,29 @@ const adminUserSelect = `
     p.last_name,
     p.phone,
     z.id AS home_zone_id,
-    z.name AS home_zone_name
+    z.name AS home_zone_name,
+    uj.scope_level,
+    uj.province_id,
+    gp.code AS province_code,
+    gp.name AS province_name,
+    uj.district_id,
+    gd.code AS district_code,
+    gd.name AS district_name,
+    uj.local_level_id,
+    gll.code AS local_level_code,
+    gll.name AS local_level_name,
+    uj.ward_id,
+    gw.ward_number,
+    gw.name AS ward_name
   FROM users u
   INNER JOIN roles r ON r.id = u.role_id
   LEFT JOIN user_profiles p ON p.user_id = u.id
   LEFT JOIN flood_zones z ON z.id = p.home_zone_id
+  LEFT JOIN user_jurisdictions uj ON uj.user_id = u.id
+  LEFT JOIN geo_provinces gp ON gp.id = uj.province_id
+  LEFT JOIN geo_districts gd ON gd.id = uj.district_id
+  LEFT JOIN geo_local_levels gll ON gll.id = uj.local_level_id
+  LEFT JOIN geo_wards gw ON gw.id = uj.ward_id
 `;
 
 function mapAdminUser(row) {
@@ -48,6 +66,13 @@ function mapAdminUser(row) {
     lastName: row.last_name,
     phone: row.phone,
     homeZone: row.home_zone_id ? { id: row.home_zone_id, name: row.home_zone_name } : null,
+    jurisdiction: row.scope_level ? {
+      scopeLevel: row.scope_level,
+      province: row.province_id ? { id: row.province_id, code: row.province_code, name: row.province_name } : null,
+      district: row.district_id ? { id: row.district_id, code: row.district_code, name: row.district_name } : null,
+      localLevel: row.local_level_id ? { id: row.local_level_id, code: row.local_level_code, name: row.local_level_name } : null,
+      ward: row.ward_id ? { id: row.ward_id, number: row.ward_number, name: row.ward_name } : null
+    } : null,
     createdAt: row.created_at,
     lastLoginAt: row.last_login_at
   };
@@ -114,7 +139,8 @@ async function createStaffUser({
   roleCode,
   firstName,
   lastName,
-  phone
+  phone,
+  jurisdiction
 }) {
   const client = await getPool().connect();
 
@@ -148,6 +174,26 @@ async function createStaffUser({
     );
 
     await client.query('INSERT INTO notification_preferences (user_id) VALUES ($1)', [userId]);
+
+    if (jurisdiction?.scopeLevel) {
+      await client.query(
+        `
+          INSERT INTO user_jurisdictions (
+            user_id, scope_level, province_id, district_id, local_level_id, ward_id, assigned_by
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `,
+        [
+          userId,
+          jurisdiction.scopeLevel,
+          jurisdiction.provinceId || null,
+          jurisdiction.districtId || null,
+          jurisdiction.localLevelId || null,
+          jurisdiction.wardId || null,
+          actorId
+        ]
+      );
+    }
 
     await insertAuditLog(client, {
       actorId,
@@ -251,6 +297,10 @@ async function updateUserRole({ actorId, userId, roleCode }) {
       [userId, roleResult.rows[0].id]
     );
 
+    if (!['FLOOD_MONITORING_OFFICER', 'EVACUATION_OFFICER'].includes(roleCode)) {
+      await client.query('DELETE FROM user_jurisdictions WHERE user_id = $1', [userId]);
+    }
+
     // A role change alters permissions, so existing sessions are ended and the
     // user must sign in again to receive a token carrying the new role.
     await client.query(
@@ -268,6 +318,57 @@ async function updateUserRole({ actorId, userId, roleCode }) {
 
     await client.query('COMMIT');
     return { outcome: 'UPDATED' };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function updateUserJurisdiction({ actorId, userId, jurisdiction }) {
+  const client = await getPool().connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const userResult = await client.query('SELECT id FROM users WHERE id = $1 FOR UPDATE', [userId]);
+    if (userResult.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return false;
+    }
+
+    await client.query('DELETE FROM user_jurisdictions WHERE user_id = $1', [userId]);
+    if (jurisdiction) {
+      await client.query(
+        `
+          INSERT INTO user_jurisdictions (
+            user_id, scope_level, province_id, district_id, local_level_id, ward_id, assigned_by
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `,
+        [
+          userId,
+          jurisdiction.scopeLevel,
+          jurisdiction.provinceId || null,
+          jurisdiction.districtId || null,
+          jurisdiction.localLevelId || null,
+          jurisdiction.wardId || null,
+          actorId
+        ]
+      );
+    }
+
+    await insertAuditLog(client, {
+      actorId,
+      action: jurisdiction ? 'USER_JURISDICTION_ASSIGNED' : 'USER_JURISDICTION_REMOVED',
+      entityType: 'USER',
+      entityId: userId,
+      metadata: jurisdiction || {}
+    });
+
+    await client.query('COMMIT');
+    return true;
   } catch (error) {
     await client.query('ROLLBACK');
     throw error;
@@ -617,6 +718,7 @@ module.exports = {
   createStaffUser,
   updateUserStatus,
   updateUserRole,
+  updateUserJurisdiction,
   countActiveAdministrators,
   listRoles,
   listZones,

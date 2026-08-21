@@ -115,6 +115,20 @@ async function lookupIdByCode(client, table, code) {
 async function seedAccounts(client, passwordHash) {
   const accountIds = {};
 
+  async function ensureDemoJurisdiction(userId, roleCode) {
+    if (!['FLOOD_MONITORING_OFFICER', 'EVACUATION_OFFICER'].includes(roleCode)) return;
+    await client.query(
+      `
+        INSERT INTO user_jurisdictions (user_id, scope_level)
+        VALUES ($1, 'NATIONAL')
+        ON CONFLICT (user_id) DO UPDATE SET scope_level = 'NATIONAL',
+          province_id = NULL, district_id = NULL, local_level_id = NULL, ward_id = NULL,
+          updated_at = NOW()
+      `,
+      [userId]
+    );
+  }
+
   for (const account of DEMO_ACCOUNTS) {
     const roleId = await lookupIdByCode(client, 'roles', account.roleCode);
 
@@ -126,6 +140,7 @@ async function seedAccounts(client, passwordHash) {
 
     if (existing.rowCount > 0) {
       accountIds[account.roleCode] = existing.rows[0].id;
+      await ensureDemoJurisdiction(existing.rows[0].id, account.roleCode);
       continue;
     }
 
@@ -149,6 +164,8 @@ async function seedAccounts(client, passwordHash) {
     );
 
     await client.query('INSERT INTO notification_preferences (user_id) VALUES ($1)', [userId]);
+
+    await ensureDemoJurisdiction(userId, account.roleCode);
 
     accountIds[account.roleCode] = userId;
   }

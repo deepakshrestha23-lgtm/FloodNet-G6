@@ -104,9 +104,10 @@ async function resetDatabase() {
     TRUNCATE
       audit_logs, notification_logs, notification_preferences,
       flood_evidence_metadata, flood_report_status_history, flood_report_reviews,
-      flood_reports, alert_zones, flood_alerts,
+      flood_reports, alert_wards, alert_zones, flood_alerts,
       centre_facilities, evacuation_centres, centre_facility_types,
-      auth_sessions, user_profiles, users, flood_zones, roles
+      user_jurisdictions, auth_sessions, user_profiles, users, flood_zone_wards,
+      flood_zones, geo_wards, geo_local_levels, geo_districts, geo_provinces, roles
     RESTART IDENTITY CASCADE
   `);
 
@@ -133,6 +134,31 @@ async function resetDatabase() {
       ('TOILETS', 'Toilets')
   `);
 
+  await pool.query(`
+    INSERT INTO geo_provinces (source_id, code, name, sort_order)
+    VALUES (1, 'NP-P01', 'Test Province', 1)
+  `);
+  await pool.query(`
+    INSERT INTO geo_districts (source_id, province_id, code, name, sort_order)
+    VALUES (1, (SELECT id FROM geo_provinces WHERE source_id = 1), 'NP-D01', 'Test District', 1)
+  `);
+  await pool.query(`
+    INSERT INTO geo_local_levels (source_id, district_id, code, name, type, ward_count, sort_order)
+    VALUES (1, (SELECT id FROM geo_districts WHERE source_id = 1), 'NP-LL001', 'Test Municipality', 'MUNICIPALITY', 2, 1)
+  `);
+  await pool.query(`
+    INSERT INTO geo_wards (source_key, local_level_id, ward_number, name)
+    VALUES
+      ('1-1', (SELECT id FROM geo_local_levels WHERE source_id = 1), 1, 'Ward 1'),
+      ('1-2', (SELECT id FROM geo_local_levels WHERE source_id = 1), 2, 'Ward 2')
+  `);
+  await pool.query(`
+    INSERT INTO flood_zone_wards (zone_id, ward_id, is_primary)
+    SELECT z.id, w.id, TRUE
+    FROM flood_zones z
+    INNER JOIN geo_wards w ON w.ward_number = CASE z.code WHEN 'ZONE-A' THEN 1 WHEN 'ZONE-B' THEN 2 ELSE 1 END
+  `);
+
   const passwordHash = await hashPassword(TEST_PASSWORD);
   const accounts = [
     ['resident@test.local', 'RESIDENT', 'Rina', 'Resident'],
@@ -154,6 +180,14 @@ async function resetDatabase() {
       [user.rows[0].id, firstName, lastName]
     );
   }
+
+  await pool.query(`
+    INSERT INTO user_jurisdictions (user_id, scope_level)
+    SELECT u.id, 'NATIONAL'
+    FROM users u
+    INNER JOIN roles r ON r.id = u.role_id
+    WHERE r.code IN ('FLOOD_MONITORING_OFFICER', 'EVACUATION_OFFICER')
+  `);
 }
 
 async function startServer() {

@@ -10,6 +10,19 @@ React/Vite -> Express Evidence functionality -> private S3
 
 The frontend and REST backend remain separated in the repository but are deployed together in one Elastic Beanstalk Node.js environment. Express serves the Vite production build and `/api` routes. Task 1 residents can optionally attach evidence photographs; Express stores image bytes in private S3 and evidence metadata in RDS.
 
+## Location architecture
+
+FloodNet keeps official administrative geography separate from operational flood
+zones. Reports and centres use a normalized Province → District → Local Level →
+Ward hierarchy, with optional locality, landmark and GPS detail. Operational
+zones remain a separate many-to-many overlay for broad risk areas. This prevents
+a fictional or temporary response zone from being mistaken for a government
+administrative boundary.
+
+Operational officers receive a server-side jurisdiction assignment. Express
+applies that scope to report, alert, centre, evidence and dashboard queries;
+React selectors only choose filters and never grant access.
+
 ## Task 2
 
 ```text

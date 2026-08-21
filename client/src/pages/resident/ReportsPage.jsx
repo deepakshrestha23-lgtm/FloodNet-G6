@@ -10,7 +10,7 @@ import FilterBar from '../../components/common/FilterBar';
 import Pagination from '../../components/common/Pagination';
 import StatusBadge from '../../components/common/StatusBadge';
 import { REPORT_STATUS, OBSERVED_SEVERITY, toOptions } from '../../utils/enums';
-import { formatDateTime, formatRelative } from '../../utils/formatters';
+import { describeArea, formatDateTime, formatRelative } from '../../utils/formatters';
 
 const PAGE_SIZE = 12;
 
@@ -89,7 +89,7 @@ function ReportsPage() {
                     <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                       <div>
                         <span className="small text-secondary d-block">{report.reportReference}</span>
-                        <h2 className="h6 fw-semibold mb-0 mt-1">{report.zone.name}</h2>
+                        <h2 className="h6 fw-semibold mb-0 mt-1">{describeArea(report)}</h2>
                       </div>
                       <StatusBadge map={REPORT_STATUS} value={report.status} />
                     </div>

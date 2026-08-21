@@ -11,7 +11,7 @@ async function zones(_request, response) {
 async function alerts(request, response) {
   response.status(200).json({
     success: true,
-    data: { alerts: await publicService.getAlerts(request.query.zoneId) },
+    data: { alerts: await publicService.getAlerts(request.query.zoneId, request.query.wardId) },
     message: 'Active alerts retrieved successfully'
   });
 }
@@ -19,7 +19,7 @@ async function alerts(request, response) {
 async function incidents(request, response) {
   response.status(200).json({
     success: true,
-    data: { incidents: await publicService.getIncidents(request.query.zoneId, Number(request.query.limit || 50)) },
+    data: { incidents: await publicService.getIncidents(request.query.zoneId, request.query.wardId, Number(request.query.limit || 50)) },
     message: 'Verified incidents retrieved successfully'
   });
 }
@@ -27,7 +27,7 @@ async function incidents(request, response) {
 async function centres(request, response) {
   response.status(200).json({
     success: true,
-    data: { centres: await publicService.getCentres(request.query.zoneId) },
+    data: { centres: await publicService.getCentres(request.query.zoneId, request.query.wardId) },
     message: 'Evacuation centres retrieved successfully'
   });
 }

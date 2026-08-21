@@ -120,7 +120,7 @@ function ResidentAlertsPage() {
                         <StatusBadge map={OBSERVED_SEVERITY} value={incident.observedSeverity} />
                         <StatusBadge map={ROAD_CONDITION} value={incident.roadCondition} />
                       </div>
-                      <h3 className="h6 fw-semibold mb-1">{incident.zone.name}</h3>
+                      <h3 className="h6 fw-semibold mb-1">{incident.geography ? `${incident.geography.ward.name}, ${incident.geography.district.name}` : incident.zone?.name || 'Location not specified'}</h3>
                       <p className="small text-secondary mb-2">{incident.locationDescription}</p>
                       <p className="small mb-2 preserve-lines">{incident.incidentDescription}</p>
                       <p className="small text-secondary mb-0">

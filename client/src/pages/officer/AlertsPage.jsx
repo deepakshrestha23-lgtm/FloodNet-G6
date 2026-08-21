@@ -18,6 +18,7 @@ import StatusBadge from '../../components/common/StatusBadge';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import { ALERT_SEVERITY, ALERT_STATUS, toOptions } from '../../utils/enums';
 import { formatDateTime } from '../../utils/formatters';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 const PAGE_SIZE = 20;
 
@@ -54,9 +55,20 @@ function AlertsPage() {
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState(null);
 
+  const geography = useMemo(() => ({
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || ''
+  }), [searchParams]);
+
   const filters = useMemo(() => ({
     status: searchParams.get('status') || '',
-    zoneId: searchParams.get('zoneId') || ''
+    zoneId: searchParams.get('zoneId') || '',
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || ''
   }), [searchParams]);
 
   const offset = Number(searchParams.get('offset') || 0);
@@ -84,6 +96,16 @@ function AlertsPage() {
   function changePage(nextOffset) {
     const next = new URLSearchParams(searchParams);
     next.set('offset', String(nextOffset));
+    setSearchParams(next);
+  }
+
+  function updateGeography(nextGeography) {
+    const next = new URLSearchParams(searchParams);
+    ['provinceId', 'districtId', 'localLevelId', 'wardId'].forEach((field) => {
+      if (nextGeography[field]) next.set(field, nextGeography[field]);
+      else next.delete(field);
+    });
+    next.delete('offset');
     setSearchParams(next);
   }
 
@@ -125,7 +147,7 @@ function AlertsPage() {
       header: 'Zones',
       render: (row) => (
         <span className="small">
-          {row.zones.length ? row.zones.map((zone) => zone.code).join(', ') : 'None'}
+          {[...(row.zones || []).map((zone) => zone.code), ...(row.wards || []).map(() => 'ward')].join(', ') || 'None'}
         </span>
       )
     },
@@ -224,6 +246,14 @@ function AlertsPage() {
         onReset={() => setSearchParams(new URLSearchParams())}
       />
 
+      <section className="panel-card p-3 rounded-4 mb-3">
+        <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div><h2 className="h6 fw-semibold mb-1">Administrative location</h2><p className="small text-secondary mb-0">Filter alerts by the official Nepal hierarchy.</p></div>
+          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => updateGeography(EMPTY_GEOGRAPHY)}>Clear location</button>
+        </div>
+        <div className="mt-3 mb-0"><GeographySelector value={geography} onChange={updateGeography} required={false} /></div>
+      </section>
+
       {loading && <LoadingState label="Loading alerts..." />}
       {error && <ErrorState message={error.message} details={error.details} onRetry={reload} />}
 
@@ -262,7 +292,7 @@ function AlertsPage() {
           <div className="alert alert-light border mb-0">
             <strong className="d-block">{pendingAction.alert.title}</strong>
             <span className="small text-secondary">
-              {pendingAction.alert.zones.map((zone) => zone.name).join(', ') || 'No zones selected'}
+              {[...(pendingAction.alert.zones || []).map((zone) => zone.name), ...(pendingAction.alert.wards || []).map((ward) => `${ward.name}, ${ward.localLevel}`)].join(', ') || 'No geographic targets selected'}
             </span>
           </div>
         )}

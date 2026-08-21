@@ -9,6 +9,7 @@ const {
   validateCentreId
 } = require('../validators/centre.validators');
 const centreController = require('../controllers/centre.controller');
+const { validateGeographyQuery } = require('../validators/geography.validators');
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const requireEvacuationOfficer = requireRoles('EVACUATION_OFFICER');
 // Any signed-in user may read centre information so residents and flood
 // monitoring officers can see where capacity is available. Only the Evacuation
 // Officer may change it.
-router.get('/dashboard', asyncHandler(centreController.dashboard));
+router.get('/dashboard', validateGeographyQuery, asyncHandler(centreController.dashboard));
 router.get('/facility-types', asyncHandler(centreController.facilityTypes));
 router.get('/', validateCentreListQuery, asyncHandler(centreController.list));
 router.get('/:id', validateCentreId, asyncHandler(centreController.get));

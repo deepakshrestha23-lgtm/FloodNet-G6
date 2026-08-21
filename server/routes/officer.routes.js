@@ -9,6 +9,7 @@ const {
   validateResourceId
 } = require('../validators/officer.validators');
 const officerController = require('../controllers/officer.controller');
+const { validateGeographyQuery } = require('../validators/geography.validators');
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.use(requireRoles('FLOOD_MONITORING_OFFICER'));
 const validateReportId = validateResourceId('id', 'report identifier');
 const validateAlertId = validateResourceId('id', 'alert identifier');
 
-router.get('/dashboard', asyncHandler(officerController.dashboard));
+router.get('/dashboard', validateGeographyQuery, asyncHandler(officerController.dashboard));
 
 router.get('/reports', validateReportQueueQuery, asyncHandler(officerController.listReports));
 router.get('/reports/:id', validateReportId, asyncHandler(officerController.getReport));

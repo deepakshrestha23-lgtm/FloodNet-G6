@@ -11,7 +11,7 @@ import StatusBadge from '../../components/common/StatusBadge';
 import AlertCard from '../../components/alert/AlertCard';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
 import { REPORT_STATUS } from '../../utils/enums';
-import { formatRelative, formatNumber } from '../../utils/formatters';
+import { describeArea, formatRelative, formatNumber } from '../../utils/formatters';
 
 function ResidentDashboardPage() {
   const { user } = useAuth();
@@ -151,7 +151,7 @@ function ResidentDashboardPage() {
                       {report.reportReference}
                     </Link>
                     <span className="d-block small text-secondary">
-                      {report.zone.name} · {formatRelative(report.createdAt)}
+                      {describeArea(report)} · {formatRelative(report.createdAt)}
                     </span>
                   </div>
                   <StatusBadge map={REPORT_STATUS} value={report.status} />

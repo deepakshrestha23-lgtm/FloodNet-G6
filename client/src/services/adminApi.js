@@ -31,6 +31,13 @@ export function updateUserRole(userId, roleCode) {
   });
 }
 
+export function updateUserJurisdiction(userId, jurisdiction) {
+  return apiRequest(`/api/admin/users/${userId}/jurisdiction`, {
+    method: 'PATCH',
+    body: jurisdiction
+  });
+}
+
 export function fetchRoles() {
   return apiRequest('/api/admin/roles');
 }

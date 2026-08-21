@@ -9,8 +9,8 @@ export function fetchCentre(centreId) {
   return apiRequest(`/api/centres/${centreId}`);
 }
 
-export function fetchCentreDashboard() {
-  return apiRequest('/api/centres/dashboard');
+export function fetchCentreDashboard(params = {}) {
+  return apiRequest(`/api/centres/dashboard${buildQuery(params)}`);
 }
 
 export function fetchFacilityTypes() {

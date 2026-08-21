@@ -3,21 +3,67 @@ const { AppError } = require('../utils/http-error');
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const severities = new Set(['LOW', 'MODERATE', 'HIGH', 'SEVERE', 'UNKNOWN']);
 const roadConditions = new Set(['CLEAR', 'RESTRICTED', 'BLOCKED', 'UNKNOWN']);
+const floodTypes = new Set([
+  'RIVER_OVERFLOW',
+  'FLASH_FLOOD',
+  'URBAN_DRAINAGE',
+  'GLACIAL_LAKE_OUTBURST',
+  'LANDSLIDE_BLOCKAGE',
+  'UNKNOWN'
+]);
 
 function validateReportFields(body, { allowZone }) {
   const errors = [];
   const allowedFields = allowZone
-    ? ['zoneId', 'locationDescription', 'observedSeverity', 'roadCondition', 'incidentDescription', 'observedAt']
-    : ['locationDescription', 'observedSeverity', 'roadCondition', 'incidentDescription', 'observedAt'];
+    ? [
+        'zoneId', 'wardId', 'locality', 'nearestLandmark', 'latitude', 'longitude',
+        'floodType', 'peopleAtRisk', 'locationDescription', 'observedSeverity',
+        'roadCondition', 'incidentDescription', 'observedAt'
+      ]
+    : [
+        'locationDescription', 'locality', 'nearestLandmark', 'latitude', 'longitude',
+        'floodType', 'peopleAtRisk', 'observedSeverity', 'roadCondition',
+        'incidentDescription', 'observedAt'
+      ];
   const unknownFields = Object.keys(body).filter((field) => !allowedFields.includes(field));
 
   if (unknownFields.length) errors.push(`Unknown fields: ${unknownFields.join(', ')}`);
-  if (allowZone && (!uuidPattern.test(body.zoneId || ''))) errors.push('A valid zone ID is required');
+  if (allowZone) {
+    if (body.zoneId && !uuidPattern.test(body.zoneId)) errors.push('The zone ID must be a valid UUID');
+    if (body.wardId && !uuidPattern.test(body.wardId)) errors.push('The ward ID must be a valid UUID');
+    if (!body.zoneId && !body.wardId) errors.push('A flood zone or administrative ward is required');
+  }
   if (typeof body.locationDescription !== 'string' || body.locationDescription.trim().length < 3 || body.locationDescription.trim().length > 500) {
     errors.push('Location description must be between 3 and 500 characters');
   }
   if (!severities.has(body.observedSeverity)) errors.push('Observed severity is invalid');
   if (!roadConditions.has(body.roadCondition)) errors.push('Road condition is invalid');
+  if (body.floodType !== undefined && !floodTypes.has(body.floodType)) errors.push('Flood type is invalid');
+
+  if (body.peopleAtRisk !== undefined && (!Number.isInteger(body.peopleAtRisk) || body.peopleAtRisk < 0 || body.peopleAtRisk > 1000000)) {
+    errors.push('People at immediate risk must be a whole number between 0 and 1,000,000');
+  }
+
+  const hasLatitude = body.latitude !== undefined && body.latitude !== null && body.latitude !== '';
+  const hasLongitude = body.longitude !== undefined && body.longitude !== null && body.longitude !== '';
+  if (hasLatitude !== hasLongitude) {
+    errors.push('Latitude and longitude must be provided together');
+  } else if (hasLatitude && (!Number.isFinite(Number(body.latitude)) || Number(body.latitude) < -90 || Number(body.latitude) > 90)) {
+    errors.push('Latitude must be between -90 and 90');
+  } else if (hasLongitude && (!Number.isFinite(Number(body.longitude)) || Number(body.longitude) < -180 || Number(body.longitude) > 180)) {
+    errors.push('Longitude must be between -180 and 180');
+  }
+
+  for (const [field, label, max] of [
+    ['locality', 'Locality', 160],
+    ['nearestLandmark', 'Nearest landmark', 240]
+  ]) {
+    if (body[field] !== undefined && body[field] !== null && body[field] !== '') {
+      if (typeof body[field] !== 'string' || body[field].trim().length > max) {
+        errors.push(`${label} must be at most ${max} characters`);
+      }
+    }
+  }
   if (typeof body.incidentDescription !== 'string' || body.incidentDescription.trim().length < 3 || body.incidentDescription.trim().length > 2000) {
     errors.push('Incident description must be between 3 and 2000 characters');
   }

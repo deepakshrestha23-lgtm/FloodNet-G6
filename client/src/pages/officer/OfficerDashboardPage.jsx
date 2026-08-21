@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchDashboard } from '../../services/officerApi';
 import { useApiResource } from '../../hooks/useApiResource';
@@ -9,11 +9,13 @@ import DashboardStatCard from '../../components/common/DashboardStatCard';
 import ChartCard from '../../components/chart/ChartCard';
 import { REPORT_STATUS, OBSERVED_SEVERITY, describe } from '../../utils/enums';
 import { formatDate } from '../../utils/formatters';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 const CHART_COLOURS = ['#0d6efd', '#20c997', '#fd7e14', '#dc3545', '#6f42c1', '#6c757d'];
 
 function OfficerDashboardPage() {
-  const loader = useCallback(() => fetchDashboard(), []);
+  const [geography, setGeography] = useState(EMPTY_GEOGRAPHY);
+  const loader = useCallback(() => fetchDashboard(geography), [geography]);
   const { data, loading, error, reload } = useApiResource(loader);
 
   const trendChart = useMemo(() => {
@@ -133,6 +135,17 @@ function OfficerDashboardPage() {
           </>
         }
       />
+
+      <section className="panel-card p-3 p-md-4 rounded-4 mb-4">
+        <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div>
+            <h2 className="h6 fw-semibold mb-1">Dashboard geography</h2>
+            <p className="small text-secondary mb-0">Filter the live figures from province down to ward. Results remain limited to your assigned jurisdiction.</p>
+          </div>
+          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setGeography(EMPTY_GEOGRAPHY)}>Clear filter</button>
+        </div>
+        <div className="mt-3 mb-0"><GeographySelector value={geography} onChange={setGeography} required={false} /></div>
+      </section>
 
       <div className="row g-3 mb-4">
         <div className="col-6 col-lg-3">

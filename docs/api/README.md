@@ -72,6 +72,18 @@ notes and audit data are never returned.
 | GET | `/api/public/incidents` | Public | Verified incident summaries |
 | GET | `/api/public/centres` | Public | Evacuation centre availability |
 
+## Administrative geography
+
+These endpoints are public reference-data lookups used by cascading selectors.
+They return active records only and never accept free-text geography names.
+
+| Method | Path | Access | Purpose |
+|---|---|---|---|
+| GET | `/api/geography/provinces` | Public | List active provinces |
+| GET | `/api/geography/districts?provinceId={id}` | Public | List districts in a province |
+| GET | `/api/geography/local-levels?districtId={id}` | Public | List local levels in a district |
+| GET | `/api/geography/wards?localLevelId={id}` | Public | List wards in a local level |
+
 ## Resident reports
 
 | Method | Path | Access | Purpose |
@@ -97,11 +109,11 @@ alert publishing belong to the operational officer role only.
 | Method | Path | Access | Purpose |
 |---|---|---|---|
 | GET | `/api/officer/dashboard` | Flood Officer | Aggregated situation statistics |
-| GET | `/api/officer/reports` | Flood Officer | Review queue: `status`, `zoneId`, `severity`, `from`, `to`, `sort`, `limit`, `offset` |
+| GET | `/api/officer/reports` | Flood Officer | Review queue: `status`, `zoneId`, `provinceId`, `districtId`, `localLevelId`, `wardId`, `severity`, `from`, `to`, `sort`, `limit`, `offset` |
 | GET | `/api/officer/reports/:id` | Flood Officer | Full dossier: report, reporter, evidence, review and status history |
 | GET | `/api/officer/reports/:id/evidence/:evidenceId/url` | Flood Officer | Short-lived private access URL for one evidence photograph |
 | POST | `/api/officer/reports/:id/review` | Flood Officer | Record a review decision |
-| GET | `/api/officer/alerts` | Flood Officer | List alerts, filterable by status and zone |
+| GET | `/api/officer/alerts` | Flood Officer | List alerts, filterable by status, zone and administrative geography |
 | POST | `/api/officer/alerts` | Flood Officer | Create an alert **draft** |
 | GET | `/api/officer/alerts/:id` | Flood Officer | Alert detail |
 | PATCH | `/api/officer/alerts/:id` | Flood Officer | Edit a draft or published alert |
@@ -128,7 +140,7 @@ where capacity exists. Writes are restricted to the Evacuation Officer.
 
 | Method | Path | Access | Purpose |
 |---|---|---|---|
-| GET | `/api/centres` | Any | List centres, filterable by zone and status |
+| GET | `/api/centres` | Any | List centres, filterable by zone, administrative geography and status |
 | GET | `/api/centres/:id` | Any | Centre detail |
 | GET | `/api/centres/dashboard` | Any | Aggregated capacity statistics |
 | GET | `/api/centres/facility-types` | Any | Active facility vocabulary |
@@ -155,6 +167,7 @@ reviewing reports or publishing alerts.
 | GET | `/api/admin/users/:id` | Administrator | User detail |
 | PATCH | `/api/admin/users/:id/status` | Administrator | Activate or deactivate an account |
 | PATCH | `/api/admin/users/:id/role` | Administrator | Assign a role |
+| PATCH | `/api/admin/users/:id/jurisdiction` | Administrator | Assign national, province, district, local-level or ward operational coverage |
 | GET | `/api/admin/roles` | Administrator | Available roles |
 | GET | `/api/admin/zones` | Administrator | All zones including inactive |
 | POST | `/api/admin/zones` | Administrator | Create a zone |

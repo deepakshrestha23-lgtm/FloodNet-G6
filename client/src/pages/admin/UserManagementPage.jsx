@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import {
   createUser,
   fetchUsers,
+  updateUserJurisdiction,
   updateUserRole,
   updateUserStatus
 } from '../../services/adminApi';
@@ -18,8 +19,56 @@ import StatusBadge from '../../components/common/StatusBadge';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import { ROLE, USER_STATUS, toOptions } from '../../utils/enums';
 import { formatDateTime } from '../../utils/formatters';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 const PAGE_SIZE = 20;
+
+function JurisdictionEditor({ user, onSaved, onCancel }) {
+  const [scopeLevel, setScopeLevel] = useState(user.jurisdiction?.scopeLevel || 'NATIONAL');
+  const [geography, setGeography] = useState({
+    ...EMPTY_GEOGRAPHY,
+    provinceId: user.jurisdiction?.province?.id || '',
+    districtId: user.jurisdiction?.district?.id || '',
+    localLevelId: user.jurisdiction?.localLevel?.id || '',
+    wardId: user.jurisdiction?.ward?.id || ''
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function save(event) {
+    event.preventDefault();
+    const field = { PROVINCE: 'provinceId', DISTRICT: 'districtId', LOCAL_LEVEL: 'localLevelId', WARD: 'wardId' }[scopeLevel];
+    if (scopeLevel !== 'NATIONAL' && !geography[field]) {
+      setError({ message: `Select the ${scopeLevel.toLowerCase().replace('_', ' ')} before saving.` });
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    const payload = { scopeLevel };
+    if (field) payload[field] = geography[field];
+    try {
+      await updateUserJurisdiction(user.id, payload);
+      await onSaved();
+    } catch (caughtError) {
+      setError(caughtError);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form className="panel-card p-3 p-md-4 mb-3" onSubmit={save}>
+      <div className="d-flex justify-content-between align-items-start gap-2 mb-3"><div><h2 className="h6 fw-semibold mb-1">Assign operational jurisdiction</h2><p className="small text-secondary mb-0">{user.firstName} {user.lastName} · {user.email}</p></div><button type="button" className="btn btn-sm btn-outline-secondary" onClick={onCancel}>Close</button></div>
+      <div className="row g-3 align-items-end">
+        <div className="col-12 col-md-4"><label className="form-label fw-semibold" htmlFor="jurisdiction-scope">Coverage level</label><select id="jurisdiction-scope" className="form-select" value={scopeLevel} onChange={(event) => { setScopeLevel(event.target.value); setGeography(EMPTY_GEOGRAPHY); }}><option value="NATIONAL">National</option><option value="PROVINCE">Province</option><option value="DISTRICT">District</option><option value="LOCAL_LEVEL">Local level</option><option value="WARD">Ward</option></select></div>
+        <div className="col-12 col-md-8"><p className="small text-secondary mb-0">National officers can work across Nepal. Narrower assignments limit every operational query and write action on the server.</p></div>
+      </div>
+      {scopeLevel !== 'NATIONAL' && <div className="mt-3"><GeographySelector value={geography} onChange={setGeography} required={false} /></div>}
+      {error && <ErrorState message={error.message} details={error.details} />}
+      <button className="btn btn-primary" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save jurisdiction'}</button>
+    </form>
+  );
+}
 
 function CreateUserForm({ onCreated, onCancel }) {
   const [form, setForm] = useState({
@@ -160,6 +209,7 @@ function UserManagementPage() {
   const [pendingAction, setPendingAction] = useState(null);
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState(null);
+  const [jurisdictionTarget, setJurisdictionTarget] = useState(null);
 
   const filters = useMemo(() => ({
     search: searchParams.get('search') || '',
@@ -233,6 +283,11 @@ function UserManagementPage() {
       render: (row) => <StatusBadge map={USER_STATUS} value={row.status} />
     },
     {
+      key: 'jurisdiction',
+      header: 'Operational coverage',
+      render: (row) => <span className="small">{row.jurisdiction ? row.jurisdiction.scopeLevel.replaceAll('_', ' ') : 'Not assigned'}</span>
+    },
+    {
       key: 'lastLoginAt',
       header: 'Last sign-in',
       render: (row) => <span className="small">{row.lastLoginAt ? formatDateTime(row.lastLoginAt) : 'Never'}</span>
@@ -273,6 +328,11 @@ function UserManagementPage() {
             >
               {row.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
             </button>
+            {['FLOOD_MONITORING_OFFICER', 'EVACUATION_OFFICER'].includes(row.role.code) && (
+              <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => setJurisdictionTarget(row)}>
+                Jurisdiction
+              </button>
+            )}
           </div>
         );
       }
@@ -316,6 +376,14 @@ function UserManagementPage() {
             setShowCreate(false);
             await reload();
           }}
+        />
+      )}
+
+      {jurisdictionTarget && (
+        <JurisdictionEditor
+          user={jurisdictionTarget}
+          onCancel={() => setJurisdictionTarget(null)}
+          onSaved={async () => { setJurisdictionTarget(null); await reload(); }}
         />
       )}
 

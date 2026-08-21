@@ -2,6 +2,7 @@ const { AppError } = require('../utils/http-error');
 const { hashPassword } = require('../utils/password');
 const adminRepository = require('../repositories/admin.repository');
 const centreRepository = require('../repositories/centre.repository');
+const jurisdictionRepository = require('../repositories/jurisdiction.repository');
 
 const ASSIGNABLE_ROLES = new Set([
   'RESIDENT',
@@ -33,6 +34,25 @@ async function createStaffUser(admin, input) {
     throw new AppError(400, 'INVALID_ROLE', 'The selected role is not assignable');
   }
 
+  if (input.jurisdiction && !['FLOOD_MONITORING_OFFICER', 'EVACUATION_OFFICER'].includes(input.roleCode)) {
+    throw new AppError(400, 'JURISDICTION_ROLE_MISMATCH', 'Geographic jurisdictions are intended for operational officer accounts');
+  }
+
+  if (input.jurisdiction) {
+    const targetId = input.jurisdiction.scopeLevel === 'NATIONAL'
+      ? null
+      : input.jurisdiction[{
+          PROVINCE: 'provinceId',
+          DISTRICT: 'districtId',
+          LOCAL_LEVEL: 'localLevelId',
+          WARD: 'wardId'
+        }[input.jurisdiction.scopeLevel]];
+
+    if (!(await jurisdictionRepository.isValidScopeTarget(input.jurisdiction.scopeLevel, targetId))) {
+      throw new AppError(400, 'INVALID_JURISDICTION_TARGET', 'The selected geographic target is invalid or inactive');
+    }
+  }
+
   const passwordHash = await hashPassword(input.password);
 
   let result;
@@ -44,7 +64,8 @@ async function createStaffUser(admin, input) {
       roleCode: input.roleCode,
       firstName: input.firstName,
       lastName: input.lastName,
-      phone: input.phone
+      phone: input.phone,
+      jurisdiction: input.jurisdiction
     });
   } catch (error) {
     if (error.code === '23505') {
@@ -59,6 +80,34 @@ async function createStaffUser(admin, input) {
   }
 
   return adminRepository.findUserById(result.userId);
+}
+
+async function updateUserJurisdiction(admin, userId, input) {
+  const target = await getUser(userId);
+  if (!['FLOOD_MONITORING_OFFICER', 'EVACUATION_OFFICER'].includes(target.role.code)) {
+    throw new AppError(400, 'JURISDICTION_ROLE_MISMATCH', 'Geographic jurisdictions are intended for operational officer accounts');
+  }
+
+  const targetId = input.scopeLevel === 'NATIONAL'
+    ? null
+    : input[{
+        PROVINCE: 'provinceId',
+        DISTRICT: 'districtId',
+        LOCAL_LEVEL: 'localLevelId',
+        WARD: 'wardId'
+      }[input.scopeLevel]];
+
+  if (!(await jurisdictionRepository.isValidScopeTarget(input.scopeLevel, targetId))) {
+    throw new AppError(400, 'INVALID_JURISDICTION_TARGET', 'The selected geographic target is invalid or inactive');
+  }
+
+  const updated = await adminRepository.updateUserJurisdiction({
+    actorId: admin.id,
+    userId,
+    jurisdiction: input
+  });
+  if (!updated) throw new AppError(404, 'USER_NOT_FOUND', 'The requested user was not found');
+  return adminRepository.findUserById(userId);
 }
 
 /**
@@ -247,6 +296,7 @@ module.exports = {
   createStaffUser,
   updateUserStatus,
   updateUserRole,
+  updateUserJurisdiction,
   listZones,
   createZone,
   updateZone,

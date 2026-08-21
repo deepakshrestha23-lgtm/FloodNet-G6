@@ -23,6 +23,14 @@ The browser never receives AWS credentials and no permanent `server/uploads` dir
 
 For Elastic Beanstalk, configure the Express runtime with an instance role that can access only the FloodNet evidence prefix. Set `EVIDENCE_STORAGE_MODE=s3` and provide `EVIDENCE_BUCKET_NAME`.
 
+Task 1 photo evidence is therefore complete functionality. It does not wait for
+Task 2 and does not use API Gateway or Lambda. The application path is:
+
+```text
+React/Vite -> Express -> private S3 image bytes
+                    \-> RDS evidence metadata
+```
+
 ## Task 2
 
 Task 2 keeps the same report and evidence records but switches the evidence upload responsibility to the existing serverless Evidence Service. Enable the Task 2 client path with:

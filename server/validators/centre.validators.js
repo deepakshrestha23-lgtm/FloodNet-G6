@@ -52,6 +52,11 @@ function validateCentreBody(request, _response, next) {
 
   rejectUnknownFields(errors, body, [
     'zoneId',
+    'wardId',
+    'locality',
+    'nearestLandmark',
+    'latitude',
+    'longitude',
     'name',
     'locationDescription',
     'contactPhone',
@@ -61,7 +66,9 @@ function validateCentreBody(request, _response, next) {
     'facilities'
   ]);
 
-  checkUuid(errors, body.zoneId, 'Flood zone');
+  if (body.zoneId !== undefined && body.zoneId !== null && body.zoneId !== '') checkUuid(errors, body.zoneId, 'Flood zone');
+  if (body.wardId !== undefined && body.wardId !== null && body.wardId !== '') checkUuid(errors, body.wardId, 'Administrative ward');
+  if (!body.zoneId && !body.wardId) errors.push('A flood zone or administrative ward is required');
   const name = checkString(errors, body.name, 'Centre name', { min: 3, max: 160 });
   const locationDescription = checkString(errors, body.locationDescription, 'Location description', { min: 3, max: 500 });
 
@@ -94,10 +101,31 @@ function validateCentreBody(request, _response, next) {
 
   const facilities = parseFacilities(errors, body.facilities);
 
+  const hasLatitude = body.latitude !== undefined && body.latitude !== null && body.latitude !== '';
+  const hasLongitude = body.longitude !== undefined && body.longitude !== null && body.longitude !== '';
+  if (hasLatitude !== hasLongitude) errors.push('Latitude and longitude must be provided together');
+  if (hasLatitude && (!Number.isFinite(Number(body.latitude)) || Number(body.latitude) < -90 || Number(body.latitude) > 90)) {
+    errors.push('Latitude must be between -90 and 90');
+  }
+  if (hasLongitude && (!Number.isFinite(Number(body.longitude)) || Number(body.longitude) < -180 || Number(body.longitude) > 180)) {
+    errors.push('Longitude must be between -180 and 180');
+  }
+
+  for (const [field, label, max] of [['locality', 'Locality', 160], ['nearestLandmark', 'Nearest landmark', 240]]) {
+    if (body[field] !== undefined && body[field] !== null && body[field] !== '') {
+      if (typeof body[field] !== 'string' || body[field].trim().length > max) errors.push(`${label} must be at most ${max} characters`);
+    }
+  }
+
   if (errors.length) return fail(next, errors);
 
   request.centreInput = {
-    zoneId: body.zoneId,
+    zoneId: body.zoneId || null,
+    wardId: body.wardId || null,
+    locality: body.locality?.trim() || null,
+    nearestLandmark: body.nearestLandmark?.trim() || null,
+    latitude: hasLatitude ? Number(body.latitude) : null,
+    longitude: hasLongitude ? Number(body.longitude) : null,
     name,
     locationDescription,
     contactPhone,
@@ -147,6 +175,15 @@ function validateCentreListQuery(request, _response, next) {
     errors.push('The zone filter must be a valid identifier');
   }
 
+  for (const [field, label] of [
+    ['provinceId', 'province'],
+    ['districtId', 'district'],
+    ['localLevelId', 'local-level'],
+    ['wardId', 'ward']
+  ]) {
+    if (query[field] && !isUuid(query[field])) errors.push(`The ${label} filter must be a valid identifier`);
+  }
+
   if (query.status && !OPERATIONAL_STATUSES.has(query.status)) {
     errors.push('The status filter is invalid');
   }
@@ -155,6 +192,10 @@ function validateCentreListQuery(request, _response, next) {
 
   request.centreQuery = {
     zoneId: query.zoneId || undefined,
+    provinceId: query.provinceId || undefined,
+    districtId: query.districtId || undefined,
+    localLevelId: query.localLevelId || undefined,
+    wardId: query.wardId || undefined,
     status: query.status || undefined,
     includeArchived: query.includeArchived === 'true'
   };

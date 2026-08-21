@@ -18,6 +18,7 @@ const ROLE_CODES = new Set([
   'ADMINISTRATOR'
 ]);
 const USER_STATUSES = new Set(['ACTIVE', 'INACTIVE']);
+const JURISDICTION_LEVELS = new Set(['NATIONAL', 'PROVINCE', 'DISTRICT', 'LOCAL_LEVEL', 'WARD']);
 
 function fail(next, errors) {
   return next(new AppError(400, 'VALIDATION_ERROR', 'The submitted data is invalid', errors));
@@ -47,6 +48,54 @@ function checkPassword(errors, password) {
   if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
     errors.push('Password must contain uppercase, lowercase and numeric characters');
   }
+}
+
+function parseJurisdiction(errors, rawJurisdiction, { optional = true } = {}) {
+  if (rawJurisdiction === undefined || rawJurisdiction === null) {
+    if (optional) return null;
+    errors.push('A geographic jurisdiction is required for an operational officer');
+    return null;
+  }
+
+  if (!rawJurisdiction || typeof rawJurisdiction !== 'object' || Array.isArray(rawJurisdiction)) {
+    errors.push('Jurisdiction must be an object');
+    return null;
+  }
+
+  rejectUnknownFields(errors, rawJurisdiction, ['scopeLevel', 'provinceId', 'districtId', 'localLevelId', 'wardId']);
+  checkEnum(errors, rawJurisdiction.scopeLevel, 'Jurisdiction level', JURISDICTION_LEVELS);
+
+  const fields = {
+    PROVINCE: 'provinceId',
+    DISTRICT: 'districtId',
+    LOCAL_LEVEL: 'localLevelId',
+    WARD: 'wardId'
+  };
+  const expectedField = fields[rawJurisdiction.scopeLevel];
+  const idFields = ['provinceId', 'districtId', 'localLevelId', 'wardId'];
+
+  idFields.forEach((field) => {
+    if (rawJurisdiction[field] !== undefined && rawJurisdiction[field] !== null) checkUuid(errors, rawJurisdiction[field], field);
+    if (field !== expectedField && rawJurisdiction[field] !== undefined && rawJurisdiction[field] !== null) {
+      errors.push(`${field} is not valid for ${rawJurisdiction.scopeLevel || 'this jurisdiction'}`);
+    }
+  });
+
+  if (rawJurisdiction.scopeLevel !== 'NATIONAL' && !rawJurisdiction[expectedField]) {
+    errors.push(`${expectedField} is required for ${rawJurisdiction.scopeLevel || 'this jurisdiction'}`);
+  }
+  if (rawJurisdiction.scopeLevel === 'NATIONAL' && idFields.some((field) => rawJurisdiction[field])) {
+    errors.push('A national jurisdiction cannot include a narrower geographic ID');
+  }
+
+  if (errors.length) return null;
+  return {
+    scopeLevel: rawJurisdiction.scopeLevel,
+    provinceId: rawJurisdiction.provinceId,
+    districtId: rawJurisdiction.districtId,
+    localLevelId: rawJurisdiction.localLevelId,
+    wardId: rawJurisdiction.wardId
+  };
 }
 
 function validateUserListQuery(request, _response, next) {
@@ -84,7 +133,7 @@ function validateStaffUserBody(request, _response, next) {
   const body = request.body || {};
 
   rejectUnknownFields(errors, body, [
-    'email', 'password', 'roleCode', 'firstName', 'lastName', 'phone'
+    'email', 'password', 'roleCode', 'firstName', 'lastName', 'phone', 'jurisdiction'
   ]);
 
   if (typeof body.email !== 'string' || !EMAIL_PATTERN.test(body.email.trim())) {
@@ -102,6 +151,8 @@ function validateStaffUserBody(request, _response, next) {
     phone = checkString(errors, body.phone, 'Phone number', { min: 3, max: 40 });
   }
 
+  const jurisdiction = parseJurisdiction(errors, body.jurisdiction);
+
   if (errors.length) return fail(next, errors);
 
   request.staffUserInput = {
@@ -110,9 +161,18 @@ function validateStaffUserBody(request, _response, next) {
     roleCode: body.roleCode,
     firstName,
     lastName,
-    phone
+    phone,
+    jurisdiction
   };
 
+  return next();
+}
+
+function validateJurisdictionBody(request, _response, next) {
+  const errors = [];
+  const jurisdiction = parseJurisdiction(errors, request.body || {}, { optional: false });
+  if (errors.length) return fail(next, errors);
+  request.jurisdictionInput = jurisdiction;
   return next();
 }
 
@@ -277,6 +337,7 @@ function validateResourceId(paramName, label) {
 module.exports = {
   validateUserListQuery,
   validateStaffUserBody,
+  validateJurisdictionBody,
   validateUserStatusBody,
   validateUserRoleBody,
   validateZoneBody,

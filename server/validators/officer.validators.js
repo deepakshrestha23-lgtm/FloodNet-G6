@@ -52,6 +52,15 @@ function validateReportQueueQuery(request, _response, next) {
     errors.push('The zone filter must be a valid identifier');
   }
 
+  for (const [field, label] of [
+    ['provinceId', 'province'],
+    ['districtId', 'district'],
+    ['localLevelId', 'local-level'],
+    ['wardId', 'ward']
+  ]) {
+    if (query[field] && !isUuid(query[field])) errors.push(`The ${label} filter must be a valid identifier`);
+  }
+
   if (query.severity && !SEVERITIES.has(query.severity)) {
     errors.push('The severity filter is invalid');
   }
@@ -75,6 +84,10 @@ function validateReportQueueQuery(request, _response, next) {
   request.queueQuery = {
     status: query.status || undefined,
     zoneId: query.zoneId || undefined,
+    provinceId: query.provinceId || undefined,
+    districtId: query.districtId || undefined,
+    localLevelId: query.localLevelId || undefined,
+    wardId: query.wardId || undefined,
     severity: query.severity || undefined,
     from: from || undefined,
     to: to || undefined,
@@ -113,7 +126,8 @@ function validateAlertBody(request, _response, next) {
     'recommendedActions',
     'validFrom',
     'expiresAt',
-    'zoneIds'
+    'zoneIds',
+    'wardIds'
   ]);
 
   const title = checkString(errors, body.title, 'Alert title', { min: 5, max: 180 });
@@ -123,12 +137,17 @@ function validateAlertBody(request, _response, next) {
   const validFrom = checkDate(errors, body.validFrom, 'Valid from');
   const expiresAt = checkDate(errors, body.expiresAt, 'Expires at');
 
-  if (!Array.isArray(body.zoneIds) || body.zoneIds.length === 0) {
-    errors.push('At least one affected flood zone is required');
-  } else if (body.zoneIds.length > 50) {
-    errors.push('An alert cannot target more than 50 zones');
+  const zoneIds = body.zoneIds || [];
+  const wardIds = body.wardIds || [];
+  if (!Array.isArray(zoneIds) || !Array.isArray(wardIds) || (zoneIds.length === 0 && wardIds.length === 0)) {
+    errors.push('At least one affected flood zone or administrative ward is required');
+  } else if (zoneIds.length > 50) {
+    errors.push('An alert cannot target more than 50 flood zones');
+  } else if (wardIds.length > 200) {
+    errors.push('An alert cannot target more than 200 administrative wards');
   } else {
-    body.zoneIds.forEach((zoneId) => checkUuid(errors, zoneId, 'Affected zone'));
+    zoneIds.forEach((zoneId) => checkUuid(errors, zoneId, 'Affected zone'));
+    wardIds.forEach((wardId) => checkUuid(errors, wardId, 'Affected ward'));
   }
 
   if (errors.length) return fail(next, errors);
@@ -140,7 +159,8 @@ function validateAlertBody(request, _response, next) {
     recommendedActions,
     validFrom,
     expiresAt,
-    zoneIds: [...new Set(body.zoneIds)]
+    zoneIds: [...new Set(zoneIds)],
+    wardIds: [...new Set(wardIds)]
   };
 
   return next();
@@ -158,11 +178,24 @@ function validateAlertListQuery(request, _response, next) {
     errors.push('The zone filter must be a valid identifier');
   }
 
+  for (const [field, label] of [
+    ['provinceId', 'province'],
+    ['districtId', 'district'],
+    ['localLevelId', 'local-level'],
+    ['wardId', 'ward']
+  ]) {
+    if (request.query[field] && !isUuid(request.query[field])) errors.push(`The ${label} filter must be a valid identifier`);
+  }
+
   if (errors.length) return fail(next, errors);
 
   request.alertQuery = {
     status: request.query.status || undefined,
     zoneId: request.query.zoneId || undefined,
+    provinceId: request.query.provinceId || undefined,
+    districtId: request.query.districtId || undefined,
+    localLevelId: request.query.localLevelId || undefined,
+    wardId: request.query.wardId || undefined,
     limit,
     offset
   };

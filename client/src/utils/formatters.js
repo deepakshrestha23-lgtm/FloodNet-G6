@@ -61,3 +61,17 @@ export function fullName(person) {
   const name = [person.firstName, person.lastName].filter(Boolean).join(' ');
   return name || person.email || '—';
 }
+
+export function describeArea(item) {
+  if (!item) return 'Location not specified';
+  if (item.geography) {
+    return [
+      item.geography.ward?.name,
+      item.geography.localLevel?.name,
+      item.geography.district?.name,
+      item.geography.province?.name
+    ].filter(Boolean).join(', ');
+  }
+  if (item.zone) return item.zone.name;
+  return 'Location not specified';
+}

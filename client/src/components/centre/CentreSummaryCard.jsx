@@ -1,6 +1,6 @@
 import StatusBadge from '../common/StatusBadge';
 import { CENTRE_STATUS } from '../../utils/enums';
-import { formatNumber } from '../../utils/formatters';
+import { describeArea, formatNumber } from '../../utils/formatters';
 
 /**
  * Read-only view of an evacuation centre for residents and public visitors.
@@ -18,7 +18,7 @@ function CentreSummaryCard({ centre }) {
       <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
         <div>
           <h3 className="h6 fw-semibold mb-1">{centre.name}</h3>
-          <p className="small text-secondary mb-0">{centre.zone.name}</p>
+          <p className="small text-secondary mb-0">{describeArea(centre)}</p>
         </div>
         <StatusBadge map={CENTRE_STATUS} value={centre.operationalStatus} />
       </div>

@@ -15,7 +15,7 @@ import {
   REVIEW_ACTION,
   describe
 } from '../../utils/enums';
-import { formatDateTime } from '../../utils/formatters';
+import { describeArea, formatDateTime } from '../../utils/formatters';
 
 function DetailRow({ label, children }) {
   return (
@@ -81,7 +81,7 @@ function ReportDetailPage() {
       <PageHeader
         eyebrow="Resident"
         title={report.reportReference}
-        description={`${report.zone.name} · ${report.locationDescription}`}
+        description={`${describeArea(report)} · ${report.locationDescription}`}
         actions={
           <>
             <Link className="btn btn-outline-secondary" to="/resident/reports">Back to reports</Link>

@@ -1,5 +1,6 @@
 const { pool } = require('../db/pool');
 const { insertAuditLog } = require('../utils/audit');
+const { alertPredicate, alertGeographyPredicate } = require('./jurisdiction.repository');
 
 function getPool() {
   if (!pool) {
@@ -34,7 +35,20 @@ const alertSelect = `
         DISTINCT JSONB_BUILD_OBJECT('id', z.id, 'code', z.code, 'name', z.name)
       ) FILTER (WHERE z.id IS NOT NULL),
       '[]'::JSON
-    ) AS zones
+    ) AS zones,
+    COALESCE((
+      SELECT JSON_AGG(
+        JSONB_BUILD_OBJECT('id', w.id, 'number', w.ward_number, 'name', w.name,
+          'localLevel', ll.name, 'district', d.name, 'province', p.name)
+        ORDER BY p.name, d.name, ll.name, w.ward_number
+      )
+      FROM alert_wards aw
+      INNER JOIN geo_wards w ON w.id = aw.ward_id
+      INNER JOIN geo_local_levels ll ON ll.id = w.local_level_id
+      INNER JOIN geo_districts d ON d.id = ll.district_id
+      INNER JOIN geo_provinces p ON p.id = d.province_id
+      WHERE aw.alert_id = a.id
+    ), '[]'::JSON) AS wards
   FROM flood_alerts a
   LEFT JOIN alert_zones az ON az.alert_id = a.id
   LEFT JOIN flood_zones z ON z.id = az.zone_id
@@ -57,28 +71,59 @@ function mapAlert(row) {
     publishedAt: row.published_at,
     cancelledAt: row.cancelled_at,
     zones: row.zones,
+    wards: row.wards,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
 }
 
-async function findAlertById(alertId) {
+async function findAlertById(alertId, officerId) {
+  const parameters = [alertId];
+  const authorization = officerId ? ` AND ${alertPredicate('a', 2)}` : '';
+  if (officerId) parameters.push(officerId);
   const result = await getPool().query(
-    `${alertSelect} WHERE a.id = $1 GROUP BY a.id`,
-    [alertId]
+    `${alertSelect} WHERE a.id = $1${authorization} GROUP BY a.id`,
+    parameters
   );
 
   return mapAlert(result.rows[0]);
 }
 
-async function listAlerts({ status, zoneId, limit, offset }) {
-  const parameters = [status || null, zoneId || null, limit, offset];
+async function listAlerts({
+  officerId,
+  status,
+  zoneId,
+  provinceId,
+  districtId,
+  localLevelId,
+  wardId,
+  limit,
+  offset
+}) {
+  const parameters = [
+    officerId,
+    status || null,
+    zoneId || null,
+    provinceId || null,
+    districtId || null,
+    localLevelId || null,
+    wardId || null,
+    limit,
+    offset
+  ];
 
   const filterClause = `
-    WHERE ($1::VARCHAR IS NULL OR a.status = $1)
-      AND ($2::UUID IS NULL OR EXISTS (
-        SELECT 1 FROM alert_zones f WHERE f.alert_id = a.id AND f.zone_id = $2
+    WHERE ${alertPredicate('a', 1)}
+      AND ($2::VARCHAR IS NULL OR a.status = $2)
+      AND ($3::UUID IS NULL OR EXISTS (
+        SELECT 1 FROM alert_zones f WHERE f.alert_id = a.id AND f.zone_id = $3
       ))
+      AND ${alertGeographyPredicate('a', {
+        provinceParameter: 4,
+        districtParameter: 5,
+        localLevelParameter: 6,
+        wardParameter: 7
+      })}
   `;
 
   const result = await getPool().query(
@@ -87,7 +132,7 @@ async function listAlerts({ status, zoneId, limit, offset }) {
       ${filterClause}
       GROUP BY a.id
       ORDER BY a.created_at DESC
-      LIMIT $3 OFFSET $4
+      LIMIT $8 OFFSET $9
     `,
     parameters
   );
@@ -98,7 +143,7 @@ async function listAlerts({ status, zoneId, limit, offset }) {
       FROM flood_alerts a
       ${filterClause}
     `,
-    parameters.slice(0, 2)
+    parameters.slice(0, 7)
   );
 
   return {
@@ -107,13 +152,21 @@ async function listAlerts({ status, zoneId, limit, offset }) {
   };
 }
 
-async function replaceAlertZones(client, alertId, zoneIds) {
+async function replaceAlertTargets(client, alertId, zoneIds, wardIds) {
   await client.query('DELETE FROM alert_zones WHERE alert_id = $1', [alertId]);
+  await client.query('DELETE FROM alert_wards WHERE alert_id = $1', [alertId]);
 
   for (const zoneId of zoneIds) {
     await client.query(
       'INSERT INTO alert_zones (alert_id, zone_id) VALUES ($1, $2)',
       [alertId, zoneId]
+    );
+  }
+
+  for (const wardId of wardIds) {
+    await client.query(
+      'INSERT INTO alert_wards (alert_id, ward_id) VALUES ($1, $2)',
+      [alertId, wardId]
     );
   }
 }
@@ -127,7 +180,8 @@ async function createAlert({
   recommendedActions,
   validFrom,
   expiresAt,
-  zoneIds
+  zoneIds = [],
+  wardIds = []
 }) {
   const client = await getPool().connect();
 
@@ -156,14 +210,14 @@ async function createAlert({
     );
 
     const alertId = alertResult.rows[0].id;
-    await replaceAlertZones(client, alertId, zoneIds);
+    await replaceAlertTargets(client, alertId, zoneIds, wardIds);
 
     await insertAuditLog(client, {
       actorId: createdBy,
       action: 'ALERT_CREATED',
       entityType: 'FLOOD_ALERT',
       entityId: alertId,
-      metadata: { severity, zoneCount: zoneIds.length }
+      metadata: { severity, zoneCount: zoneIds.length, wardCount: wardIds.length }
     });
 
     await client.query('COMMIT');
@@ -189,7 +243,8 @@ async function updateAlert({
   recommendedActions,
   validFrom,
   expiresAt,
-  zoneIds
+  zoneIds = [],
+  wardIds = []
 }) {
   const client = await getPool().connect();
 
@@ -218,14 +273,14 @@ async function updateAlert({
       return null;
     }
 
-    await replaceAlertZones(client, alertId, zoneIds);
+    await replaceAlertTargets(client, alertId, zoneIds, wardIds);
 
     await insertAuditLog(client, {
       actorId,
       action: 'ALERT_UPDATED',
       entityType: 'FLOOD_ALERT',
       entityId: alertId,
-      metadata: { severity, zoneCount: zoneIds.length }
+      metadata: { severity, zoneCount: zoneIds.length, wardCount: wardIds.length }
     });
 
     await client.query('COMMIT');
@@ -242,15 +297,17 @@ async function updateAlert({
  * Moves an alert into a published or terminal state. Allowed source states are
  * checked under a row lock so two officers cannot both publish the same draft.
  */
-async function transitionAlert({ alertId, actorId, newStatus, allowedFromStatuses, auditAction }) {
+async function transitionAlert({ alertId, actorId, newStatus, allowedFromStatuses, auditAction, officerId }) {
   const client = await getPool().connect();
 
   try {
     await client.query('BEGIN');
 
     const currentResult = await client.query(
-      'SELECT status FROM flood_alerts WHERE id = $1 FOR UPDATE',
-      [alertId]
+      `SELECT status FROM flood_alerts a
+       WHERE a.id = $1 AND ${alertPredicate('a', 2)}
+       FOR UPDATE`,
+      [alertId, officerId]
     );
 
     if (currentResult.rowCount === 0) {
@@ -266,12 +323,15 @@ async function transitionAlert({ alertId, actorId, newStatus, allowedFromStatuse
     }
 
     if (newStatus === 'PUBLISHED') {
-      const zoneCheck = await client.query(
-        'SELECT COUNT(*)::INTEGER AS total FROM alert_zones WHERE alert_id = $1',
+      const targetCheck = await client.query(
+        `SELECT (
+          (SELECT COUNT(*) FROM alert_zones WHERE alert_id = $1) +
+          (SELECT COUNT(*) FROM alert_wards WHERE alert_id = $1)
+        )::INTEGER AS total`,
         [alertId]
       );
 
-      if (zoneCheck.rows[0].total === 0) {
+      if (targetCheck.rows[0].total === 0) {
         await client.query('ROLLBACK');
         return { outcome: 'NO_ZONES' };
       }

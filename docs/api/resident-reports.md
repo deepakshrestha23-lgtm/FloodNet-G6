@@ -33,6 +33,28 @@ Residents cannot verify, reject or close their own reports.
 
 All report endpoints require a valid access token. Ownership is enforced in SQL using both the report ID and authenticated resident ID.
 
+## Location fields
+
+New reports use `wardId` from the public cascading geography API as their
+canonical administrative location. They may also include:
+
+```json
+{
+  "wardId": "uuid",
+  "locality": "Tole or neighbourhood",
+  "nearestLandmark": "Bridge or school",
+  "latitude": 27.7172,
+  "longitude": 85.324,
+  "floodType": "URBAN_DRAINAGE",
+  "peopleAtRisk": 12
+}
+```
+
+`zoneId` is optional operational context. It is not a replacement for the
+official ward and is never treated as an administrative boundary. A report's
+ward, locality, landmark and coordinates are fixed after initial submission;
+the additional-information flow can update the descriptive observation fields.
+
 ## Public endpoints
 
 | Method | Endpoint | Public data |
@@ -44,4 +66,4 @@ All report endpoints require a valid access token. Ownership is enforced in SQL 
 
 Public responses never include resident identity, private officer notes, evidence metadata or audit records.
 
-Task 1 uses `POST /api/reports/:id/evidence`, so the browser sends images to Express and Express uploads them to private S3. The Task 2 Evidence Lambda remains exposed separately through API Gateway as `POST /evidence/upload-url`; in that mode the browser uses the returned URL for the direct S3 upload, then calls the compatible Express completion endpoint.
+Task 1 uses `POST /api/reports/:id/evidence`, so the browser sends images to Express and Express uploads them to private S3. The Task 2 Evidence Lambda remains exposed separately through API Gateway as `POST /evidence/upload-url`; in that mode the browser uses the returned URL for the direct S3 upload, then calls the compatible Express completion endpoint. Task 2 is not required for the working Task 1 photo feature.

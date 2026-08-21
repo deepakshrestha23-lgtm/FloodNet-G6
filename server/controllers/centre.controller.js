@@ -88,8 +88,8 @@ async function facilityTypes(_request, response) {
   });
 }
 
-async function dashboard(_request, response) {
-  const data = await centreService.getDashboard();
+async function dashboard(request, response) {
+  const data = await centreService.getDashboard(request.user, request.geographyQuery);
 
   response.status(200).json({
     success: true,

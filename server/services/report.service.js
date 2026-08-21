@@ -24,10 +24,19 @@ function validateStatusFilter(status) {
 }
 
 async function submitReport(residentId, input) {
-  const validZone = await userRepository.isActiveZone(input.zoneId);
+  const validZone = input.zoneId ? await userRepository.isActiveZone(input.zoneId) : true;
+  const validWard = input.wardId ? await userRepository.isActiveWard(input.wardId) : true;
 
   if (!validZone) {
     throw new AppError(400, 'INVALID_ZONE', 'The selected flood zone is invalid or inactive');
+  }
+
+  if (!validWard) {
+    throw new AppError(400, 'INVALID_WARD', 'The selected administrative ward is invalid or inactive');
+  }
+
+  if (!input.zoneId && !input.wardId) {
+    throw new AppError(400, 'LOCATION_REQUIRED', 'A flood zone or administrative ward is required');
   }
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -35,7 +44,14 @@ async function submitReport(residentId, input) {
       return await reportRepository.createReport({
         reportReference: createReportReference(),
         residentId,
-        zoneId: input.zoneId,
+        zoneId: input.zoneId || null,
+        wardId: input.wardId || null,
+        locality: input.locality?.trim() || null,
+        nearestLandmark: input.nearestLandmark?.trim() || null,
+        latitude: input.latitude === '' || input.latitude === undefined ? null : input.latitude,
+        longitude: input.longitude === '' || input.longitude === undefined ? null : input.longitude,
+        floodType: input.floodType || 'UNKNOWN',
+        peopleAtRisk: input.peopleAtRisk ?? 0,
         locationDescription: input.locationDescription.trim(),
         observedSeverity: input.observedSeverity,
         roadCondition: input.roadCondition,
@@ -90,6 +106,12 @@ async function updateMoreInformation(residentId, reportId, input) {
     reportId,
     residentId,
     locationDescription: input.locationDescription.trim(),
+    locality: input.locality?.trim() || null,
+    nearestLandmark: input.nearestLandmark?.trim() || null,
+    latitude: input.latitude === '' || input.latitude === undefined ? null : input.latitude,
+    longitude: input.longitude === '' || input.longitude === undefined ? null : input.longitude,
+    floodType: input.floodType || 'UNKNOWN',
+    peopleAtRisk: input.peopleAtRisk ?? 0,
     observedSeverity: input.observedSeverity,
     roadCondition: input.roadCondition,
     incidentDescription: input.incidentDescription.trim(),

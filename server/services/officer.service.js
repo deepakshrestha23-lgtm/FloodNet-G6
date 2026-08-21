@@ -4,6 +4,8 @@ const reviewRepository = require('../repositories/review.repository');
 const alertRepository = require('../repositories/alert.repository');
 const dashboardRepository = require('../repositories/dashboard.repository');
 const userRepository = require('../repositories/user.repository');
+const jurisdictionService = require('./jurisdiction.service');
+const jurisdictionRepository = require('../repositories/jurisdiction.repository');
 
 /**
  * A review action maps to exactly one resulting report status, and each action
@@ -40,12 +42,14 @@ function createAlertReference() {
   return `ALT-${datePart}-${randomPart}`;
 }
 
-async function listReports(query) {
-  return reviewRepository.listReports(query);
+async function listReports(officer, query) {
+  await jurisdictionService.requireAssignment(officer.id);
+  return reviewRepository.listReports({ ...query, officerId: officer.id });
 }
 
-async function getReport(reportId) {
-  const dossier = await reviewRepository.getReportDossier(reportId);
+async function getReport(officer, reportId) {
+  await jurisdictionService.requireAssignment(officer.id);
+  const dossier = await reviewRepository.getReportDossier(reportId, officer.id);
 
   if (!dossier) {
     throw new AppError(404, 'REPORT_NOT_FOUND', 'The requested report was not found');
@@ -76,7 +80,8 @@ async function reviewReport(reviewer, reportId, { action, notes }) {
     );
   }
 
-  const report = await reviewRepository.findReportById(reportId);
+  await jurisdictionService.requireAssignment(reviewer.id);
+  const report = await reviewRepository.findReportById(reportId, reviewer.id);
 
   if (!report) {
     throw new AppError(404, 'REPORT_NOT_FOUND', 'The requested report was not found');
@@ -108,7 +113,7 @@ async function reviewReport(reviewer, reportId, { action, notes }) {
     );
   }
 
-  return reviewRepository.getReportDossier(reportId);
+  return reviewRepository.getReportDossier(reportId, reviewer.id);
 }
 
 async function assertZonesAreActive(zoneIds) {
@@ -127,12 +132,28 @@ function assertValidityWindow(validFrom, expiresAt) {
   }
 }
 
-async function listAlerts(query) {
-  return alertRepository.listAlerts(query);
+async function listAlerts(officer, query) {
+  await jurisdictionService.requireAssignment(officer.id);
+  return alertRepository.listAlerts({ ...query, officerId: officer.id });
 }
 
-async function getAlert(alertId) {
-  const alert = await alertRepository.findAlertById(alertId);
+async function assertAlertTargetsAreAllowed(officerId, zoneIds, wardIds) {
+  for (const wardId of wardIds) {
+    if (!(await userRepository.isActiveWard(wardId)) || !(await jurisdictionRepository.canAccessWard(officerId, wardId))) {
+      throw new AppError(403, 'JURISDICTION_FORBIDDEN', 'One or more alert wards are outside your assigned jurisdiction');
+    }
+  }
+
+  for (const zoneId of zoneIds) {
+    if (!(await jurisdictionRepository.canAccessZone(officerId, zoneId))) {
+      throw new AppError(403, 'JURISDICTION_FORBIDDEN', 'One or more alert zones are outside your assigned jurisdiction');
+    }
+  }
+}
+
+async function getAlert(officer, alertId) {
+  await jurisdictionService.requireAssignment(officer.id);
+  const alert = await alertRepository.findAlertById(alertId, officer.id);
 
   if (!alert) {
     throw new AppError(404, 'ALERT_NOT_FOUND', 'The requested alert was not found');
@@ -142,8 +163,10 @@ async function getAlert(alertId) {
 }
 
 async function createAlert(officer, input) {
+  await jurisdictionService.requireAssignment(officer.id);
   assertValidityWindow(input.validFrom, input.expiresAt);
   await assertZonesAreActive(input.zoneIds);
+  await assertAlertTargetsAreAllowed(officer.id, input.zoneIds, input.wardIds);
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
@@ -156,7 +179,9 @@ async function createAlert(officer, input) {
         recommendedActions: input.recommendedActions,
         validFrom: input.validFrom,
         expiresAt: input.expiresAt,
-        zoneIds: input.zoneIds
+        zoneIds: input.zoneIds,
+        wardIds: input.wardIds,
+        officerId: officer.id
       });
     } catch (error) {
       if (error.code !== '23505' || attempt === 2) throw error;
@@ -167,8 +192,10 @@ async function createAlert(officer, input) {
 }
 
 async function updateAlert(officer, alertId, input) {
+  await jurisdictionService.requireAssignment(officer.id);
   assertValidityWindow(input.validFrom, input.expiresAt);
   await assertZonesAreActive(input.zoneIds);
+  await assertAlertTargetsAreAllowed(officer.id, input.zoneIds, input.wardIds);
 
   const alert = await alertRepository.updateAlert({
     alertId,
@@ -179,11 +206,13 @@ async function updateAlert(officer, alertId, input) {
     recommendedActions: input.recommendedActions,
     validFrom: input.validFrom,
     expiresAt: input.expiresAt,
-    zoneIds: input.zoneIds
+    zoneIds: input.zoneIds,
+    wardIds: input.wardIds,
+    officerId: officer.id
   });
 
   if (!alert) {
-    const existing = await alertRepository.findAlertById(alertId);
+    const existing = await alertRepository.findAlertById(alertId, officer.id);
 
     if (!existing) {
       throw new AppError(404, 'ALERT_NOT_FOUND', 'The requested alert was not found');
@@ -217,6 +246,7 @@ const ALERT_TRANSITIONS = {
 };
 
 async function transitionAlert(officer, alertId, transitionName) {
+  await jurisdictionService.requireAssignment(officer.id);
   const transition = ALERT_TRANSITIONS[transitionName];
 
   if (!transition) {
@@ -228,7 +258,8 @@ async function transitionAlert(officer, alertId, transitionName) {
     actorId: officer.id,
     newStatus: transition.newStatus,
     allowedFromStatuses: transition.allowedFrom,
-    auditAction: transition.auditAction
+    auditAction: transition.auditAction,
+    officerId: officer.id
   });
 
   if (result.outcome === 'NOT_FOUND') {
@@ -243,11 +274,12 @@ async function transitionAlert(officer, alertId, transitionName) {
     throw new AppError(409, 'INVALID_ALERT_TRANSITION', transition.conflictMessage);
   }
 
-  return alertRepository.findAlertById(alertId);
+  return alertRepository.findAlertById(alertId, officer.id);
 }
 
-async function getDashboard() {
-  return dashboardRepository.getOfficerDashboard();
+async function getDashboard(officer, geographyQuery) {
+  await jurisdictionService.requireAssignment(officer.id);
+  return dashboardRepository.getOfficerDashboard(officer.id, geographyQuery);
 }
 
 module.exports = {

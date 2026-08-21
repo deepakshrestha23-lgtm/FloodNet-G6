@@ -13,6 +13,7 @@ const evidenceRoutes = require('./routes/evidence.routes');
 const officerRoutes = require('./routes/officer.routes');
 const centreRoutes = require('./routes/centre.routes');
 const adminRoutes = require('./routes/admin.routes');
+const geographyRoutes = require('./routes/geography.routes');
 const { AppError } = require('./utils/http-error');
 
 const app = express();
@@ -54,6 +55,7 @@ app.use(cookieParser());
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/public', publicRoutes);
+app.use('/api/geography', geographyRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/reports', evidenceRoutes);
 app.use('/api/officer', officerRoutes);

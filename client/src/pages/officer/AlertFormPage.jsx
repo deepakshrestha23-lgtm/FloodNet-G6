@@ -7,6 +7,7 @@ import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import { ALERT_SEVERITY } from '../../utils/enums';
 import { toDateTimeLocalValue } from '../../utils/formatters';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 function defaultValidityWindow() {
   const now = new Date();
@@ -35,6 +36,7 @@ function AlertFormPage() {
   const [loadError, setLoadError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [selectedGeography, setSelectedGeography] = useState(EMPTY_GEOGRAPHY);
 
   const [form, setForm] = useState(() => ({
     title: '',
@@ -42,6 +44,7 @@ function AlertFormPage() {
     warningDescription: '',
     recommendedActions: '',
     zoneIds: [],
+    wardIds: [],
     ...defaultValidityWindow()
   }));
 
@@ -68,6 +71,7 @@ function AlertFormPage() {
             warningDescription: alert.warningDescription,
             recommendedActions: alert.recommendedActions,
             zoneIds: alert.zones.map((zone) => zone.id),
+            wardIds: (alert.wards || []).map((ward) => ward.id),
             validFrom: toDateTimeLocalValue(alert.validFrom),
             expiresAt: toDateTimeLocalValue(alert.expiresAt)
           });
@@ -96,6 +100,17 @@ function AlertFormPage() {
     }));
   }
 
+  function addWardTarget() {
+    if (!selectedGeography.wardId) return;
+    setForm((current) => current.wardIds.includes(selectedGeography.wardId)
+      ? current
+      : { ...current, wardIds: [...current.wardIds, selectedGeography.wardId] });
+  }
+
+  function removeWardTarget(wardId) {
+    setForm((current) => ({ ...current, wardIds: current.wardIds.filter((value) => value !== wardId) }));
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
@@ -108,7 +123,8 @@ function AlertFormPage() {
       recommendedActions: form.recommendedActions.trim(),
       validFrom: new Date(form.validFrom).toISOString(),
       expiresAt: new Date(form.expiresAt).toISOString(),
-      zoneIds: form.zoneIds
+      zoneIds: form.zoneIds,
+      wardIds: form.wardIds
     };
 
     try {
@@ -187,7 +203,7 @@ function AlertFormPage() {
         </fieldset>
 
         <fieldset className="mb-3">
-          <legend className="form-label fw-semibold">Affected flood zones</legend>
+          <legend className="form-label fw-semibold">Affected areas</legend>
           {zones.length === 0 ? (
             <p className="text-secondary mb-0">No active flood zones are available.</p>
           ) : (
@@ -210,7 +226,12 @@ function AlertFormPage() {
               ))}
             </div>
           )}
-          <p className="form-text">An alert must target at least one zone before it can be published.</p>
+          <p className="form-text">Operational zones are useful for broad areas. Add official wards when the warning must reach a precise community.</p>
+          <div className="border-top pt-3 mt-3">
+            <GeographySelector value={selectedGeography} onChange={setSelectedGeography} required={false} />
+            <button type="button" className="btn btn-outline-primary btn-sm" onClick={addWardTarget} disabled={!selectedGeography.wardId}>Add selected ward</button>
+            {form.wardIds.length > 0 && <div className="d-flex flex-wrap gap-2 mt-2">{form.wardIds.map((wardId) => <span className="badge text-bg-light border" key={wardId}>Administrative ward selected <button type="button" className="btn btn-link btn-sm p-0 ms-1" onClick={() => removeWardTarget(wardId)} aria-label="Remove ward target">×</button></span>)}</div>}
+          </div>
         </fieldset>
 
         <div className="mb-3">
@@ -273,7 +294,7 @@ function AlertFormPage() {
         )}
 
         <div className="d-flex flex-wrap gap-2">
-          <button type="submit" className="btn btn-primary" disabled={submitting}>
+          <button type="submit" className="btn btn-primary" disabled={submitting || (form.zoneIds.length === 0 && form.wardIds.length === 0)}>
             {submitting ? 'Saving...' : isEditing ? 'Save changes' : 'Save as draft'}
           </button>
           <button

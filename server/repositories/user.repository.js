@@ -158,6 +158,23 @@ async function isActiveZone(zoneId) {
   return result.rowCount > 0;
 }
 
+async function isActiveWard(wardId) {
+  const result = await getPool().query(
+    `
+      SELECT 1
+      FROM geo_wards w
+      INNER JOIN geo_local_levels ll ON ll.id = w.local_level_id
+      INNER JOIN geo_districts d ON d.id = ll.district_id
+      INNER JOIN geo_provinces p ON p.id = d.province_id
+      WHERE w.id = $1 AND w.is_active = TRUE AND ll.is_active = TRUE
+        AND d.is_active = TRUE AND p.is_active = TRUE
+    `,
+    [wardId]
+  );
+
+  return result.rowCount > 0;
+}
+
 async function updateProfile(userId, {
   firstName,
   lastName,
@@ -212,5 +229,6 @@ module.exports = {
   createResident,
   updateLastLogin,
   isActiveZone,
+  isActiveWard,
   updateProfile
 };

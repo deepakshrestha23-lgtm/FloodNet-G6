@@ -19,7 +19,7 @@ listed separately with its own implementation owner.
 | Backend routes | `/api/reports/*` (`server/routes/report.routes.js`, `evidence.routes.js`) |
 | Controllers / services | `report.controller.js`, `report.service.js`, `evidence.*` |
 | Repositories | `report.repository.js`, `evidence.repository.js` |
-| Database tables | `flood_reports`, `flood_report_status_history`, `flood_evidence_metadata`, `user_profiles`, `notification_preferences` |
+| Database tables | `flood_reports`, `flood_report_status_history`, `flood_evidence_metadata`, `geo_wards`, `user_profiles`, `notification_preferences` |
 | AWS components | Private S3 evidence bucket (Task 1 and Task 2 upload paths) |
 | Key rules | Reports start `PENDING_REVIEW`; residents cannot verify their own reports; only reports in `MORE_INFORMATION_REQUIRED` are editable |
 
@@ -33,7 +33,7 @@ listed separately with its own implementation owner.
 | Controllers / services | `officer.controller.js`, `officer.service.js` |
 | Repositories | `review.repository.js`, `alert.repository.js`, `dashboard.repository.js` (officer half) |
 | Validators | `officer.validators.js` |
-| Database tables | `flood_reports`, `flood_report_reviews`, `flood_report_status_history`, `flood_alerts`, `alert_zones` |
+| Database tables | `flood_reports`, `flood_report_reviews`, `flood_report_status_history`, `flood_alerts`, `alert_zones`, `alert_wards`, `user_jurisdictions` |
 | AWS components | SNS notification path on alert publish (Task 2) |
 | Key rules | Verification and alert publishing are separate actions; notes mandatory on reject and request-info; no self-review; alerts need at least one zone before publishing |
 
@@ -47,7 +47,7 @@ listed separately with its own implementation owner.
 | Controllers / services | `centre.controller.js`, `centre.service.js` |
 | Repositories | `centre.repository.js`, `dashboard.repository.js` (evacuation half) |
 | Validators | `centre.validators.js` |
-| Database tables | `evacuation_centres`, `centre_facilities`, `centre_facility_types` |
+| Database tables | `evacuation_centres`, `centre_facilities`, `centre_facility_types`, `geo_wards`, `user_jurisdictions` |
 | Key rules | `available_space` is a generated column; occupancy cannot be negative or exceed capacity; capacity cannot drop below occupancy; status follows occupancy unless the centre is closed |
 
 ## Member 4 — System Administrator
@@ -60,8 +60,8 @@ listed separately with its own implementation owner.
 | Controllers / services | `admin.controller.js`, `admin.service.js` |
 | Repositories | `admin.repository.js` |
 | Validators | `admin.validators.js` |
-| Database tables | `users`, `roles`, `user_profiles`, `flood_zones`, `centre_facility_types`, `audit_logs`, `auth_sessions` |
-| Key rules | No self-deactivation or self-role-change; last active administrator protected; role or status change revokes sessions; zones with active centres cannot be deactivated; administrators cannot verify reports or publish alerts |
+| Database tables | `users`, `roles`, `user_profiles`, `user_jurisdictions`, `geo_provinces`, `geo_districts`, `geo_local_levels`, `geo_wards`, `flood_zones`, `centre_facility_types`, `audit_logs`, `auth_sessions` |
+| Key rules | No self-deactivation or self-role-change; last active administrator protected; role or status change revokes sessions; zones with active centres cannot be deactivated; operational officers require an assigned jurisdiction; administrators cannot verify reports or publish alerts |
 
 ## Shared infrastructure
 

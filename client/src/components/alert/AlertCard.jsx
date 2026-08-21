@@ -18,7 +18,7 @@ function AlertCard({ alert }) {
       <h3 className="h5 fw-bold mb-2">{alert.title}</h3>
 
       <p className="small text-secondary mb-3">
-        Affects: {alert.zones.map((zone) => zone.name).join(', ') || 'No zones listed'}
+        Affects: {[...(alert.zones || []).map((zone) => zone.name), ...(alert.wards || []).map((ward) => `${ward.name}, ${ward.localLevel}`)].join(', ') || 'No geographic targets listed'}
       </p>
 
       <h4 className="text-uppercase small fw-semibold text-secondary mb-1">What is happening</h4>

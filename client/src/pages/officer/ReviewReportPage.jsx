@@ -14,7 +14,7 @@ import {
   REVIEW_ACTION,
   describe
 } from '../../utils/enums';
-import { formatDateTime, formatRelative, fullName } from '../../utils/formatters';
+import { describeArea, formatDateTime, formatRelative, fullName } from '../../utils/formatters';
 
 /**
  * The decisions an officer can take. Notes are mandatory where the resident
@@ -155,7 +155,7 @@ function ReviewReportPage() {
       <PageHeader
         eyebrow="Report review"
         title={report.reportReference}
-        description={`Submitted ${formatRelative(report.createdAt)} for ${report.zone.name}.`}
+        description={`Submitted ${formatRelative(report.createdAt)} for ${describeArea(report)}.`}
         actions={
           <button type="button" className="btn btn-outline-secondary" onClick={() => navigate(-1)}>
             Back to queue
@@ -173,7 +173,7 @@ function ReviewReportPage() {
 
             <dl className="row g-0 mb-0">
               <DetailRow label="Flood zone">
-                {report.zone.name} <span className="text-secondary">({report.zone.code})</span>
+                {describeArea(report)} {report.zone?.code && <span className="text-secondary">({report.zone.code})</span>}
               </DetailRow>
               <DetailRow label="Observed at">{formatDateTime(report.observedAt)}</DetailRow>
               <DetailRow label="Resident-observed severity">

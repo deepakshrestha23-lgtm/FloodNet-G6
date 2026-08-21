@@ -1,0 +1,7381 @@
+{
+  "source": {
+    "name": "local-states-nepal",
+    "repository": "https://github.com/sagautam5/local-states-nepal",
+    "sources": {
+      "provinces": "https://raw.githubusercontent.com/sagautam5/local-states-nepal/master/dataset/provinces/en.json",
+      "districts": "https://raw.githubusercontent.com/sagautam5/local-states-nepal/master/dataset/districts/en.json",
+      "municipalities": "https://raw.githubusercontent.com/sagautam5/local-states-nepal/master/dataset/municipalities/en.json"
+    },
+    "verifiedTotals": {
+      "provinces": 7,
+      "districts": 77,
+      "localLevels": 753,
+      "wards": 6743
+    }
+  },
+  "provinces": [
+    {
+      "sourceId": 1,
+      "code": "NP-P01",
+      "name": "Koshi Province",
+      "sortOrder": 1
+    },
+    {
+      "sourceId": 2,
+      "code": "NP-P02",
+      "name": "Madhesh Province",
+      "sortOrder": 2
+    },
+    {
+      "sourceId": 3,
+      "code": "NP-P03",
+      "name": "Bagmati Province",
+      "sortOrder": 3
+    },
+    {
+      "sourceId": 4,
+      "code": "NP-P04",
+      "name": "Gandaki Province",
+      "sortOrder": 4
+    },
+    {
+      "sourceId": 5,
+      "code": "NP-P05",
+      "name": "Lumbini Province",
+      "sortOrder": 5
+    },
+    {
+      "sourceId": 6,
+      "code": "NP-P06",
+      "name": "Karnali Province",
+      "sortOrder": 6
+    },
+    {
+      "sourceId": 7,
+      "code": "NP-P07",
+      "name": "Sudurpaschim Province",
+      "sortOrder": 7
+    }
+  ],
+  "districts": [
+    {
+      "sourceId": 1,
+      "provinceSourceId": 1,
+      "code": "NP-D01",
+      "name": "Bhojpur",
+      "sortOrder": 1
+    },
+    {
+      "sourceId": 2,
+      "provinceSourceId": 1,
+      "code": "NP-D02",
+      "name": "Dhankuta",
+      "sortOrder": 2
+    },
+    {
+      "sourceId": 3,
+      "provinceSourceId": 1,
+      "code": "NP-D03",
+      "name": "Ilam",
+      "sortOrder": 3
+    },
+    {
+      "sourceId": 4,
+      "provinceSourceId": 1,
+      "code": "NP-D04",
+      "name": "Jhapa",
+      "sortOrder": 4
+    },
+    {
+      "sourceId": 5,
+      "provinceSourceId": 1,
+      "code": "NP-D05",
+      "name": "Khotang",
+      "sortOrder": 5
+    },
+    {
+      "sourceId": 6,
+      "provinceSourceId": 1,
+      "code": "NP-D06",
+      "name": "Morang",
+      "sortOrder": 6
+    },
+    {
+      "sourceId": 7,
+      "provinceSourceId": 1,
+      "code": "NP-D07",
+      "name": "Okhaldhunga",
+      "sortOrder": 7
+    },
+    {
+      "sourceId": 8,
+      "provinceSourceId": 1,
+      "code": "NP-D08",
+      "name": "Pachthar",
+      "sortOrder": 8
+    },
+    {
+      "sourceId": 9,
+      "provinceSourceId": 1,
+      "code": "NP-D09",
+      "name": "Sankhuwasabha",
+      "sortOrder": 9
+    },
+    {
+      "sourceId": 10,
+      "provinceSourceId": 1,
+      "code": "NP-D10",
+      "name": "Solukhumbu",
+      "sortOrder": 10
+    },
+    {
+      "sourceId": 11,
+      "provinceSourceId": 1,
+      "code": "NP-D11",
+      "name": "Sunsari",
+      "sortOrder": 11
+    },
+    {
+      "sourceId": 12,
+      "provinceSourceId": 1,
+      "code": "NP-D12",
+      "name": "Taplejung",
+      "sortOrder": 12
+    },
+    {
+      "sourceId": 13,
+      "provinceSourceId": 1,
+      "code": "NP-D13",
+      "name": "Terhathum",
+      "sortOrder": 13
+    },
+    {
+      "sourceId": 14,
+      "provinceSourceId": 1,
+      "code": "NP-D14",
+      "name": "Udayapur",
+      "sortOrder": 14
+    },
+    {
+      "sourceId": 15,
+      "provinceSourceId": 2,
+      "code": "NP-D15",
+      "name": "Parsa",
+      "sortOrder": 15
+    },
+    {
+      "sourceId": 16,
+      "provinceSourceId": 2,
+      "code": "NP-D16",
+      "name": "Bara",
+      "sortOrder": 16
+    },
+    {
+      "sourceId": 17,
+      "provinceSourceId": 2,
+      "code": "NP-D17",
+      "name": "Rautahat",
+      "sortOrder": 17
+    },
+    {
+      "sourceId": 18,
+      "provinceSourceId": 2,
+      "code": "NP-D18",
+      "name": "Sarlahi",
+      "sortOrder": 18
+    },
+    {
+      "sourceId": 19,
+      "provinceSourceId": 2,
+      "code": "NP-D19",
+      "name": "Siraha",
+      "sortOrder": 19
+    },
+    {
+      "sourceId": 20,
+      "provinceSourceId": 2,
+      "code": "NP-D20",
+      "name": "Dhanusha",
+      "sortOrder": 20
+    },
+    {
+      "sourceId": 21,
+      "provinceSourceId": 2,
+      "code": "NP-D21",
+      "name": "Saptari",
+      "sortOrder": 21
+    },
+    {
+      "sourceId": 22,
+      "provinceSourceId": 2,
+      "code": "NP-D22",
+      "name": "Mahottari",
+      "sortOrder": 22
+    },
+    {
+      "sourceId": 23,
+      "provinceSourceId": 3,
+      "code": "NP-D23",
+      "name": "Bhaktapur",
+      "sortOrder": 23
+    },
+    {
+      "sourceId": 24,
+      "provinceSourceId": 3,
+      "code": "NP-D24",
+      "name": "Chitwan",
+      "sortOrder": 24
+    },
+    {
+      "sourceId": 25,
+      "provinceSourceId": 3,
+      "code": "NP-D25",
+      "name": "Dhading",
+      "sortOrder": 25
+    },
+    {
+      "sourceId": 26,
+      "provinceSourceId": 3,
+      "code": "NP-D26",
+      "name": "Dolakha",
+      "sortOrder": 26
+    },
+    {
+      "sourceId": 27,
+      "provinceSourceId": 3,
+      "code": "NP-D27",
+      "name": "Kathmandu",
+      "sortOrder": 27
+    },
+    {
+      "sourceId": 28,
+      "provinceSourceId": 3,
+      "code": "NP-D28",
+      "name": "Kavrepalanchok",
+      "sortOrder": 28
+    },
+    {
+      "sourceId": 29,
+      "provinceSourceId": 3,
+      "code": "NP-D29",
+      "name": "Lalitpur",
+      "sortOrder": 29
+    },
+    {
+      "sourceId": 30,
+      "provinceSourceId": 3,
+      "code": "NP-D30",
+      "name": "Makwanpur",
+      "sortOrder": 30
+    },
+    {
+      "sourceId": 31,
+      "provinceSourceId": 3,
+      "code": "NP-D31",
+      "name": "Nuwakot",
+      "sortOrder": 31
+    },
+    {
+      "sourceId": 32,
+      "provinceSourceId": 3,
+      "code": "NP-D32",
+      "name": "Ramechap",
+      "sortOrder": 32
+    },
+    {
+      "sourceId": 33,
+      "provinceSourceId": 3,
+      "code": "NP-D33",
+      "name": "Rasuwa",
+      "sortOrder": 33
+    },
+    {
+      "sourceId": 34,
+      "provinceSourceId": 3,
+      "code": "NP-D34",
+      "name": "Sindhuli",
+      "sortOrder": 34
+    },
+    {
+      "sourceId": 35,
+      "provinceSourceId": 3,
+      "code": "NP-D35",
+      "name": "Sindhupalchok",
+      "sortOrder": 35
+    },
+    {
+      "sourceId": 36,
+      "provinceSourceId": 4,
+      "code": "NP-D36",
+      "name": "Baglung",
+      "sortOrder": 36
+    },
+    {
+      "sourceId": 37,
+      "provinceSourceId": 4,
+      "code": "NP-D37",
+      "name": "Gorkha",
+      "sortOrder": 37
+    },
+    {
+      "sourceId": 38,
+      "provinceSourceId": 4,
+      "code": "NP-D38",
+      "name": "Kaski",
+      "sortOrder": 38
+    },
+    {
+      "sourceId": 39,
+      "provinceSourceId": 4,
+      "code": "NP-D39",
+      "name": "Lamjung",
+      "sortOrder": 39
+    },
+    {
+      "sourceId": 40,
+      "provinceSourceId": 4,
+      "code": "NP-D40",
+      "name": "Manang",
+      "sortOrder": 40
+    },
+    {
+      "sourceId": 41,
+      "provinceSourceId": 4,
+      "code": "NP-D41",
+      "name": "Mustang",
+      "sortOrder": 41
+    },
+    {
+      "sourceId": 42,
+      "provinceSourceId": 4,
+      "code": "NP-D42",
+      "name": "Myagdi",
+      "sortOrder": 42
+    },
+    {
+      "sourceId": 43,
+      "provinceSourceId": 4,
+      "code": "NP-D43",
+      "name": "Nawalpur",
+      "sortOrder": 43
+    },
+    {
+      "sourceId": 44,
+      "provinceSourceId": 4,
+      "code": "NP-D44",
+      "name": "Parwat",
+      "sortOrder": 44
+    },
+    {
+      "sourceId": 45,
+      "provinceSourceId": 4,
+      "code": "NP-D45",
+      "name": "Syangja",
+      "sortOrder": 45
+    },
+    {
+      "sourceId": 46,
+      "provinceSourceId": 4,
+      "code": "NP-D46",
+      "name": "Tanahun",
+      "sortOrder": 46
+    },
+    {
+      "sourceId": 47,
+      "provinceSourceId": 5,
+      "code": "NP-D47",
+      "name": "Kapilvastu",
+      "sortOrder": 47
+    },
+    {
+      "sourceId": 48,
+      "provinceSourceId": 5,
+      "code": "NP-D48",
+      "name": "Parasi",
+      "sortOrder": 48
+    },
+    {
+      "sourceId": 49,
+      "provinceSourceId": 5,
+      "code": "NP-D49",
+      "name": "Rupandehi",
+      "sortOrder": 49
+    },
+    {
+      "sourceId": 50,
+      "provinceSourceId": 5,
+      "code": "NP-D50",
+      "name": "Arghakhanchi",
+      "sortOrder": 50
+    },
+    {
+      "sourceId": 51,
+      "provinceSourceId": 5,
+      "code": "NP-D51",
+      "name": "Gulmi",
+      "sortOrder": 51
+    },
+    {
+      "sourceId": 52,
+      "provinceSourceId": 5,
+      "code": "NP-D52",
+      "name": "Palpa",
+      "sortOrder": 52
+    },
+    {
+      "sourceId": 53,
+      "provinceSourceId": 5,
+      "code": "NP-D53",
+      "name": "Dang",
+      "sortOrder": 53
+    },
+    {
+      "sourceId": 54,
+      "provinceSourceId": 5,
+      "code": "NP-D54",
+      "name": "Pyuthan",
+      "sortOrder": 54
+    },
+    {
+      "sourceId": 55,
+      "provinceSourceId": 5,
+      "code": "NP-D55",
+      "name": "Rolpa",
+      "sortOrder": 55
+    },
+    {
+      "sourceId": 56,
+      "provinceSourceId": 5,
+      "code": "NP-D56",
+      "name": "Eastern Rukum",
+      "sortOrder": 56
+    },
+    {
+      "sourceId": 57,
+      "provinceSourceId": 5,
+      "code": "NP-D57",
+      "name": "Banke",
+      "sortOrder": 57
+    },
+    {
+      "sourceId": 58,
+      "provinceSourceId": 5,
+      "code": "NP-D58",
+      "name": "Bardiya",
+      "sortOrder": 58
+    },
+    {
+      "sourceId": 59,
+      "provinceSourceId": 6,
+      "code": "NP-D59",
+      "name": "Western Rukum",
+      "sortOrder": 59
+    },
+    {
+      "sourceId": 60,
+      "provinceSourceId": 6,
+      "code": "NP-D60",
+      "name": "Salyan",
+      "sortOrder": 60
+    },
+    {
+      "sourceId": 61,
+      "provinceSourceId": 6,
+      "code": "NP-D61",
+      "name": "Dolpa",
+      "sortOrder": 61
+    },
+    {
+      "sourceId": 62,
+      "provinceSourceId": 6,
+      "code": "NP-D62",
+      "name": "Humla",
+      "sortOrder": 62
+    },
+    {
+      "sourceId": 63,
+      "provinceSourceId": 6,
+      "code": "NP-D63",
+      "name": "Jumla",
+      "sortOrder": 63
+    },
+    {
+      "sourceId": 64,
+      "provinceSourceId": 6,
+      "code": "NP-D64",
+      "name": "Kalikot",
+      "sortOrder": 64
+    },
+    {
+      "sourceId": 65,
+      "provinceSourceId": 6,
+      "code": "NP-D65",
+      "name": "Mugu",
+      "sortOrder": 65
+    },
+    {
+      "sourceId": 66,
+      "provinceSourceId": 6,
+      "code": "NP-D66",
+      "name": "Surkhet",
+      "sortOrder": 66
+    },
+    {
+      "sourceId": 67,
+      "provinceSourceId": 6,
+      "code": "NP-D67",
+      "name": "Dailekh",
+      "sortOrder": 67
+    },
+    {
+      "sourceId": 68,
+      "provinceSourceId": 6,
+      "code": "NP-D68",
+      "name": "Jajarkot",
+      "sortOrder": 68
+    },
+    {
+      "sourceId": 69,
+      "provinceSourceId": 7,
+      "code": "NP-D69",
+      "name": "Darchula",
+      "sortOrder": 69
+    },
+    {
+      "sourceId": 70,
+      "provinceSourceId": 7,
+      "code": "NP-D70",
+      "name": "Bajhang",
+      "sortOrder": 70
+    },
+    {
+      "sourceId": 71,
+      "provinceSourceId": 7,
+      "code": "NP-D71",
+      "name": "Bajura",
+      "sortOrder": 71
+    },
+    {
+      "sourceId": 72,
+      "provinceSourceId": 7,
+      "code": "NP-D72",
+      "name": "Baitadi",
+      "sortOrder": 72
+    },
+    {
+      "sourceId": 73,
+      "provinceSourceId": 7,
+      "code": "NP-D73",
+      "name": "Doti",
+      "sortOrder": 73
+    },
+    {
+      "sourceId": 74,
+      "provinceSourceId": 7,
+      "code": "NP-D74",
+      "name": "Acham",
+      "sortOrder": 74
+    },
+    {
+      "sourceId": 75,
+      "provinceSourceId": 7,
+      "code": "NP-D75",
+      "name": "Dadeldhura",
+      "sortOrder": 75
+    },
+    {
+      "sourceId": 76,
+      "provinceSourceId": 7,
+      "code": "NP-D76",
+      "name": "Kanchanpur",
+      "sortOrder": 76
+    },
+    {
+      "sourceId": 77,
+      "provinceSourceId": 7,
+      "code": "NP-D77",
+      "name": "Kailali",
+      "sortOrder": 77
+    }
+  ],
+  "localLevels": [
+    {
+      "sourceId": 1,
+      "districtSourceId": 1,
+      "code": "NP-LL001",
+      "name": "Shadanand",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 1
+    },
+    {
+      "sourceId": 2,
+      "districtSourceId": 1,
+      "code": "NP-LL002",
+      "name": "Bhojpur",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 2
+    },
+    {
+      "sourceId": 3,
+      "districtSourceId": 1,
+      "code": "NP-LL003",
+      "name": "Hatuwagadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 3
+    },
+    {
+      "sourceId": 4,
+      "districtSourceId": 1,
+      "code": "NP-LL004",
+      "name": "Ramprasad Rai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 4
+    },
+    {
+      "sourceId": 5,
+      "districtSourceId": 1,
+      "code": "NP-LL005",
+      "name": "Aamchok",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 5
+    },
+    {
+      "sourceId": 6,
+      "districtSourceId": 1,
+      "code": "NP-LL006",
+      "name": "Tyamke Maiyum",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 6
+    },
+    {
+      "sourceId": 7,
+      "districtSourceId": 1,
+      "code": "NP-LL007",
+      "name": "Arun",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 7
+    },
+    {
+      "sourceId": 8,
+      "districtSourceId": 1,
+      "code": "NP-LL008",
+      "name": "Pauwadungma",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 8
+    },
+    {
+      "sourceId": 9,
+      "districtSourceId": 1,
+      "code": "NP-LL009",
+      "name": "Salpasilichho",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 9
+    },
+    {
+      "sourceId": 10,
+      "districtSourceId": 2,
+      "code": "NP-LL010",
+      "name": "Dhankuta",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 10
+    },
+    {
+      "sourceId": 11,
+      "districtSourceId": 2,
+      "code": "NP-LL011",
+      "name": "Pakhribas",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 11
+    },
+    {
+      "sourceId": 12,
+      "districtSourceId": 2,
+      "code": "NP-LL012",
+      "name": "Mahalaxmi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 12
+    },
+    {
+      "sourceId": 13,
+      "districtSourceId": 2,
+      "code": "NP-LL013",
+      "name": "Sangurigadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 13
+    },
+    {
+      "sourceId": 14,
+      "districtSourceId": 2,
+      "code": "NP-LL014",
+      "name": "Chaubise",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 14
+    },
+    {
+      "sourceId": 15,
+      "districtSourceId": 2,
+      "code": "NP-LL015",
+      "name": "Sahidbhumi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 15
+    },
+    {
+      "sourceId": 16,
+      "districtSourceId": 2,
+      "code": "NP-LL016",
+      "name": "Chhathar Jorpati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 16
+    },
+    {
+      "sourceId": 17,
+      "districtSourceId": 3,
+      "code": "NP-LL017",
+      "name": "Suryodaya",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 17
+    },
+    {
+      "sourceId": 18,
+      "districtSourceId": 3,
+      "code": "NP-LL018",
+      "name": "Ilam",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 18
+    },
+    {
+      "sourceId": 19,
+      "districtSourceId": 3,
+      "code": "NP-LL019",
+      "name": "Deumai",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 19
+    },
+    {
+      "sourceId": 20,
+      "districtSourceId": 3,
+      "code": "NP-LL020",
+      "name": "Maijogmai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 20
+    },
+    {
+      "sourceId": 21,
+      "districtSourceId": 3,
+      "code": "NP-LL021",
+      "name": "Phakphokthum",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 21
+    },
+    {
+      "sourceId": 22,
+      "districtSourceId": 3,
+      "code": "NP-LL022",
+      "name": "Mai",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 22
+    },
+    {
+      "sourceId": 23,
+      "districtSourceId": 3,
+      "code": "NP-LL023",
+      "name": "Chulachuli",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 23
+    },
+    {
+      "sourceId": 24,
+      "districtSourceId": 3,
+      "code": "NP-LL024",
+      "name": "Rong",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 24
+    },
+    {
+      "sourceId": 25,
+      "districtSourceId": 3,
+      "code": "NP-LL025",
+      "name": "Mangsebung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 25
+    },
+    {
+      "sourceId": 26,
+      "districtSourceId": 3,
+      "code": "NP-LL026",
+      "name": "Sandakpur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 26
+    },
+    {
+      "sourceId": 27,
+      "districtSourceId": 4,
+      "code": "NP-LL027",
+      "name": "Mechinagar",
+      "type": "MUNICIPALITY",
+      "wardCount": 15,
+      "sortOrder": 27
+    },
+    {
+      "sourceId": 28,
+      "districtSourceId": 4,
+      "code": "NP-LL028",
+      "name": "Birtamod",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 28
+    },
+    {
+      "sourceId": 29,
+      "districtSourceId": 4,
+      "code": "NP-LL029",
+      "name": "Damak",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 29
+    },
+    {
+      "sourceId": 30,
+      "districtSourceId": 4,
+      "code": "NP-LL030",
+      "name": "Bhadrapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 30
+    },
+    {
+      "sourceId": 31,
+      "districtSourceId": 4,
+      "code": "NP-LL031",
+      "name": "Shivasatakshi",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 31
+    },
+    {
+      "sourceId": 32,
+      "districtSourceId": 4,
+      "code": "NP-LL032",
+      "name": "Arjundhara",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 32
+    },
+    {
+      "sourceId": 33,
+      "districtSourceId": 4,
+      "code": "NP-LL033",
+      "name": "Gauradaha",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 33
+    },
+    {
+      "sourceId": 34,
+      "districtSourceId": 4,
+      "code": "NP-LL034",
+      "name": "Kankai",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 34
+    },
+    {
+      "sourceId": 35,
+      "districtSourceId": 4,
+      "code": "NP-LL035",
+      "name": "Kamal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 35
+    },
+    {
+      "sourceId": 36,
+      "districtSourceId": 4,
+      "code": "NP-LL036",
+      "name": "Buddha Shanti",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 36
+    },
+    {
+      "sourceId": 37,
+      "districtSourceId": 4,
+      "code": "NP-LL037",
+      "name": "Kachankawal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 37
+    },
+    {
+      "sourceId": 38,
+      "districtSourceId": 4,
+      "code": "NP-LL038",
+      "name": "Jhapa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 38
+    },
+    {
+      "sourceId": 39,
+      "districtSourceId": 4,
+      "code": "NP-LL039",
+      "name": "Barhadashi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 39
+    },
+    {
+      "sourceId": 40,
+      "districtSourceId": 4,
+      "code": "NP-LL040",
+      "name": "Gaurigunj",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 40
+    },
+    {
+      "sourceId": 41,
+      "districtSourceId": 4,
+      "code": "NP-LL041",
+      "name": "Haldibari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 41
+    },
+    {
+      "sourceId": 42,
+      "districtSourceId": 5,
+      "code": "NP-LL042",
+      "name": "Diktel Rupakot Majhuwagadhi",
+      "type": "MUNICIPALITY",
+      "wardCount": 15,
+      "sortOrder": 42
+    },
+    {
+      "sourceId": 43,
+      "districtSourceId": 5,
+      "code": "NP-LL043",
+      "name": "Halesi Tuwachung",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 43
+    },
+    {
+      "sourceId": 44,
+      "districtSourceId": 5,
+      "code": "NP-LL044",
+      "name": "Khotehang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 44
+    },
+    {
+      "sourceId": 45,
+      "districtSourceId": 5,
+      "code": "NP-LL045",
+      "name": "Diprung Chuichumma",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 45
+    },
+    {
+      "sourceId": 46,
+      "districtSourceId": 5,
+      "code": "NP-LL046",
+      "name": "Aiselukharka",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 46
+    },
+    {
+      "sourceId": 47,
+      "districtSourceId": 5,
+      "code": "NP-LL047",
+      "name": "Jantedhunga",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 47
+    },
+    {
+      "sourceId": 48,
+      "districtSourceId": 5,
+      "code": "NP-LL048",
+      "name": "Kepilasgadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 48
+    },
+    {
+      "sourceId": 49,
+      "districtSourceId": 5,
+      "code": "NP-LL049",
+      "name": "Barahpokhari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 49
+    },
+    {
+      "sourceId": 50,
+      "districtSourceId": 5,
+      "code": "NP-LL050",
+      "name": "Rawa Besi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 50
+    },
+    {
+      "sourceId": 51,
+      "districtSourceId": 5,
+      "code": "NP-LL051",
+      "name": "Sakela",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 51
+    },
+    {
+      "sourceId": 52,
+      "districtSourceId": 6,
+      "code": "NP-LL052",
+      "name": "Sundar Haraicha",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 52
+    },
+    {
+      "sourceId": 53,
+      "districtSourceId": 6,
+      "code": "NP-LL053",
+      "name": "Belbari",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 53
+    },
+    {
+      "sourceId": 54,
+      "districtSourceId": 6,
+      "code": "NP-LL054",
+      "name": "Pathari Shanischare",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 54
+    },
+    {
+      "sourceId": 55,
+      "districtSourceId": 6,
+      "code": "NP-LL055",
+      "name": "Ratuwamai",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 55
+    },
+    {
+      "sourceId": 56,
+      "districtSourceId": 6,
+      "code": "NP-LL056",
+      "name": "Urlabari",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 56
+    },
+    {
+      "sourceId": 57,
+      "districtSourceId": 6,
+      "code": "NP-LL057",
+      "name": "Rangeli",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 57
+    },
+    {
+      "sourceId": 58,
+      "districtSourceId": 6,
+      "code": "NP-LL058",
+      "name": "Sunawarshi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 58
+    },
+    {
+      "sourceId": 59,
+      "districtSourceId": 6,
+      "code": "NP-LL059",
+      "name": "Letang",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 59
+    },
+    {
+      "sourceId": 60,
+      "districtSourceId": 6,
+      "code": "NP-LL060",
+      "name": "Biratnagar",
+      "type": "METROPOLITAN_CITY",
+      "wardCount": 19,
+      "sortOrder": 60
+    },
+    {
+      "sourceId": 61,
+      "districtSourceId": 6,
+      "code": "NP-LL061",
+      "name": "Jahada",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 61
+    },
+    {
+      "sourceId": 62,
+      "districtSourceId": 6,
+      "code": "NP-LL062",
+      "name": "Budi Ganga",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 62
+    },
+    {
+      "sourceId": 63,
+      "districtSourceId": 6,
+      "code": "NP-LL063",
+      "name": "Katahari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 63
+    },
+    {
+      "sourceId": 64,
+      "districtSourceId": 6,
+      "code": "NP-LL064",
+      "name": "Dhanpalthan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 64
+    },
+    {
+      "sourceId": 65,
+      "districtSourceId": 6,
+      "code": "NP-LL065",
+      "name": "Kanepokhari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 65
+    },
+    {
+      "sourceId": 66,
+      "districtSourceId": 6,
+      "code": "NP-LL066",
+      "name": "Gramthan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 66
+    },
+    {
+      "sourceId": 67,
+      "districtSourceId": 6,
+      "code": "NP-LL067",
+      "name": "Kerabari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 67
+    },
+    {
+      "sourceId": 68,
+      "districtSourceId": 6,
+      "code": "NP-LL068",
+      "name": "Miklajung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 68
+    },
+    {
+      "sourceId": 69,
+      "districtSourceId": 7,
+      "code": "NP-LL069",
+      "name": "Siddhicharan",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 69
+    },
+    {
+      "sourceId": 70,
+      "districtSourceId": 7,
+      "code": "NP-LL070",
+      "name": "Khiji Demba",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 70
+    },
+    {
+      "sourceId": 71,
+      "districtSourceId": 7,
+      "code": "NP-LL071",
+      "name": "Chisankhugadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 71
+    },
+    {
+      "sourceId": 72,
+      "districtSourceId": 7,
+      "code": "NP-LL072",
+      "name": "Molung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 72
+    },
+    {
+      "sourceId": 73,
+      "districtSourceId": 7,
+      "code": "NP-LL073",
+      "name": "Sunkoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 73
+    },
+    {
+      "sourceId": 74,
+      "districtSourceId": 7,
+      "code": "NP-LL074",
+      "name": "Champadevi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 74
+    },
+    {
+      "sourceId": 75,
+      "districtSourceId": 7,
+      "code": "NP-LL075",
+      "name": "Manebhanjyang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 75
+    },
+    {
+      "sourceId": 76,
+      "districtSourceId": 7,
+      "code": "NP-LL076",
+      "name": "Likhu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 76
+    },
+    {
+      "sourceId": 77,
+      "districtSourceId": 8,
+      "code": "NP-LL077",
+      "name": "Phidim",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 77
+    },
+    {
+      "sourceId": 78,
+      "districtSourceId": 8,
+      "code": "NP-LL078",
+      "name": "Miklajung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 78
+    },
+    {
+      "sourceId": 79,
+      "districtSourceId": 8,
+      "code": "NP-LL079",
+      "name": "Phalgunanda",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 79
+    },
+    {
+      "sourceId": 80,
+      "districtSourceId": 8,
+      "code": "NP-LL080",
+      "name": "Hilihang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 80
+    },
+    {
+      "sourceId": 81,
+      "districtSourceId": 8,
+      "code": "NP-LL081",
+      "name": "Phalelung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 81
+    },
+    {
+      "sourceId": 82,
+      "districtSourceId": 8,
+      "code": "NP-LL082",
+      "name": "Yangwarak",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 82
+    },
+    {
+      "sourceId": 83,
+      "districtSourceId": 8,
+      "code": "NP-LL083",
+      "name": "Kummayak",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 83
+    },
+    {
+      "sourceId": 84,
+      "districtSourceId": 8,
+      "code": "NP-LL084",
+      "name": "Tumbewa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 84
+    },
+    {
+      "sourceId": 85,
+      "districtSourceId": 9,
+      "code": "NP-LL085",
+      "name": "Khandbari",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 85
+    },
+    {
+      "sourceId": 86,
+      "districtSourceId": 9,
+      "code": "NP-LL086",
+      "name": "Chainpur",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 86
+    },
+    {
+      "sourceId": 87,
+      "districtSourceId": 9,
+      "code": "NP-LL087",
+      "name": "Dharmadevi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 87
+    },
+    {
+      "sourceId": 88,
+      "districtSourceId": 9,
+      "code": "NP-LL088",
+      "name": "Panchkhapan",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 88
+    },
+    {
+      "sourceId": 89,
+      "districtSourceId": 9,
+      "code": "NP-LL089",
+      "name": "Madi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 89
+    },
+    {
+      "sourceId": 90,
+      "districtSourceId": 9,
+      "code": "NP-LL090",
+      "name": "Makalu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 90
+    },
+    {
+      "sourceId": 91,
+      "districtSourceId": 9,
+      "code": "NP-LL091",
+      "name": "Silichong",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 91
+    },
+    {
+      "sourceId": 92,
+      "districtSourceId": 9,
+      "code": "NP-LL092",
+      "name": "Sabhapokhari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 92
+    },
+    {
+      "sourceId": 93,
+      "districtSourceId": 9,
+      "code": "NP-LL093",
+      "name": "Chichila",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 93
+    },
+    {
+      "sourceId": 94,
+      "districtSourceId": 9,
+      "code": "NP-LL094",
+      "name": "BhotKhola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 94
+    },
+    {
+      "sourceId": 95,
+      "districtSourceId": 10,
+      "code": "NP-LL095",
+      "name": "Solu Dudhkunda",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 95
+    },
+    {
+      "sourceId": 96,
+      "districtSourceId": 10,
+      "code": "NP-LL096",
+      "name": "Mapya Dudhkoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 96
+    },
+    {
+      "sourceId": 97,
+      "districtSourceId": 10,
+      "code": "NP-LL097",
+      "name": "Necha Salyan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 97
+    },
+    {
+      "sourceId": 98,
+      "districtSourceId": 10,
+      "code": "NP-LL098",
+      "name": "Thulung Dudhkoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 98
+    },
+    {
+      "sourceId": 99,
+      "districtSourceId": 10,
+      "code": "NP-LL099",
+      "name": "Maha Kulung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 99
+    },
+    {
+      "sourceId": 100,
+      "districtSourceId": 10,
+      "code": "NP-LL100",
+      "name": "Sotang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 100
+    },
+    {
+      "sourceId": 101,
+      "districtSourceId": 10,
+      "code": "NP-LL101",
+      "name": "Khumbu PasangLhamu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 101
+    },
+    {
+      "sourceId": 102,
+      "districtSourceId": 10,
+      "code": "NP-LL102",
+      "name": "Likhu Pike",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 102
+    },
+    {
+      "sourceId": 103,
+      "districtSourceId": 11,
+      "code": "NP-LL103",
+      "name": "BarahaKshetra",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 103
+    },
+    {
+      "sourceId": 104,
+      "districtSourceId": 11,
+      "code": "NP-LL104",
+      "name": "Inaruwa",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 104
+    },
+    {
+      "sourceId": 105,
+      "districtSourceId": 11,
+      "code": "NP-LL105",
+      "name": "Duhabi",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 105
+    },
+    {
+      "sourceId": 106,
+      "districtSourceId": 11,
+      "code": "NP-LL106",
+      "name": "Ramdhuni",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 106
+    },
+    {
+      "sourceId": 107,
+      "districtSourceId": 11,
+      "code": "NP-LL107",
+      "name": "Itahari",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 20,
+      "sortOrder": 107
+    },
+    {
+      "sourceId": 108,
+      "districtSourceId": 11,
+      "code": "NP-LL108",
+      "name": "Dharan",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 20,
+      "sortOrder": 108
+    },
+    {
+      "sourceId": 109,
+      "districtSourceId": 11,
+      "code": "NP-LL109",
+      "name": "Koshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 109
+    },
+    {
+      "sourceId": 110,
+      "districtSourceId": 11,
+      "code": "NP-LL110",
+      "name": "Harinagar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 110
+    },
+    {
+      "sourceId": 111,
+      "districtSourceId": 11,
+      "code": "NP-LL111",
+      "name": "Bhokraha Narsingh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 111
+    },
+    {
+      "sourceId": 112,
+      "districtSourceId": 11,
+      "code": "NP-LL112",
+      "name": "Dewangunj",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 112
+    },
+    {
+      "sourceId": 113,
+      "districtSourceId": 11,
+      "code": "NP-LL113",
+      "name": "Gadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 113
+    },
+    {
+      "sourceId": 114,
+      "districtSourceId": 11,
+      "code": "NP-LL114",
+      "name": "Barju",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 114
+    },
+    {
+      "sourceId": 115,
+      "districtSourceId": 12,
+      "code": "NP-LL115",
+      "name": "Phungling",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 115
+    },
+    {
+      "sourceId": 116,
+      "districtSourceId": 12,
+      "code": "NP-LL116",
+      "name": "Sirijangha",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 116
+    },
+    {
+      "sourceId": 117,
+      "districtSourceId": 12,
+      "code": "NP-LL117",
+      "name": "Aathrai Triveni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 117
+    },
+    {
+      "sourceId": 118,
+      "districtSourceId": 12,
+      "code": "NP-LL118",
+      "name": "Pathibhara Yangwarak",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 118
+    },
+    {
+      "sourceId": 119,
+      "districtSourceId": 12,
+      "code": "NP-LL119",
+      "name": "Meringden",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 119
+    },
+    {
+      "sourceId": 120,
+      "districtSourceId": 12,
+      "code": "NP-LL120",
+      "name": "Sidingwa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 120
+    },
+    {
+      "sourceId": 121,
+      "districtSourceId": 12,
+      "code": "NP-LL121",
+      "name": "Phaktanglung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 121
+    },
+    {
+      "sourceId": 122,
+      "districtSourceId": 12,
+      "code": "NP-LL122",
+      "name": "Maiwa Khola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 122
+    },
+    {
+      "sourceId": 123,
+      "districtSourceId": 12,
+      "code": "NP-LL123",
+      "name": "Mikwa Khola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 123
+    },
+    {
+      "sourceId": 124,
+      "districtSourceId": 13,
+      "code": "NP-LL124",
+      "name": "Myanglung",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 124
+    },
+    {
+      "sourceId": 125,
+      "districtSourceId": 13,
+      "code": "NP-LL125",
+      "name": "Laligurans",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 125
+    },
+    {
+      "sourceId": 126,
+      "districtSourceId": 13,
+      "code": "NP-LL126",
+      "name": "Aathrai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 126
+    },
+    {
+      "sourceId": 127,
+      "districtSourceId": 13,
+      "code": "NP-LL127",
+      "name": "Phedap",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 127
+    },
+    {
+      "sourceId": 128,
+      "districtSourceId": 13,
+      "code": "NP-LL128",
+      "name": "Chhathar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 128
+    },
+    {
+      "sourceId": 129,
+      "districtSourceId": 13,
+      "code": "NP-LL129",
+      "name": "Menchayayem",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 129
+    },
+    {
+      "sourceId": 130,
+      "districtSourceId": 14,
+      "code": "NP-LL130",
+      "name": "Triyuga",
+      "type": "MUNICIPALITY",
+      "wardCount": 16,
+      "sortOrder": 130
+    },
+    {
+      "sourceId": 131,
+      "districtSourceId": 14,
+      "code": "NP-LL131",
+      "name": "Katari",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 131
+    },
+    {
+      "sourceId": 132,
+      "districtSourceId": 14,
+      "code": "NP-LL132",
+      "name": "Chaudandigadhi",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 132
+    },
+    {
+      "sourceId": 133,
+      "districtSourceId": 14,
+      "code": "NP-LL133",
+      "name": "Belaka",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 133
+    },
+    {
+      "sourceId": 134,
+      "districtSourceId": 14,
+      "code": "NP-LL134",
+      "name": "Udayapurgadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 134
+    },
+    {
+      "sourceId": 135,
+      "districtSourceId": 14,
+      "code": "NP-LL135",
+      "name": "Rautamai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 135
+    },
+    {
+      "sourceId": 136,
+      "districtSourceId": 14,
+      "code": "NP-LL136",
+      "name": "Tapli",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 136
+    },
+    {
+      "sourceId": 137,
+      "districtSourceId": 14,
+      "code": "NP-LL137",
+      "name": "Limchungbung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 137
+    },
+    {
+      "sourceId": 138,
+      "districtSourceId": 15,
+      "code": "NP-LL138",
+      "name": "Birgunj",
+      "type": "METROPOLITAN_CITY",
+      "wardCount": 32,
+      "sortOrder": 138
+    },
+    {
+      "sourceId": 139,
+      "districtSourceId": 15,
+      "code": "NP-LL139",
+      "name": "Bahudarmai",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 139
+    },
+    {
+      "sourceId": 140,
+      "districtSourceId": 15,
+      "code": "NP-LL140",
+      "name": "Parsagadhi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 140
+    },
+    {
+      "sourceId": 141,
+      "districtSourceId": 15,
+      "code": "NP-LL141",
+      "name": "Pokhariya",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 141
+    },
+    {
+      "sourceId": 142,
+      "districtSourceId": 15,
+      "code": "NP-LL142",
+      "name": "Bindabasini",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 142
+    },
+    {
+      "sourceId": 143,
+      "districtSourceId": 15,
+      "code": "NP-LL143",
+      "name": "Dhobini",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 143
+    },
+    {
+      "sourceId": 144,
+      "districtSourceId": 15,
+      "code": "NP-LL144",
+      "name": "Chhipaharmai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 144
+    },
+    {
+      "sourceId": 145,
+      "districtSourceId": 15,
+      "code": "NP-LL145",
+      "name": "Jagarnathpur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 145
+    },
+    {
+      "sourceId": 146,
+      "districtSourceId": 15,
+      "code": "NP-LL146",
+      "name": "Jirabhawani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 146
+    },
+    {
+      "sourceId": 147,
+      "districtSourceId": 15,
+      "code": "NP-LL147",
+      "name": "Kalikamai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 147
+    },
+    {
+      "sourceId": 148,
+      "districtSourceId": 15,
+      "code": "NP-LL148",
+      "name": "Pakaha Mainpur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 148
+    },
+    {
+      "sourceId": 149,
+      "districtSourceId": 15,
+      "code": "NP-LL149",
+      "name": "Paterwa Sugauli",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 149
+    },
+    {
+      "sourceId": 150,
+      "districtSourceId": 15,
+      "code": "NP-LL150",
+      "name": "Sakhuwa Prasauni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 150
+    },
+    {
+      "sourceId": 151,
+      "districtSourceId": 15,
+      "code": "NP-LL151",
+      "name": "Thori",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 151
+    },
+    {
+      "sourceId": 152,
+      "districtSourceId": 16,
+      "code": "NP-LL152",
+      "name": "Kalaiya",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 27,
+      "sortOrder": 152
+    },
+    {
+      "sourceId": 153,
+      "districtSourceId": 16,
+      "code": "NP-LL153",
+      "name": "Jitpur Simara",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 24,
+      "sortOrder": 153
+    },
+    {
+      "sourceId": 154,
+      "districtSourceId": 16,
+      "code": "NP-LL154",
+      "name": "Kolhabi",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 154
+    },
+    {
+      "sourceId": 155,
+      "districtSourceId": 16,
+      "code": "NP-LL155",
+      "name": "Nijgadh",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 155
+    },
+    {
+      "sourceId": 156,
+      "districtSourceId": 16,
+      "code": "NP-LL156",
+      "name": "Mahagadhimai",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 156
+    },
+    {
+      "sourceId": 157,
+      "districtSourceId": 16,
+      "code": "NP-LL157",
+      "name": "Simaraungadh",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 157
+    },
+    {
+      "sourceId": 158,
+      "districtSourceId": 16,
+      "code": "NP-LL158",
+      "name": "Pacharauta",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 158
+    },
+    {
+      "sourceId": 159,
+      "districtSourceId": 16,
+      "code": "NP-LL159",
+      "name": "Pheta",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 159
+    },
+    {
+      "sourceId": 160,
+      "districtSourceId": 16,
+      "code": "NP-LL160",
+      "name": "Bishrampur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 160
+    },
+    {
+      "sourceId": 161,
+      "districtSourceId": 16,
+      "code": "NP-LL161",
+      "name": "Prasauni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 161
+    },
+    {
+      "sourceId": 162,
+      "districtSourceId": 16,
+      "code": "NP-LL162",
+      "name": "Adarsh Kotwal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 162
+    },
+    {
+      "sourceId": 163,
+      "districtSourceId": 16,
+      "code": "NP-LL163",
+      "name": "Karaiyamai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 163
+    },
+    {
+      "sourceId": 164,
+      "districtSourceId": 16,
+      "code": "NP-LL164",
+      "name": "Devtal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 164
+    },
+    {
+      "sourceId": 165,
+      "districtSourceId": 16,
+      "code": "NP-LL165",
+      "name": "Parwanipur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 165
+    },
+    {
+      "sourceId": 166,
+      "districtSourceId": 16,
+      "code": "NP-LL166",
+      "name": "Baragadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 166
+    },
+    {
+      "sourceId": 167,
+      "districtSourceId": 16,
+      "code": "NP-LL167",
+      "name": "Suwarna",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 167
+    },
+    {
+      "sourceId": 168,
+      "districtSourceId": 17,
+      "code": "NP-LL168",
+      "name": "Baudhimai",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 168
+    },
+    {
+      "sourceId": 169,
+      "districtSourceId": 17,
+      "code": "NP-LL169",
+      "name": "Brindaban",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 169
+    },
+    {
+      "sourceId": 170,
+      "districtSourceId": 17,
+      "code": "NP-LL170",
+      "name": "Chandrapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 170
+    },
+    {
+      "sourceId": 171,
+      "districtSourceId": 17,
+      "code": "NP-LL171",
+      "name": "Dewahi Gonahi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 171
+    },
+    {
+      "sourceId": 172,
+      "districtSourceId": 17,
+      "code": "NP-LL172",
+      "name": "Gadhimai",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 172
+    },
+    {
+      "sourceId": 173,
+      "districtSourceId": 17,
+      "code": "NP-LL173",
+      "name": "Guruda",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 173
+    },
+    {
+      "sourceId": 174,
+      "districtSourceId": 17,
+      "code": "NP-LL174",
+      "name": "Gaur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 174
+    },
+    {
+      "sourceId": 175,
+      "districtSourceId": 17,
+      "code": "NP-LL175",
+      "name": "Gujara",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 175
+    },
+    {
+      "sourceId": 176,
+      "districtSourceId": 17,
+      "code": "NP-LL176",
+      "name": "Ishanath",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 176
+    },
+    {
+      "sourceId": 177,
+      "districtSourceId": 17,
+      "code": "NP-LL177",
+      "name": "Katahariya",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 177
+    },
+    {
+      "sourceId": 178,
+      "districtSourceId": 17,
+      "code": "NP-LL178",
+      "name": "Madhav Narayan",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 178
+    },
+    {
+      "sourceId": 179,
+      "districtSourceId": 17,
+      "code": "NP-LL179",
+      "name": "Maulapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 179
+    },
+    {
+      "sourceId": 180,
+      "districtSourceId": 17,
+      "code": "NP-LL180",
+      "name": "Paroha",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 180
+    },
+    {
+      "sourceId": 181,
+      "districtSourceId": 17,
+      "code": "NP-LL181",
+      "name": "Phatuwa Bijayapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 181
+    },
+    {
+      "sourceId": 182,
+      "districtSourceId": 17,
+      "code": "NP-LL182",
+      "name": "Rajdevi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 182
+    },
+    {
+      "sourceId": 183,
+      "districtSourceId": 17,
+      "code": "NP-LL183",
+      "name": "Rajpur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 183
+    },
+    {
+      "sourceId": 184,
+      "districtSourceId": 17,
+      "code": "NP-LL184",
+      "name": "Durga Bhagwati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 184
+    },
+    {
+      "sourceId": 185,
+      "districtSourceId": 17,
+      "code": "NP-LL185",
+      "name": "Yamunamai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 185
+    },
+    {
+      "sourceId": 186,
+      "districtSourceId": 18,
+      "code": "NP-LL186",
+      "name": "Bagmati",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 186
+    },
+    {
+      "sourceId": 187,
+      "districtSourceId": 18,
+      "code": "NP-LL187",
+      "name": "Balara",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 187
+    },
+    {
+      "sourceId": 188,
+      "districtSourceId": 18,
+      "code": "NP-LL188",
+      "name": "Barahathwa",
+      "type": "MUNICIPALITY",
+      "wardCount": 18,
+      "sortOrder": 188
+    },
+    {
+      "sourceId": 189,
+      "districtSourceId": 18,
+      "code": "NP-LL189",
+      "name": "Godaita",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 189
+    },
+    {
+      "sourceId": 190,
+      "districtSourceId": 18,
+      "code": "NP-LL190",
+      "name": "Hariwan",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 190
+    },
+    {
+      "sourceId": 191,
+      "districtSourceId": 18,
+      "code": "NP-LL191",
+      "name": "Haripur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 191
+    },
+    {
+      "sourceId": 192,
+      "districtSourceId": 18,
+      "code": "NP-LL192",
+      "name": "Haripurwa",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 192
+    },
+    {
+      "sourceId": 193,
+      "districtSourceId": 18,
+      "code": "NP-LL193",
+      "name": "Ishowrpur",
+      "type": "MUNICIPALITY",
+      "wardCount": 15,
+      "sortOrder": 193
+    },
+    {
+      "sourceId": 194,
+      "districtSourceId": 18,
+      "code": "NP-LL194",
+      "name": "Kabilasi",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 194
+    },
+    {
+      "sourceId": 195,
+      "districtSourceId": 18,
+      "code": "NP-LL195",
+      "name": "Lalbandi",
+      "type": "MUNICIPALITY",
+      "wardCount": 17,
+      "sortOrder": 195
+    },
+    {
+      "sourceId": 196,
+      "districtSourceId": 18,
+      "code": "NP-LL196",
+      "name": "Malangawa",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 196
+    },
+    {
+      "sourceId": 197,
+      "districtSourceId": 18,
+      "code": "NP-LL197",
+      "name": "Basbariya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 197
+    },
+    {
+      "sourceId": 198,
+      "districtSourceId": 18,
+      "code": "NP-LL198",
+      "name": "Bisnu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 198
+    },
+    {
+      "sourceId": 199,
+      "districtSourceId": 18,
+      "code": "NP-LL199",
+      "name": "Brahampuri",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 199
+    },
+    {
+      "sourceId": 200,
+      "districtSourceId": 18,
+      "code": "NP-LL200",
+      "name": "Chakraghatta",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 200
+    },
+    {
+      "sourceId": 201,
+      "districtSourceId": 18,
+      "code": "NP-LL201",
+      "name": "Chandranagar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 201
+    },
+    {
+      "sourceId": 202,
+      "districtSourceId": 18,
+      "code": "NP-LL202",
+      "name": "Dhankaul",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 202
+    },
+    {
+      "sourceId": 203,
+      "districtSourceId": 18,
+      "code": "NP-LL203",
+      "name": "Kaudena",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 203
+    },
+    {
+      "sourceId": 204,
+      "districtSourceId": 18,
+      "code": "NP-LL204",
+      "name": "Parsa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 204
+    },
+    {
+      "sourceId": 205,
+      "districtSourceId": 18,
+      "code": "NP-LL205",
+      "name": "Ramnagar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 205
+    },
+    {
+      "sourceId": 206,
+      "districtSourceId": 19,
+      "code": "NP-LL206",
+      "name": "Lahan",
+      "type": "MUNICIPALITY",
+      "wardCount": 24,
+      "sortOrder": 206
+    },
+    {
+      "sourceId": 207,
+      "districtSourceId": 19,
+      "code": "NP-LL207",
+      "name": "Dhangadhimai",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 207
+    },
+    {
+      "sourceId": 208,
+      "districtSourceId": 19,
+      "code": "NP-LL208",
+      "name": "Siraha",
+      "type": "MUNICIPALITY",
+      "wardCount": 22,
+      "sortOrder": 208
+    },
+    {
+      "sourceId": 209,
+      "districtSourceId": 19,
+      "code": "NP-LL209",
+      "name": "Golbazar",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 209
+    },
+    {
+      "sourceId": 210,
+      "districtSourceId": 19,
+      "code": "NP-LL210",
+      "name": "Mirchaiya",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 210
+    },
+    {
+      "sourceId": 211,
+      "districtSourceId": 19,
+      "code": "NP-LL211",
+      "name": "Kalyanpur",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 211
+    },
+    {
+      "sourceId": 212,
+      "districtSourceId": 19,
+      "code": "NP-LL212",
+      "name": "Karjanha",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 212
+    },
+    {
+      "sourceId": 213,
+      "districtSourceId": 19,
+      "code": "NP-LL213",
+      "name": "Sukhipur",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 213
+    },
+    {
+      "sourceId": 214,
+      "districtSourceId": 19,
+      "code": "NP-LL214",
+      "name": "Bhagwanpur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 214
+    },
+    {
+      "sourceId": 215,
+      "districtSourceId": 19,
+      "code": "NP-LL215",
+      "name": "Aurahi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 215
+    },
+    {
+      "sourceId": 216,
+      "districtSourceId": 19,
+      "code": "NP-LL216",
+      "name": "Bishnupur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 216
+    },
+    {
+      "sourceId": 217,
+      "districtSourceId": 19,
+      "code": "NP-LL217",
+      "name": "Bariyarpatti",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 217
+    },
+    {
+      "sourceId": 218,
+      "districtSourceId": 19,
+      "code": "NP-LL218",
+      "name": "Lakshmipur Patari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 218
+    },
+    {
+      "sourceId": 219,
+      "districtSourceId": 19,
+      "code": "NP-LL219",
+      "name": "Naraha",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 219
+    },
+    {
+      "sourceId": 220,
+      "districtSourceId": 19,
+      "code": "NP-LL220",
+      "name": "SakhuwanankarKatti",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 220
+    },
+    {
+      "sourceId": 221,
+      "districtSourceId": 19,
+      "code": "NP-LL221",
+      "name": "Arnama",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 221
+    },
+    {
+      "sourceId": 222,
+      "districtSourceId": 19,
+      "code": "NP-LL222",
+      "name": "Navarajpur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 222
+    },
+    {
+      "sourceId": 223,
+      "districtSourceId": 20,
+      "code": "NP-LL223",
+      "name": "Janakpurdham",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 25,
+      "sortOrder": 223
+    },
+    {
+      "sourceId": 224,
+      "districtSourceId": 20,
+      "code": "NP-LL224",
+      "name": "Chhireshwarnath",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 224
+    },
+    {
+      "sourceId": 225,
+      "districtSourceId": 20,
+      "code": "NP-LL225",
+      "name": "Ganeshman Charnath",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 225
+    },
+    {
+      "sourceId": 226,
+      "districtSourceId": 20,
+      "code": "NP-LL226",
+      "name": "Dhanushadham",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 226
+    },
+    {
+      "sourceId": 227,
+      "districtSourceId": 20,
+      "code": "NP-LL227",
+      "name": "Nagarain",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 227
+    },
+    {
+      "sourceId": 228,
+      "districtSourceId": 20,
+      "code": "NP-LL228",
+      "name": "Bideha",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 228
+    },
+    {
+      "sourceId": 229,
+      "districtSourceId": 20,
+      "code": "NP-LL229",
+      "name": "Mithila",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 229
+    },
+    {
+      "sourceId": 230,
+      "districtSourceId": 20,
+      "code": "NP-LL230",
+      "name": "Sahidnagar",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 230
+    },
+    {
+      "sourceId": 231,
+      "districtSourceId": 20,
+      "code": "NP-LL231",
+      "name": "Sabaila",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 231
+    },
+    {
+      "sourceId": 232,
+      "districtSourceId": 20,
+      "code": "NP-LL232",
+      "name": "Kamala",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 232
+    },
+    {
+      "sourceId": 233,
+      "districtSourceId": 20,
+      "code": "NP-LL233",
+      "name": "MithilaBihari",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 233
+    },
+    {
+      "sourceId": 234,
+      "districtSourceId": 20,
+      "code": "NP-LL234",
+      "name": "Hansapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 234
+    },
+    {
+      "sourceId": 235,
+      "districtSourceId": 20,
+      "code": "NP-LL235",
+      "name": "Janaknandani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 235
+    },
+    {
+      "sourceId": 236,
+      "districtSourceId": 20,
+      "code": "NP-LL236",
+      "name": "Bateshwar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 236
+    },
+    {
+      "sourceId": 237,
+      "districtSourceId": 20,
+      "code": "NP-LL237",
+      "name": "Mukhiyapatti Musharniya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 237
+    },
+    {
+      "sourceId": 238,
+      "districtSourceId": 20,
+      "code": "NP-LL238",
+      "name": "Lakshminya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 238
+    },
+    {
+      "sourceId": 239,
+      "districtSourceId": 20,
+      "code": "NP-LL239",
+      "name": "Aaurahi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 239
+    },
+    {
+      "sourceId": 240,
+      "districtSourceId": 20,
+      "code": "NP-LL240",
+      "name": "Dhanauji",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 240
+    },
+    {
+      "sourceId": 241,
+      "districtSourceId": 21,
+      "code": "NP-LL241",
+      "name": "Bodebarsain",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 241
+    },
+    {
+      "sourceId": 242,
+      "districtSourceId": 21,
+      "code": "NP-LL242",
+      "name": "Dakneshwori",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 242
+    },
+    {
+      "sourceId": 243,
+      "districtSourceId": 21,
+      "code": "NP-LL243",
+      "name": "Hanumannagar Kankalini",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 243
+    },
+    {
+      "sourceId": 244,
+      "districtSourceId": 21,
+      "code": "NP-LL244",
+      "name": "Kanchanrup",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 244
+    },
+    {
+      "sourceId": 245,
+      "districtSourceId": 21,
+      "code": "NP-LL245",
+      "name": "Khadak",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 245
+    },
+    {
+      "sourceId": 246,
+      "districtSourceId": 21,
+      "code": "NP-LL246",
+      "name": "Shambhunath",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 246
+    },
+    {
+      "sourceId": 247,
+      "districtSourceId": 21,
+      "code": "NP-LL247",
+      "name": "Saptakoshi",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 247
+    },
+    {
+      "sourceId": 248,
+      "districtSourceId": 21,
+      "code": "NP-LL248",
+      "name": "Surunga",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 248
+    },
+    {
+      "sourceId": 249,
+      "districtSourceId": 21,
+      "code": "NP-LL249",
+      "name": "Rajbiraj",
+      "type": "MUNICIPALITY",
+      "wardCount": 16,
+      "sortOrder": 249
+    },
+    {
+      "sourceId": 250,
+      "districtSourceId": 21,
+      "code": "NP-LL250",
+      "name": "Agnisaira Krishnasavaran",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 250
+    },
+    {
+      "sourceId": 251,
+      "districtSourceId": 21,
+      "code": "NP-LL251",
+      "name": "Balan-Bihul",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 251
+    },
+    {
+      "sourceId": 252,
+      "districtSourceId": 21,
+      "code": "NP-LL252",
+      "name": "Rajgadh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 252
+    },
+    {
+      "sourceId": 253,
+      "districtSourceId": 21,
+      "code": "NP-LL253",
+      "name": "Bishnupur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 253
+    },
+    {
+      "sourceId": 254,
+      "districtSourceId": 21,
+      "code": "NP-LL254",
+      "name": "Chhinnamasta",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 254
+    },
+    {
+      "sourceId": 255,
+      "districtSourceId": 21,
+      "code": "NP-LL255",
+      "name": "Mahadeva",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 255
+    },
+    {
+      "sourceId": 256,
+      "districtSourceId": 21,
+      "code": "NP-LL256",
+      "name": "Rupani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 256
+    },
+    {
+      "sourceId": 257,
+      "districtSourceId": 21,
+      "code": "NP-LL257",
+      "name": "Tilathi Koiladi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 257
+    },
+    {
+      "sourceId": 258,
+      "districtSourceId": 21,
+      "code": "NP-LL258",
+      "name": "Tirhut",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 258
+    },
+    {
+      "sourceId": 259,
+      "districtSourceId": 22,
+      "code": "NP-LL259",
+      "name": "Aaurahi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 259
+    },
+    {
+      "sourceId": 260,
+      "districtSourceId": 22,
+      "code": "NP-LL260",
+      "name": "Balawa",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 260
+    },
+    {
+      "sourceId": 261,
+      "districtSourceId": 22,
+      "code": "NP-LL261",
+      "name": "Bardibas",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 261
+    },
+    {
+      "sourceId": 262,
+      "districtSourceId": 22,
+      "code": "NP-LL262",
+      "name": "Bhangaha",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 262
+    },
+    {
+      "sourceId": 263,
+      "districtSourceId": 22,
+      "code": "NP-LL263",
+      "name": "Gaushala",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 263
+    },
+    {
+      "sourceId": 264,
+      "districtSourceId": 22,
+      "code": "NP-LL264",
+      "name": "Jaleshor",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 264
+    },
+    {
+      "sourceId": 265,
+      "districtSourceId": 22,
+      "code": "NP-LL265",
+      "name": "Loharpatti",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 265
+    },
+    {
+      "sourceId": 266,
+      "districtSourceId": 22,
+      "code": "NP-LL266",
+      "name": "Manara Shiswa",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 266
+    },
+    {
+      "sourceId": 267,
+      "districtSourceId": 22,
+      "code": "NP-LL267",
+      "name": "Matihani",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 267
+    },
+    {
+      "sourceId": 268,
+      "districtSourceId": 22,
+      "code": "NP-LL268",
+      "name": "Ramgopalpur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 268
+    },
+    {
+      "sourceId": 269,
+      "districtSourceId": 22,
+      "code": "NP-LL269",
+      "name": "Ekdara",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 269
+    },
+    {
+      "sourceId": 270,
+      "districtSourceId": 22,
+      "code": "NP-LL270",
+      "name": "Mahottari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 270
+    },
+    {
+      "sourceId": 271,
+      "districtSourceId": 22,
+      "code": "NP-LL271",
+      "name": "Pipara",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 271
+    },
+    {
+      "sourceId": 272,
+      "districtSourceId": 22,
+      "code": "NP-LL272",
+      "name": "Samsi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 272
+    },
+    {
+      "sourceId": 273,
+      "districtSourceId": 22,
+      "code": "NP-LL273",
+      "name": "Sonama",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 273
+    },
+    {
+      "sourceId": 274,
+      "districtSourceId": 23,
+      "code": "NP-LL274",
+      "name": "Bhaktapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 274
+    },
+    {
+      "sourceId": 275,
+      "districtSourceId": 23,
+      "code": "NP-LL275",
+      "name": "Changunarayan",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 275
+    },
+    {
+      "sourceId": 276,
+      "districtSourceId": 23,
+      "code": "NP-LL276",
+      "name": "Suryabinayak",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 276
+    },
+    {
+      "sourceId": 277,
+      "districtSourceId": 23,
+      "code": "NP-LL277",
+      "name": "Madhyapur Thimi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 277
+    },
+    {
+      "sourceId": 278,
+      "districtSourceId": 24,
+      "code": "NP-LL278",
+      "name": "Bharatpur",
+      "type": "METROPOLITAN_CITY",
+      "wardCount": 29,
+      "sortOrder": 278
+    },
+    {
+      "sourceId": 279,
+      "districtSourceId": 24,
+      "code": "NP-LL279",
+      "name": "Kalika",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 279
+    },
+    {
+      "sourceId": 280,
+      "districtSourceId": 24,
+      "code": "NP-LL280",
+      "name": "Khairhani",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 280
+    },
+    {
+      "sourceId": 281,
+      "districtSourceId": 24,
+      "code": "NP-LL281",
+      "name": "Madi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 281
+    },
+    {
+      "sourceId": 282,
+      "districtSourceId": 24,
+      "code": "NP-LL282",
+      "name": "Ratnagar",
+      "type": "MUNICIPALITY",
+      "wardCount": 16,
+      "sortOrder": 282
+    },
+    {
+      "sourceId": 283,
+      "districtSourceId": 24,
+      "code": "NP-LL283",
+      "name": "Rapti",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 283
+    },
+    {
+      "sourceId": 284,
+      "districtSourceId": 24,
+      "code": "NP-LL284",
+      "name": "Ichchhakamana",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 284
+    },
+    {
+      "sourceId": 285,
+      "districtSourceId": 25,
+      "code": "NP-LL285",
+      "name": "Dhunibeshi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 285
+    },
+    {
+      "sourceId": 286,
+      "districtSourceId": 25,
+      "code": "NP-LL286",
+      "name": "Nilkantha",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 286
+    },
+    {
+      "sourceId": 287,
+      "districtSourceId": 25,
+      "code": "NP-LL287",
+      "name": "Khaniyabas",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 287
+    },
+    {
+      "sourceId": 288,
+      "districtSourceId": 25,
+      "code": "NP-LL288",
+      "name": "Gajuri",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 288
+    },
+    {
+      "sourceId": 289,
+      "districtSourceId": 25,
+      "code": "NP-LL289",
+      "name": "Galchhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 289
+    },
+    {
+      "sourceId": 290,
+      "districtSourceId": 25,
+      "code": "NP-LL290",
+      "name": "Gangajamuna",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 290
+    },
+    {
+      "sourceId": 291,
+      "districtSourceId": 25,
+      "code": "NP-LL291",
+      "name": "Jwalamukhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 291
+    },
+    {
+      "sourceId": 292,
+      "districtSourceId": 25,
+      "code": "NP-LL292",
+      "name": "Thakre",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 292
+    },
+    {
+      "sourceId": 293,
+      "districtSourceId": 25,
+      "code": "NP-LL293",
+      "name": "Netrawati Dabjong",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 293
+    },
+    {
+      "sourceId": 294,
+      "districtSourceId": 25,
+      "code": "NP-LL294",
+      "name": "Benighat Rorang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 294
+    },
+    {
+      "sourceId": 295,
+      "districtSourceId": 25,
+      "code": "NP-LL295",
+      "name": "Rubi Valley",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 295
+    },
+    {
+      "sourceId": 296,
+      "districtSourceId": 25,
+      "code": "NP-LL296",
+      "name": "Siddhalek",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 296
+    },
+    {
+      "sourceId": 297,
+      "districtSourceId": 25,
+      "code": "NP-LL297",
+      "name": "Tripurasundari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 297
+    },
+    {
+      "sourceId": 298,
+      "districtSourceId": 26,
+      "code": "NP-LL298",
+      "name": "Bhimeswor",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 298
+    },
+    {
+      "sourceId": 299,
+      "districtSourceId": 26,
+      "code": "NP-LL299",
+      "name": "Jiri",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 299
+    },
+    {
+      "sourceId": 300,
+      "districtSourceId": 26,
+      "code": "NP-LL300",
+      "name": "Kalinchok",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 300
+    },
+    {
+      "sourceId": 301,
+      "districtSourceId": 26,
+      "code": "NP-LL301",
+      "name": "Melung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 301
+    },
+    {
+      "sourceId": 302,
+      "districtSourceId": 26,
+      "code": "NP-LL302",
+      "name": "Bigu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 302
+    },
+    {
+      "sourceId": 303,
+      "districtSourceId": 26,
+      "code": "NP-LL303",
+      "name": "Gaurishankar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 303
+    },
+    {
+      "sourceId": 304,
+      "districtSourceId": 26,
+      "code": "NP-LL304",
+      "name": "Baiteshowr",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 304
+    },
+    {
+      "sourceId": 305,
+      "districtSourceId": 26,
+      "code": "NP-LL305",
+      "name": "Sailung",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 305
+    },
+    {
+      "sourceId": 306,
+      "districtSourceId": 26,
+      "code": "NP-LL306",
+      "name": "Tamakoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 306
+    },
+    {
+      "sourceId": 307,
+      "districtSourceId": 27,
+      "code": "NP-LL307",
+      "name": "Kathmandu",
+      "type": "METROPOLITAN_CITY",
+      "wardCount": 32,
+      "sortOrder": 307
+    },
+    {
+      "sourceId": 308,
+      "districtSourceId": 27,
+      "code": "NP-LL308",
+      "name": "Gokarneshwar",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 308
+    },
+    {
+      "sourceId": 309,
+      "districtSourceId": 27,
+      "code": "NP-LL309",
+      "name": "Kirtipur",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 309
+    },
+    {
+      "sourceId": 310,
+      "districtSourceId": 27,
+      "code": "NP-LL310",
+      "name": "Kageshwari-Manohara",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 310
+    },
+    {
+      "sourceId": 311,
+      "districtSourceId": 27,
+      "code": "NP-LL311",
+      "name": "Chandragiri",
+      "type": "MUNICIPALITY",
+      "wardCount": 15,
+      "sortOrder": 311
+    },
+    {
+      "sourceId": 312,
+      "districtSourceId": 27,
+      "code": "NP-LL312",
+      "name": "Tokha",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 312
+    },
+    {
+      "sourceId": 313,
+      "districtSourceId": 27,
+      "code": "NP-LL313",
+      "name": "Tarakeshwar",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 313
+    },
+    {
+      "sourceId": 314,
+      "districtSourceId": 27,
+      "code": "NP-LL314",
+      "name": "Dakshinkali",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 314
+    },
+    {
+      "sourceId": 315,
+      "districtSourceId": 27,
+      "code": "NP-LL315",
+      "name": "Nagarjun",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 315
+    },
+    {
+      "sourceId": 316,
+      "districtSourceId": 27,
+      "code": "NP-LL316",
+      "name": "Budhalikantha",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 316
+    },
+    {
+      "sourceId": 317,
+      "districtSourceId": 27,
+      "code": "NP-LL317",
+      "name": "Shankharapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 317
+    },
+    {
+      "sourceId": 318,
+      "districtSourceId": 28,
+      "code": "NP-LL318",
+      "name": "Dhulikhel",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 318
+    },
+    {
+      "sourceId": 319,
+      "districtSourceId": 28,
+      "code": "NP-LL319",
+      "name": "Namobuddha",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 319
+    },
+    {
+      "sourceId": 320,
+      "districtSourceId": 28,
+      "code": "NP-LL320",
+      "name": "Panauti",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 320
+    },
+    {
+      "sourceId": 321,
+      "districtSourceId": 28,
+      "code": "NP-LL321",
+      "name": "Panchkhal",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 321
+    },
+    {
+      "sourceId": 322,
+      "districtSourceId": 28,
+      "code": "NP-LL322",
+      "name": "Banepa",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 322
+    },
+    {
+      "sourceId": 323,
+      "districtSourceId": 28,
+      "code": "NP-LL323",
+      "name": "Mandandeupur",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 323
+    },
+    {
+      "sourceId": 324,
+      "districtSourceId": 28,
+      "code": "NP-LL324",
+      "name": "Khani Khola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 324
+    },
+    {
+      "sourceId": 325,
+      "districtSourceId": 28,
+      "code": "NP-LL325",
+      "name": "Chauri Deurali",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 325
+    },
+    {
+      "sourceId": 326,
+      "districtSourceId": 28,
+      "code": "NP-LL326",
+      "name": "Temal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 326
+    },
+    {
+      "sourceId": 327,
+      "districtSourceId": 28,
+      "code": "NP-LL327",
+      "name": "Bethanchok",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 327
+    },
+    {
+      "sourceId": 328,
+      "districtSourceId": 28,
+      "code": "NP-LL328",
+      "name": "Bhumlu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 328
+    },
+    {
+      "sourceId": 329,
+      "districtSourceId": 28,
+      "code": "NP-LL329",
+      "name": "Mahabharat",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 329
+    },
+    {
+      "sourceId": 330,
+      "districtSourceId": 28,
+      "code": "NP-LL330",
+      "name": "Roshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 330
+    },
+    {
+      "sourceId": 331,
+      "districtSourceId": 29,
+      "code": "NP-LL331",
+      "name": "Lalitpur",
+      "type": "METROPOLITAN_CITY",
+      "wardCount": 29,
+      "sortOrder": 331
+    },
+    {
+      "sourceId": 332,
+      "districtSourceId": 29,
+      "code": "NP-LL332",
+      "name": "Mahalaxmi",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 332
+    },
+    {
+      "sourceId": 333,
+      "districtSourceId": 29,
+      "code": "NP-LL333",
+      "name": "Godawari",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 333
+    },
+    {
+      "sourceId": 334,
+      "districtSourceId": 29,
+      "code": "NP-LL334",
+      "name": "Konjyosom",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 334
+    },
+    {
+      "sourceId": 335,
+      "districtSourceId": 29,
+      "code": "NP-LL335",
+      "name": "Bagmati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 335
+    },
+    {
+      "sourceId": 336,
+      "districtSourceId": 29,
+      "code": "NP-LL336",
+      "name": "Mahankal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 336
+    },
+    {
+      "sourceId": 337,
+      "districtSourceId": 30,
+      "code": "NP-LL337",
+      "name": "Hetauda",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 19,
+      "sortOrder": 337
+    },
+    {
+      "sourceId": 338,
+      "districtSourceId": 30,
+      "code": "NP-LL338",
+      "name": "Thaha",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 338
+    },
+    {
+      "sourceId": 339,
+      "districtSourceId": 30,
+      "code": "NP-LL339",
+      "name": "Bhimphedi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 339
+    },
+    {
+      "sourceId": 340,
+      "districtSourceId": 30,
+      "code": "NP-LL340",
+      "name": "Makawanpurgadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 340
+    },
+    {
+      "sourceId": 341,
+      "districtSourceId": 30,
+      "code": "NP-LL341",
+      "name": "Manahari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 341
+    },
+    {
+      "sourceId": 342,
+      "districtSourceId": 30,
+      "code": "NP-LL342",
+      "name": "Raksirang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 342
+    },
+    {
+      "sourceId": 343,
+      "districtSourceId": 30,
+      "code": "NP-LL343",
+      "name": "Bakaiya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 343
+    },
+    {
+      "sourceId": 344,
+      "districtSourceId": 30,
+      "code": "NP-LL344",
+      "name": "Bagmati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 344
+    },
+    {
+      "sourceId": 345,
+      "districtSourceId": 30,
+      "code": "NP-LL345",
+      "name": "Kailash",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 345
+    },
+    {
+      "sourceId": 346,
+      "districtSourceId": 30,
+      "code": "NP-LL346",
+      "name": "Indrasarowar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 346
+    },
+    {
+      "sourceId": 347,
+      "districtSourceId": 31,
+      "code": "NP-LL347",
+      "name": "Bidur",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 347
+    },
+    {
+      "sourceId": 348,
+      "districtSourceId": 31,
+      "code": "NP-LL348",
+      "name": "Belkotgadhi",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 348
+    },
+    {
+      "sourceId": 349,
+      "districtSourceId": 31,
+      "code": "NP-LL349",
+      "name": "Kakani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 349
+    },
+    {
+      "sourceId": 350,
+      "districtSourceId": 31,
+      "code": "NP-LL350",
+      "name": "Panchakanya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 350
+    },
+    {
+      "sourceId": 351,
+      "districtSourceId": 31,
+      "code": "NP-LL351",
+      "name": "Likhu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 351
+    },
+    {
+      "sourceId": 352,
+      "districtSourceId": 31,
+      "code": "NP-LL352",
+      "name": "Dupcheshwar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 352
+    },
+    {
+      "sourceId": 353,
+      "districtSourceId": 31,
+      "code": "NP-LL353",
+      "name": "Shivapuri",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 353
+    },
+    {
+      "sourceId": 354,
+      "districtSourceId": 31,
+      "code": "NP-LL354",
+      "name": "Tadi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 354
+    },
+    {
+      "sourceId": 355,
+      "districtSourceId": 31,
+      "code": "NP-LL355",
+      "name": "Suryagadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 355
+    },
+    {
+      "sourceId": 356,
+      "districtSourceId": 31,
+      "code": "NP-LL356",
+      "name": "Tarkeshwar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 356
+    },
+    {
+      "sourceId": 357,
+      "districtSourceId": 31,
+      "code": "NP-LL357",
+      "name": "Kispang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 357
+    },
+    {
+      "sourceId": 358,
+      "districtSourceId": 31,
+      "code": "NP-LL358",
+      "name": "Myagang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 358
+    },
+    {
+      "sourceId": 359,
+      "districtSourceId": 32,
+      "code": "NP-LL359",
+      "name": "Manthali",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 359
+    },
+    {
+      "sourceId": 360,
+      "districtSourceId": 32,
+      "code": "NP-LL360",
+      "name": "Ramechhap",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 360
+    },
+    {
+      "sourceId": 361,
+      "districtSourceId": 32,
+      "code": "NP-LL361",
+      "name": "Umakunda",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 361
+    },
+    {
+      "sourceId": 362,
+      "districtSourceId": 32,
+      "code": "NP-LL362",
+      "name": "Khandadevi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 362
+    },
+    {
+      "sourceId": 363,
+      "districtSourceId": 32,
+      "code": "NP-LL363",
+      "name": "Doramba",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 363
+    },
+    {
+      "sourceId": 364,
+      "districtSourceId": 32,
+      "code": "NP-LL364",
+      "name": "Gokulganga",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 364
+    },
+    {
+      "sourceId": 365,
+      "districtSourceId": 32,
+      "code": "NP-LL365",
+      "name": "LikhuTamakoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 365
+    },
+    {
+      "sourceId": 366,
+      "districtSourceId": 32,
+      "code": "NP-LL366",
+      "name": "Sunapati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 366
+    },
+    {
+      "sourceId": 367,
+      "districtSourceId": 33,
+      "code": "NP-LL367",
+      "name": "Kalika",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 367
+    },
+    {
+      "sourceId": 368,
+      "districtSourceId": 33,
+      "code": "NP-LL368",
+      "name": "Gosaikunda",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 368
+    },
+    {
+      "sourceId": 369,
+      "districtSourceId": 33,
+      "code": "NP-LL369",
+      "name": "Naukunda",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 369
+    },
+    {
+      "sourceId": 370,
+      "districtSourceId": 33,
+      "code": "NP-LL370",
+      "name": "Parbatikunda",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 370
+    },
+    {
+      "sourceId": 371,
+      "districtSourceId": 33,
+      "code": "NP-LL371",
+      "name": "Uttargaya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 371
+    },
+    {
+      "sourceId": 372,
+      "districtSourceId": 34,
+      "code": "NP-LL372",
+      "name": "Kamalamai",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 372
+    },
+    {
+      "sourceId": 373,
+      "districtSourceId": 34,
+      "code": "NP-LL373",
+      "name": "Dudhauli",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 373
+    },
+    {
+      "sourceId": 374,
+      "districtSourceId": 34,
+      "code": "NP-LL374",
+      "name": "Sunkoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 374
+    },
+    {
+      "sourceId": 375,
+      "districtSourceId": 34,
+      "code": "NP-LL375",
+      "name": "Hariharpurgadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 375
+    },
+    {
+      "sourceId": 376,
+      "districtSourceId": 34,
+      "code": "NP-LL376",
+      "name": "Tinpatan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 376
+    },
+    {
+      "sourceId": 377,
+      "districtSourceId": 34,
+      "code": "NP-LL377",
+      "name": "Marin",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 377
+    },
+    {
+      "sourceId": 378,
+      "districtSourceId": 34,
+      "code": "NP-LL378",
+      "name": "Golanjor",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 378
+    },
+    {
+      "sourceId": 379,
+      "districtSourceId": 34,
+      "code": "NP-LL379",
+      "name": "Phikkal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 379
+    },
+    {
+      "sourceId": 380,
+      "districtSourceId": 34,
+      "code": "NP-LL380",
+      "name": "Ghyanglekh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 380
+    },
+    {
+      "sourceId": 381,
+      "districtSourceId": 35,
+      "code": "NP-LL381",
+      "name": "Chautara Sangachowkgadi",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 381
+    },
+    {
+      "sourceId": 382,
+      "districtSourceId": 35,
+      "code": "NP-LL382",
+      "name": "Bahrabise",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 382
+    },
+    {
+      "sourceId": 383,
+      "districtSourceId": 35,
+      "code": "NP-LL383",
+      "name": "Melamchi",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 383
+    },
+    {
+      "sourceId": 384,
+      "districtSourceId": 35,
+      "code": "NP-LL384",
+      "name": "Balephi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 384
+    },
+    {
+      "sourceId": 385,
+      "districtSourceId": 35,
+      "code": "NP-LL385",
+      "name": "Sunkoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 385
+    },
+    {
+      "sourceId": 386,
+      "districtSourceId": 35,
+      "code": "NP-LL386",
+      "name": "Indrawati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 386
+    },
+    {
+      "sourceId": 387,
+      "districtSourceId": 35,
+      "code": "NP-LL387",
+      "name": "Jugal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 387
+    },
+    {
+      "sourceId": 388,
+      "districtSourceId": 35,
+      "code": "NP-LL388",
+      "name": "Panchpokhari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 388
+    },
+    {
+      "sourceId": 389,
+      "districtSourceId": 35,
+      "code": "NP-LL389",
+      "name": "Bhotekoshi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 389
+    },
+    {
+      "sourceId": 390,
+      "districtSourceId": 35,
+      "code": "NP-LL390",
+      "name": "Lisankhu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 390
+    },
+    {
+      "sourceId": 391,
+      "districtSourceId": 35,
+      "code": "NP-LL391",
+      "name": "Helambu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 391
+    },
+    {
+      "sourceId": 392,
+      "districtSourceId": 35,
+      "code": "NP-LL392",
+      "name": "Tripurasundari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 392
+    },
+    {
+      "sourceId": 393,
+      "districtSourceId": 36,
+      "code": "NP-LL393",
+      "name": "Baglung",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 393
+    },
+    {
+      "sourceId": 394,
+      "districtSourceId": 36,
+      "code": "NP-LL394",
+      "name": "Dhorpatan",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 394
+    },
+    {
+      "sourceId": 395,
+      "districtSourceId": 36,
+      "code": "NP-LL395",
+      "name": "Galkot",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 395
+    },
+    {
+      "sourceId": 396,
+      "districtSourceId": 36,
+      "code": "NP-LL396",
+      "name": "Jaimuni",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 396
+    },
+    {
+      "sourceId": 397,
+      "districtSourceId": 36,
+      "code": "NP-LL397",
+      "name": "Bareng",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 397
+    },
+    {
+      "sourceId": 398,
+      "districtSourceId": 36,
+      "code": "NP-LL398",
+      "name": "Khathekhola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 398
+    },
+    {
+      "sourceId": 399,
+      "districtSourceId": 36,
+      "code": "NP-LL399",
+      "name": "Taman Khola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 399
+    },
+    {
+      "sourceId": 400,
+      "districtSourceId": 36,
+      "code": "NP-LL400",
+      "name": "Tara Khola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 400
+    },
+    {
+      "sourceId": 401,
+      "districtSourceId": 36,
+      "code": "NP-LL401",
+      "name": "Nishi Khola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 401
+    },
+    {
+      "sourceId": 402,
+      "districtSourceId": 36,
+      "code": "NP-LL402",
+      "name": "Badigad",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 402
+    },
+    {
+      "sourceId": 403,
+      "districtSourceId": 37,
+      "code": "NP-LL403",
+      "name": "Gorkha",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 403
+    },
+    {
+      "sourceId": 404,
+      "districtSourceId": 37,
+      "code": "NP-LL404",
+      "name": "Palungtar",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 404
+    },
+    {
+      "sourceId": 405,
+      "districtSourceId": 37,
+      "code": "NP-LL405",
+      "name": "Sulikot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 405
+    },
+    {
+      "sourceId": 406,
+      "districtSourceId": 37,
+      "code": "NP-LL406",
+      "name": "Siranchowk",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 406
+    },
+    {
+      "sourceId": 407,
+      "districtSourceId": 37,
+      "code": "NP-LL407",
+      "name": "Ajirkot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 407
+    },
+    {
+      "sourceId": 408,
+      "districtSourceId": 37,
+      "code": "NP-LL408",
+      "name": "Chumnubri",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 408
+    },
+    {
+      "sourceId": 409,
+      "districtSourceId": 37,
+      "code": "NP-LL409",
+      "name": "Dharche",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 409
+    },
+    {
+      "sourceId": 410,
+      "districtSourceId": 37,
+      "code": "NP-LL410",
+      "name": "Bhimsen Thapa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 410
+    },
+    {
+      "sourceId": 411,
+      "districtSourceId": 37,
+      "code": "NP-LL411",
+      "name": "Sahid Lakhan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 411
+    },
+    {
+      "sourceId": 412,
+      "districtSourceId": 37,
+      "code": "NP-LL412",
+      "name": "Aarughat",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 412
+    },
+    {
+      "sourceId": 413,
+      "districtSourceId": 37,
+      "code": "NP-LL413",
+      "name": "Gandaki",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 413
+    },
+    {
+      "sourceId": 414,
+      "districtSourceId": 38,
+      "code": "NP-LL414",
+      "name": "Pokhara",
+      "type": "METROPOLITAN_CITY",
+      "wardCount": 33,
+      "sortOrder": 414
+    },
+    {
+      "sourceId": 415,
+      "districtSourceId": 38,
+      "code": "NP-LL415",
+      "name": "Annapurna",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 415
+    },
+    {
+      "sourceId": 416,
+      "districtSourceId": 38,
+      "code": "NP-LL416",
+      "name": "Machhapuchchhre",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 416
+    },
+    {
+      "sourceId": 417,
+      "districtSourceId": 38,
+      "code": "NP-LL417",
+      "name": "Madi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 417
+    },
+    {
+      "sourceId": 418,
+      "districtSourceId": 38,
+      "code": "NP-LL418",
+      "name": "Rupa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 418
+    },
+    {
+      "sourceId": 419,
+      "districtSourceId": 39,
+      "code": "NP-LL419",
+      "name": "Besisahar",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 419
+    },
+    {
+      "sourceId": 420,
+      "districtSourceId": 39,
+      "code": "NP-LL420",
+      "name": "Madhya Nepal",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 420
+    },
+    {
+      "sourceId": 421,
+      "districtSourceId": 39,
+      "code": "NP-LL421",
+      "name": "Rainas",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 421
+    },
+    {
+      "sourceId": 422,
+      "districtSourceId": 39,
+      "code": "NP-LL422",
+      "name": "Sundarbazar",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 422
+    },
+    {
+      "sourceId": 423,
+      "districtSourceId": 39,
+      "code": "NP-LL423",
+      "name": "Dordi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 423
+    },
+    {
+      "sourceId": 424,
+      "districtSourceId": 39,
+      "code": "NP-LL424",
+      "name": "Dudhpokhari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 424
+    },
+    {
+      "sourceId": 425,
+      "districtSourceId": 39,
+      "code": "NP-LL425",
+      "name": "Kwhlosothar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 425
+    },
+    {
+      "sourceId": 426,
+      "districtSourceId": 39,
+      "code": "NP-LL426",
+      "name": "Marsyangdi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 426
+    },
+    {
+      "sourceId": 427,
+      "districtSourceId": 40,
+      "code": "NP-LL427",
+      "name": "Chame",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 427
+    },
+    {
+      "sourceId": 428,
+      "districtSourceId": 40,
+      "code": "NP-LL428",
+      "name": "Nason",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 428
+    },
+    {
+      "sourceId": 429,
+      "districtSourceId": 40,
+      "code": "NP-LL429",
+      "name": "NarpaBhumi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 429
+    },
+    {
+      "sourceId": 430,
+      "districtSourceId": 40,
+      "code": "NP-LL430",
+      "name": "Manang Ngisyang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 430
+    },
+    {
+      "sourceId": 431,
+      "districtSourceId": 41,
+      "code": "NP-LL431",
+      "name": "Gharpajhong",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 431
+    },
+    {
+      "sourceId": 432,
+      "districtSourceId": 41,
+      "code": "NP-LL432",
+      "name": "Thasang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 432
+    },
+    {
+      "sourceId": 433,
+      "districtSourceId": 41,
+      "code": "NP-LL433",
+      "name": "Barhagaun Muktichhetra",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 433
+    },
+    {
+      "sourceId": 434,
+      "districtSourceId": 41,
+      "code": "NP-LL434",
+      "name": "Lomanthang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 434
+    },
+    {
+      "sourceId": 435,
+      "districtSourceId": 41,
+      "code": "NP-LL435",
+      "name": "Lo-Ghekar Damodarkunda",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 435
+    },
+    {
+      "sourceId": 436,
+      "districtSourceId": 42,
+      "code": "NP-LL436",
+      "name": "Beni",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 436
+    },
+    {
+      "sourceId": 437,
+      "districtSourceId": 42,
+      "code": "NP-LL437",
+      "name": "Annapurna",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 437
+    },
+    {
+      "sourceId": 438,
+      "districtSourceId": 42,
+      "code": "NP-LL438",
+      "name": "Dhaulagiri",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 438
+    },
+    {
+      "sourceId": 439,
+      "districtSourceId": 42,
+      "code": "NP-LL439",
+      "name": "Mangala",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 439
+    },
+    {
+      "sourceId": 440,
+      "districtSourceId": 42,
+      "code": "NP-LL440",
+      "name": "Malika",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 440
+    },
+    {
+      "sourceId": 441,
+      "districtSourceId": 42,
+      "code": "NP-LL441",
+      "name": "Raghuganga",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 441
+    },
+    {
+      "sourceId": 442,
+      "districtSourceId": 43,
+      "code": "NP-LL442",
+      "name": "Kawasoti",
+      "type": "MUNICIPALITY",
+      "wardCount": 17,
+      "sortOrder": 442
+    },
+    {
+      "sourceId": 443,
+      "districtSourceId": 43,
+      "code": "NP-LL443",
+      "name": "Gaindakot",
+      "type": "MUNICIPALITY",
+      "wardCount": 18,
+      "sortOrder": 443
+    },
+    {
+      "sourceId": 444,
+      "districtSourceId": 43,
+      "code": "NP-LL444",
+      "name": "Devachuli",
+      "type": "MUNICIPALITY",
+      "wardCount": 17,
+      "sortOrder": 444
+    },
+    {
+      "sourceId": 445,
+      "districtSourceId": 43,
+      "code": "NP-LL445",
+      "name": "Madhya Bindu",
+      "type": "MUNICIPALITY",
+      "wardCount": 15,
+      "sortOrder": 445
+    },
+    {
+      "sourceId": 446,
+      "districtSourceId": 43,
+      "code": "NP-LL446",
+      "name": "Baudikali",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 446
+    },
+    {
+      "sourceId": 447,
+      "districtSourceId": 43,
+      "code": "NP-LL447",
+      "name": "Bulingtar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 447
+    },
+    {
+      "sourceId": 448,
+      "districtSourceId": 43,
+      "code": "NP-LL448",
+      "name": "Binayi Tribeni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 448
+    },
+    {
+      "sourceId": 449,
+      "districtSourceId": 43,
+      "code": "NP-LL449",
+      "name": "Hupsekot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 449
+    },
+    {
+      "sourceId": 450,
+      "districtSourceId": 44,
+      "code": "NP-LL450",
+      "name": "Kushma",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 450
+    },
+    {
+      "sourceId": 451,
+      "districtSourceId": 44,
+      "code": "NP-LL451",
+      "name": "Phalewas",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 451
+    },
+    {
+      "sourceId": 452,
+      "districtSourceId": 44,
+      "code": "NP-LL452",
+      "name": "Jaljala",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 452
+    },
+    {
+      "sourceId": 453,
+      "districtSourceId": 44,
+      "code": "NP-LL453",
+      "name": "Paiyun",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 453
+    },
+    {
+      "sourceId": 454,
+      "districtSourceId": 44,
+      "code": "NP-LL454",
+      "name": "Mahashila",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 454
+    },
+    {
+      "sourceId": 455,
+      "districtSourceId": 44,
+      "code": "NP-LL455",
+      "name": "Modi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 455
+    },
+    {
+      "sourceId": 456,
+      "districtSourceId": 44,
+      "code": "NP-LL456",
+      "name": "Bihadi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 456
+    },
+    {
+      "sourceId": 457,
+      "districtSourceId": 45,
+      "code": "NP-LL457",
+      "name": "Galyang",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 457
+    },
+    {
+      "sourceId": 458,
+      "districtSourceId": 45,
+      "code": "NP-LL458",
+      "name": "Chapakot",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 458
+    },
+    {
+      "sourceId": 459,
+      "districtSourceId": 45,
+      "code": "NP-LL459",
+      "name": "Putalibazar",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 459
+    },
+    {
+      "sourceId": 460,
+      "districtSourceId": 45,
+      "code": "NP-LL460",
+      "name": "Bheerkot",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 460
+    },
+    {
+      "sourceId": 461,
+      "districtSourceId": 45,
+      "code": "NP-LL461",
+      "name": "Waling",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 461
+    },
+    {
+      "sourceId": 462,
+      "districtSourceId": 45,
+      "code": "NP-LL462",
+      "name": "Arjun Chaupari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 462
+    },
+    {
+      "sourceId": 463,
+      "districtSourceId": 45,
+      "code": "NP-LL463",
+      "name": "Aandhikhola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 463
+    },
+    {
+      "sourceId": 464,
+      "districtSourceId": 45,
+      "code": "NP-LL464",
+      "name": "Kaligandaki",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 464
+    },
+    {
+      "sourceId": 465,
+      "districtSourceId": 45,
+      "code": "NP-LL465",
+      "name": "Phedikhola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 465
+    },
+    {
+      "sourceId": 466,
+      "districtSourceId": 45,
+      "code": "NP-LL466",
+      "name": "Harinas",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 466
+    },
+    {
+      "sourceId": 467,
+      "districtSourceId": 45,
+      "code": "NP-LL467",
+      "name": "Biruwa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 467
+    },
+    {
+      "sourceId": 468,
+      "districtSourceId": 46,
+      "code": "NP-LL468",
+      "name": "Bhanu",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 468
+    },
+    {
+      "sourceId": 469,
+      "districtSourceId": 46,
+      "code": "NP-LL469",
+      "name": "Bhimad",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 469
+    },
+    {
+      "sourceId": 470,
+      "districtSourceId": 46,
+      "code": "NP-LL470",
+      "name": "Byas",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 470
+    },
+    {
+      "sourceId": 471,
+      "districtSourceId": 46,
+      "code": "NP-LL471",
+      "name": "Suklagandaki",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 471
+    },
+    {
+      "sourceId": 472,
+      "districtSourceId": 46,
+      "code": "NP-LL472",
+      "name": "AnbuKhaireni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 472
+    },
+    {
+      "sourceId": 473,
+      "districtSourceId": 46,
+      "code": "NP-LL473",
+      "name": "Devghat",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 473
+    },
+    {
+      "sourceId": 474,
+      "districtSourceId": 46,
+      "code": "NP-LL474",
+      "name": "Bandipur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 474
+    },
+    {
+      "sourceId": 475,
+      "districtSourceId": 46,
+      "code": "NP-LL475",
+      "name": "Rishing",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 475
+    },
+    {
+      "sourceId": 476,
+      "districtSourceId": 46,
+      "code": "NP-LL476",
+      "name": "Ghiring",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 476
+    },
+    {
+      "sourceId": 477,
+      "districtSourceId": 46,
+      "code": "NP-LL477",
+      "name": "Myagde",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 477
+    },
+    {
+      "sourceId": 478,
+      "districtSourceId": 47,
+      "code": "NP-LL478",
+      "name": "Kapilvastu",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 478
+    },
+    {
+      "sourceId": 479,
+      "districtSourceId": 47,
+      "code": "NP-LL479",
+      "name": "Banganga",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 479
+    },
+    {
+      "sourceId": 480,
+      "districtSourceId": 47,
+      "code": "NP-LL480",
+      "name": "Buddhabhumi",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 480
+    },
+    {
+      "sourceId": 481,
+      "districtSourceId": 47,
+      "code": "NP-LL481",
+      "name": "Shivaraj",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 481
+    },
+    {
+      "sourceId": 482,
+      "districtSourceId": 47,
+      "code": "NP-LL482",
+      "name": "Krishnanagar",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 482
+    },
+    {
+      "sourceId": 483,
+      "districtSourceId": 47,
+      "code": "NP-LL483",
+      "name": "Maharajgunj",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 483
+    },
+    {
+      "sourceId": 484,
+      "districtSourceId": 47,
+      "code": "NP-LL484",
+      "name": "Mayadevi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 484
+    },
+    {
+      "sourceId": 485,
+      "districtSourceId": 47,
+      "code": "NP-LL485",
+      "name": "Yashodhara",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 485
+    },
+    {
+      "sourceId": 486,
+      "districtSourceId": 47,
+      "code": "NP-LL486",
+      "name": "Suddhodan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 486
+    },
+    {
+      "sourceId": 487,
+      "districtSourceId": 47,
+      "code": "NP-LL487",
+      "name": "Bijaynagar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 487
+    },
+    {
+      "sourceId": 488,
+      "districtSourceId": 48,
+      "code": "NP-LL488",
+      "name": "Bardaghat",
+      "type": "MUNICIPALITY",
+      "wardCount": 16,
+      "sortOrder": 488
+    },
+    {
+      "sourceId": 489,
+      "districtSourceId": 48,
+      "code": "NP-LL489",
+      "name": "Ramgram",
+      "type": "MUNICIPALITY",
+      "wardCount": 18,
+      "sortOrder": 489
+    },
+    {
+      "sourceId": 490,
+      "districtSourceId": 48,
+      "code": "NP-LL490",
+      "name": "Sunwal",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 490
+    },
+    {
+      "sourceId": 491,
+      "districtSourceId": 48,
+      "code": "NP-LL491",
+      "name": "Susta",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 491
+    },
+    {
+      "sourceId": 492,
+      "districtSourceId": 48,
+      "code": "NP-LL492",
+      "name": "Palhi Nandan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 492
+    },
+    {
+      "sourceId": 493,
+      "districtSourceId": 48,
+      "code": "NP-LL493",
+      "name": "Pratappur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 493
+    },
+    {
+      "sourceId": 494,
+      "districtSourceId": 48,
+      "code": "NP-LL494",
+      "name": "Sarawal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 494
+    },
+    {
+      "sourceId": 495,
+      "districtSourceId": 49,
+      "code": "NP-LL495",
+      "name": "Butwal",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 19,
+      "sortOrder": 495
+    },
+    {
+      "sourceId": 496,
+      "districtSourceId": 49,
+      "code": "NP-LL496",
+      "name": "Devdaha",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 496
+    },
+    {
+      "sourceId": 497,
+      "districtSourceId": 49,
+      "code": "NP-LL497",
+      "name": "Lumbini Sanskritik",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 497
+    },
+    {
+      "sourceId": 498,
+      "districtSourceId": 49,
+      "code": "NP-LL498",
+      "name": "Sainamaina",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 498
+    },
+    {
+      "sourceId": 499,
+      "districtSourceId": 49,
+      "code": "NP-LL499",
+      "name": "Siddharthanagar",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 499
+    },
+    {
+      "sourceId": 500,
+      "districtSourceId": 49,
+      "code": "NP-LL500",
+      "name": "Tilottama",
+      "type": "MUNICIPALITY",
+      "wardCount": 17,
+      "sortOrder": 500
+    },
+    {
+      "sourceId": 501,
+      "districtSourceId": 49,
+      "code": "NP-LL501",
+      "name": "Gaidahawa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 501
+    },
+    {
+      "sourceId": 502,
+      "districtSourceId": 49,
+      "code": "NP-LL502",
+      "name": "Kanchan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 502
+    },
+    {
+      "sourceId": 503,
+      "districtSourceId": 49,
+      "code": "NP-LL503",
+      "name": "Kotahimai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 503
+    },
+    {
+      "sourceId": 504,
+      "districtSourceId": 49,
+      "code": "NP-LL504",
+      "name": "Marchawari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 504
+    },
+    {
+      "sourceId": 505,
+      "districtSourceId": 49,
+      "code": "NP-LL505",
+      "name": "Mayadevi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 505
+    },
+    {
+      "sourceId": 506,
+      "districtSourceId": 49,
+      "code": "NP-LL506",
+      "name": "Omsatiya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 506
+    },
+    {
+      "sourceId": 507,
+      "districtSourceId": 49,
+      "code": "NP-LL507",
+      "name": "Rohini",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 507
+    },
+    {
+      "sourceId": 508,
+      "districtSourceId": 49,
+      "code": "NP-LL508",
+      "name": "Sammarimai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 508
+    },
+    {
+      "sourceId": 509,
+      "districtSourceId": 49,
+      "code": "NP-LL509",
+      "name": "Siyari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 509
+    },
+    {
+      "sourceId": 510,
+      "districtSourceId": 49,
+      "code": "NP-LL510",
+      "name": "Suddodhan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 510
+    },
+    {
+      "sourceId": 511,
+      "districtSourceId": 50,
+      "code": "NP-LL511",
+      "name": "Sandhikharka",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 511
+    },
+    {
+      "sourceId": 512,
+      "districtSourceId": 50,
+      "code": "NP-LL512",
+      "name": "Sitganga",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 512
+    },
+    {
+      "sourceId": 513,
+      "districtSourceId": 50,
+      "code": "NP-LL513",
+      "name": "Bhumikasthan",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 513
+    },
+    {
+      "sourceId": 514,
+      "districtSourceId": 50,
+      "code": "NP-LL514",
+      "name": "Chhatradev",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 514
+    },
+    {
+      "sourceId": 515,
+      "districtSourceId": 50,
+      "code": "NP-LL515",
+      "name": "Panini",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 515
+    },
+    {
+      "sourceId": 516,
+      "districtSourceId": 50,
+      "code": "NP-LL516",
+      "name": "Malarani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 516
+    },
+    {
+      "sourceId": 517,
+      "districtSourceId": 51,
+      "code": "NP-LL517",
+      "name": "Resunga",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 517
+    },
+    {
+      "sourceId": 518,
+      "districtSourceId": 51,
+      "code": "NP-LL518",
+      "name": "Musikot",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 518
+    },
+    {
+      "sourceId": 519,
+      "districtSourceId": 51,
+      "code": "NP-LL519",
+      "name": "Rurukshetra",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 519
+    },
+    {
+      "sourceId": 520,
+      "districtSourceId": 51,
+      "code": "NP-LL520",
+      "name": "Chhatrakot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 520
+    },
+    {
+      "sourceId": 521,
+      "districtSourceId": 51,
+      "code": "NP-LL521",
+      "name": "Gulmidarbar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 521
+    },
+    {
+      "sourceId": 522,
+      "districtSourceId": 51,
+      "code": "NP-LL522",
+      "name": "Chandrakot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 522
+    },
+    {
+      "sourceId": 523,
+      "districtSourceId": 51,
+      "code": "NP-LL523",
+      "name": "Satyawati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 523
+    },
+    {
+      "sourceId": 524,
+      "districtSourceId": 51,
+      "code": "NP-LL524",
+      "name": "Dhurkot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 524
+    },
+    {
+      "sourceId": 525,
+      "districtSourceId": 51,
+      "code": "NP-LL525",
+      "name": "Kaligandaki",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 525
+    },
+    {
+      "sourceId": 526,
+      "districtSourceId": 51,
+      "code": "NP-LL526",
+      "name": "Isma",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 526
+    },
+    {
+      "sourceId": 527,
+      "districtSourceId": 51,
+      "code": "NP-LL527",
+      "name": "Malika",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 527
+    },
+    {
+      "sourceId": 528,
+      "districtSourceId": 51,
+      "code": "NP-LL528",
+      "name": "Madane",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 528
+    },
+    {
+      "sourceId": 529,
+      "districtSourceId": 52,
+      "code": "NP-LL529",
+      "name": "Tansen",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 529
+    },
+    {
+      "sourceId": 530,
+      "districtSourceId": 52,
+      "code": "NP-LL530",
+      "name": "Rampur",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 530
+    },
+    {
+      "sourceId": 531,
+      "districtSourceId": 52,
+      "code": "NP-LL531",
+      "name": "Rainadevi Chhahara",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 531
+    },
+    {
+      "sourceId": 532,
+      "districtSourceId": 52,
+      "code": "NP-LL532",
+      "name": "Ripdikot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 532
+    },
+    {
+      "sourceId": 533,
+      "districtSourceId": 52,
+      "code": "NP-LL533",
+      "name": "Bagnaskali",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 533
+    },
+    {
+      "sourceId": 534,
+      "districtSourceId": 52,
+      "code": "NP-LL534",
+      "name": "Rambha",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 534
+    },
+    {
+      "sourceId": 535,
+      "districtSourceId": 52,
+      "code": "NP-LL535",
+      "name": "Purbakhola",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 535
+    },
+    {
+      "sourceId": 536,
+      "districtSourceId": 52,
+      "code": "NP-LL536",
+      "name": "Nisdi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 536
+    },
+    {
+      "sourceId": 537,
+      "districtSourceId": 52,
+      "code": "NP-LL537",
+      "name": "Mathagadhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 537
+    },
+    {
+      "sourceId": 538,
+      "districtSourceId": 52,
+      "code": "NP-LL538",
+      "name": "Tinahu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 538
+    },
+    {
+      "sourceId": 539,
+      "districtSourceId": 53,
+      "code": "NP-LL539",
+      "name": "Ghorahi",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 19,
+      "sortOrder": 539
+    },
+    {
+      "sourceId": 540,
+      "districtSourceId": 53,
+      "code": "NP-LL540",
+      "name": "Tulsipur",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 19,
+      "sortOrder": 540
+    },
+    {
+      "sourceId": 541,
+      "districtSourceId": 53,
+      "code": "NP-LL541",
+      "name": "Lamahi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 541
+    },
+    {
+      "sourceId": 542,
+      "districtSourceId": 53,
+      "code": "NP-LL542",
+      "name": "Gadhawa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 542
+    },
+    {
+      "sourceId": 543,
+      "districtSourceId": 53,
+      "code": "NP-LL543",
+      "name": "Rajpur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 543
+    },
+    {
+      "sourceId": 544,
+      "districtSourceId": 53,
+      "code": "NP-LL544",
+      "name": "Shantinagar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 544
+    },
+    {
+      "sourceId": 545,
+      "districtSourceId": 53,
+      "code": "NP-LL545",
+      "name": "Rapti",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 545
+    },
+    {
+      "sourceId": 546,
+      "districtSourceId": 53,
+      "code": "NP-LL546",
+      "name": "Banglachuli",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 546
+    },
+    {
+      "sourceId": 547,
+      "districtSourceId": 53,
+      "code": "NP-LL547",
+      "name": "Dangisharan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 547
+    },
+    {
+      "sourceId": 548,
+      "districtSourceId": 53,
+      "code": "NP-LL548",
+      "name": "Babai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 548
+    },
+    {
+      "sourceId": 549,
+      "districtSourceId": 54,
+      "code": "NP-LL549",
+      "name": "Sworgadwari",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 549
+    },
+    {
+      "sourceId": 550,
+      "districtSourceId": 54,
+      "code": "NP-LL550",
+      "name": "Pyuthan",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 550
+    },
+    {
+      "sourceId": 551,
+      "districtSourceId": 54,
+      "code": "NP-LL551",
+      "name": "Mandavi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 551
+    },
+    {
+      "sourceId": 552,
+      "districtSourceId": 54,
+      "code": "NP-LL552",
+      "name": "Sarumarani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 552
+    },
+    {
+      "sourceId": 553,
+      "districtSourceId": 54,
+      "code": "NP-LL553",
+      "name": "Ayirawati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 553
+    },
+    {
+      "sourceId": 554,
+      "districtSourceId": 54,
+      "code": "NP-LL554",
+      "name": "Mallarani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 554
+    },
+    {
+      "sourceId": 555,
+      "districtSourceId": 54,
+      "code": "NP-LL555",
+      "name": "Jhimruk",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 555
+    },
+    {
+      "sourceId": 556,
+      "districtSourceId": 54,
+      "code": "NP-LL556",
+      "name": "Naubahini",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 556
+    },
+    {
+      "sourceId": 557,
+      "districtSourceId": 54,
+      "code": "NP-LL557",
+      "name": "Gaumukhi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 557
+    },
+    {
+      "sourceId": 558,
+      "districtSourceId": 55,
+      "code": "NP-LL558",
+      "name": "Rolpa",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 558
+    },
+    {
+      "sourceId": 559,
+      "districtSourceId": 55,
+      "code": "NP-LL559",
+      "name": "Runtigadi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 559
+    },
+    {
+      "sourceId": 560,
+      "districtSourceId": 55,
+      "code": "NP-LL560",
+      "name": "Triveni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 560
+    },
+    {
+      "sourceId": 561,
+      "districtSourceId": 55,
+      "code": "NP-LL561",
+      "name": "Sunil Smiriti",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 561
+    },
+    {
+      "sourceId": 562,
+      "districtSourceId": 55,
+      "code": "NP-LL562",
+      "name": "Lungri",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 562
+    },
+    {
+      "sourceId": 563,
+      "districtSourceId": 55,
+      "code": "NP-LL563",
+      "name": "Sunchhahari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 563
+    },
+    {
+      "sourceId": 564,
+      "districtSourceId": 55,
+      "code": "NP-LL564",
+      "name": "Thawang",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 564
+    },
+    {
+      "sourceId": 565,
+      "districtSourceId": 55,
+      "code": "NP-LL565",
+      "name": "Madi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 565
+    },
+    {
+      "sourceId": 566,
+      "districtSourceId": 55,
+      "code": "NP-LL566",
+      "name": "GangaDev",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 566
+    },
+    {
+      "sourceId": 567,
+      "districtSourceId": 55,
+      "code": "NP-LL567",
+      "name": "Pariwartan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 567
+    },
+    {
+      "sourceId": 568,
+      "districtSourceId": 56,
+      "code": "NP-LL568",
+      "name": "Putha Uttarganga",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 568
+    },
+    {
+      "sourceId": 569,
+      "districtSourceId": 56,
+      "code": "NP-LL569",
+      "name": "Bhume",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 569
+    },
+    {
+      "sourceId": 570,
+      "districtSourceId": 56,
+      "code": "NP-LL570",
+      "name": "Sisne",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 570
+    },
+    {
+      "sourceId": 571,
+      "districtSourceId": 57,
+      "code": "NP-LL571",
+      "name": "Nepalgunj",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 23,
+      "sortOrder": 571
+    },
+    {
+      "sourceId": 572,
+      "districtSourceId": 57,
+      "code": "NP-LL572",
+      "name": "Kohalpur",
+      "type": "MUNICIPALITY",
+      "wardCount": 15,
+      "sortOrder": 572
+    },
+    {
+      "sourceId": 573,
+      "districtSourceId": 57,
+      "code": "NP-LL573",
+      "name": "Rapti-Sonari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 573
+    },
+    {
+      "sourceId": 574,
+      "districtSourceId": 57,
+      "code": "NP-LL574",
+      "name": "Narainapur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 574
+    },
+    {
+      "sourceId": 575,
+      "districtSourceId": 57,
+      "code": "NP-LL575",
+      "name": "Duduwa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 575
+    },
+    {
+      "sourceId": 576,
+      "districtSourceId": 57,
+      "code": "NP-LL576",
+      "name": "Janaki",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 576
+    },
+    {
+      "sourceId": 577,
+      "districtSourceId": 57,
+      "code": "NP-LL577",
+      "name": "Khajura",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 577
+    },
+    {
+      "sourceId": 578,
+      "districtSourceId": 57,
+      "code": "NP-LL578",
+      "name": "Baijanath",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 578
+    },
+    {
+      "sourceId": 579,
+      "districtSourceId": 58,
+      "code": "NP-LL579",
+      "name": "Gulariya",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 579
+    },
+    {
+      "sourceId": 580,
+      "districtSourceId": 58,
+      "code": "NP-LL580",
+      "name": "Rajapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 580
+    },
+    {
+      "sourceId": 581,
+      "districtSourceId": 58,
+      "code": "NP-LL581",
+      "name": "Madhuwan",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 581
+    },
+    {
+      "sourceId": 582,
+      "districtSourceId": 58,
+      "code": "NP-LL582",
+      "name": "Thakurbaba",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 582
+    },
+    {
+      "sourceId": 583,
+      "districtSourceId": 58,
+      "code": "NP-LL583",
+      "name": "Basgadhi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 583
+    },
+    {
+      "sourceId": 584,
+      "districtSourceId": 58,
+      "code": "NP-LL584",
+      "name": "Barbardiya",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 584
+    },
+    {
+      "sourceId": 585,
+      "districtSourceId": 58,
+      "code": "NP-LL585",
+      "name": "Badhaiyatal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 585
+    },
+    {
+      "sourceId": 586,
+      "districtSourceId": 58,
+      "code": "NP-LL586",
+      "name": "Geruwa",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 586
+    },
+    {
+      "sourceId": 587,
+      "districtSourceId": 59,
+      "code": "NP-LL587",
+      "name": "Aathabiskot",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 587
+    },
+    {
+      "sourceId": 588,
+      "districtSourceId": 59,
+      "code": "NP-LL588",
+      "name": "Musikot",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 588
+    },
+    {
+      "sourceId": 589,
+      "districtSourceId": 59,
+      "code": "NP-LL589",
+      "name": "Chaurjahari",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 589
+    },
+    {
+      "sourceId": 590,
+      "districtSourceId": 59,
+      "code": "NP-LL590",
+      "name": "SaniBheri",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 590
+    },
+    {
+      "sourceId": 591,
+      "districtSourceId": 59,
+      "code": "NP-LL591",
+      "name": "Triveni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 591
+    },
+    {
+      "sourceId": 592,
+      "districtSourceId": 59,
+      "code": "NP-LL592",
+      "name": "Banphikot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 592
+    },
+    {
+      "sourceId": 593,
+      "districtSourceId": 60,
+      "code": "NP-LL593",
+      "name": "Kumakh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 593
+    },
+    {
+      "sourceId": 594,
+      "districtSourceId": 60,
+      "code": "NP-LL594",
+      "name": "Kalimati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 594
+    },
+    {
+      "sourceId": 595,
+      "districtSourceId": 60,
+      "code": "NP-LL595",
+      "name": "Chhatreshwari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 595
+    },
+    {
+      "sourceId": 596,
+      "districtSourceId": 60,
+      "code": "NP-LL596",
+      "name": "Darma",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 596
+    },
+    {
+      "sourceId": 597,
+      "districtSourceId": 60,
+      "code": "NP-LL597",
+      "name": "Kapurkot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 597
+    },
+    {
+      "sourceId": 598,
+      "districtSourceId": 60,
+      "code": "NP-LL598",
+      "name": "Triveni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 598
+    },
+    {
+      "sourceId": 599,
+      "districtSourceId": 60,
+      "code": "NP-LL599",
+      "name": "Siddha Kumakh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 599
+    },
+    {
+      "sourceId": 600,
+      "districtSourceId": 60,
+      "code": "NP-LL600",
+      "name": "Bagchaur",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 600
+    },
+    {
+      "sourceId": 601,
+      "districtSourceId": 60,
+      "code": "NP-LL601",
+      "name": "Shaarda",
+      "type": "MUNICIPALITY",
+      "wardCount": 15,
+      "sortOrder": 601
+    },
+    {
+      "sourceId": 602,
+      "districtSourceId": 60,
+      "code": "NP-LL602",
+      "name": "Bangad Kupinde",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 602
+    },
+    {
+      "sourceId": 603,
+      "districtSourceId": 61,
+      "code": "NP-LL603",
+      "name": "Mudkechula",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 603
+    },
+    {
+      "sourceId": 604,
+      "districtSourceId": 61,
+      "code": "NP-LL604",
+      "name": "Kaike",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 604
+    },
+    {
+      "sourceId": 605,
+      "districtSourceId": 61,
+      "code": "NP-LL605",
+      "name": "She Phoksundo",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 605
+    },
+    {
+      "sourceId": 606,
+      "districtSourceId": 61,
+      "code": "NP-LL606",
+      "name": "Jagadulla",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 606
+    },
+    {
+      "sourceId": 607,
+      "districtSourceId": 61,
+      "code": "NP-LL607",
+      "name": "Dolpo Buddha",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 607
+    },
+    {
+      "sourceId": 608,
+      "districtSourceId": 61,
+      "code": "NP-LL608",
+      "name": "Chharka Tongsong",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 608
+    },
+    {
+      "sourceId": 609,
+      "districtSourceId": 61,
+      "code": "NP-LL609",
+      "name": "Thuli Bheri",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 609
+    },
+    {
+      "sourceId": 610,
+      "districtSourceId": 61,
+      "code": "NP-LL610",
+      "name": "Tripurasundari",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 610
+    },
+    {
+      "sourceId": 611,
+      "districtSourceId": 62,
+      "code": "NP-LL611",
+      "name": "Simkot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 611
+    },
+    {
+      "sourceId": 612,
+      "districtSourceId": 62,
+      "code": "NP-LL612",
+      "name": "Sarkegad",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 612
+    },
+    {
+      "sourceId": 613,
+      "districtSourceId": 62,
+      "code": "NP-LL613",
+      "name": "Adanchuli",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 613
+    },
+    {
+      "sourceId": 614,
+      "districtSourceId": 62,
+      "code": "NP-LL614",
+      "name": "Kharpunath",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 614
+    },
+    {
+      "sourceId": 615,
+      "districtSourceId": 62,
+      "code": "NP-LL615",
+      "name": "Tanjakot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 615
+    },
+    {
+      "sourceId": 616,
+      "districtSourceId": 62,
+      "code": "NP-LL616",
+      "name": "Chankheli",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 616
+    },
+    {
+      "sourceId": 617,
+      "districtSourceId": 62,
+      "code": "NP-LL617",
+      "name": "Namkha",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 617
+    },
+    {
+      "sourceId": 618,
+      "districtSourceId": 63,
+      "code": "NP-LL618",
+      "name": "Tatopani",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 618
+    },
+    {
+      "sourceId": 619,
+      "districtSourceId": 63,
+      "code": "NP-LL619",
+      "name": "Patarasi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 619
+    },
+    {
+      "sourceId": 620,
+      "districtSourceId": 63,
+      "code": "NP-LL620",
+      "name": "Tila",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 620
+    },
+    {
+      "sourceId": 621,
+      "districtSourceId": 63,
+      "code": "NP-LL621",
+      "name": "Kanaka Sundari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 621
+    },
+    {
+      "sourceId": 622,
+      "districtSourceId": 63,
+      "code": "NP-LL622",
+      "name": "Sinja",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 622
+    },
+    {
+      "sourceId": 623,
+      "districtSourceId": 63,
+      "code": "NP-LL623",
+      "name": "Hima",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 623
+    },
+    {
+      "sourceId": 624,
+      "districtSourceId": 63,
+      "code": "NP-LL624",
+      "name": "Guthichaur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 624
+    },
+    {
+      "sourceId": 625,
+      "districtSourceId": 63,
+      "code": "NP-LL625",
+      "name": "Chandannath",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 625
+    },
+    {
+      "sourceId": 626,
+      "districtSourceId": 64,
+      "code": "NP-LL626",
+      "name": "Khandachakra",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 626
+    },
+    {
+      "sourceId": 627,
+      "districtSourceId": 64,
+      "code": "NP-LL627",
+      "name": "Raskot",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 627
+    },
+    {
+      "sourceId": 628,
+      "districtSourceId": 64,
+      "code": "NP-LL628",
+      "name": "Tilagufa",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 628
+    },
+    {
+      "sourceId": 629,
+      "districtSourceId": 64,
+      "code": "NP-LL629",
+      "name": "Narharinath",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 629
+    },
+    {
+      "sourceId": 630,
+      "districtSourceId": 64,
+      "code": "NP-LL630",
+      "name": "Palata",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 630
+    },
+    {
+      "sourceId": 631,
+      "districtSourceId": 64,
+      "code": "NP-LL631",
+      "name": "Shubha Kalika",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 631
+    },
+    {
+      "sourceId": 632,
+      "districtSourceId": 64,
+      "code": "NP-LL632",
+      "name": "Sanni Triveni",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 632
+    },
+    {
+      "sourceId": 633,
+      "districtSourceId": 64,
+      "code": "NP-LL633",
+      "name": "Pachaljharana",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 633
+    },
+    {
+      "sourceId": 634,
+      "districtSourceId": 64,
+      "code": "NP-LL634",
+      "name": "Mahawai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 634
+    },
+    {
+      "sourceId": 635,
+      "districtSourceId": 65,
+      "code": "NP-LL635",
+      "name": "Khatyad",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 635
+    },
+    {
+      "sourceId": 636,
+      "districtSourceId": 65,
+      "code": "NP-LL636",
+      "name": "Soru",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 636
+    },
+    {
+      "sourceId": 637,
+      "districtSourceId": 65,
+      "code": "NP-LL637",
+      "name": "Mugum Karmarong",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 637
+    },
+    {
+      "sourceId": 638,
+      "districtSourceId": 65,
+      "code": "NP-LL638",
+      "name": "Chhayanath Rara",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 638
+    },
+    {
+      "sourceId": 639,
+      "districtSourceId": 66,
+      "code": "NP-LL639",
+      "name": "Simta",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 639
+    },
+    {
+      "sourceId": 640,
+      "districtSourceId": 66,
+      "code": "NP-LL640",
+      "name": "Barahatal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 640
+    },
+    {
+      "sourceId": 641,
+      "districtSourceId": 66,
+      "code": "NP-LL641",
+      "name": "Chaukune",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 641
+    },
+    {
+      "sourceId": 642,
+      "districtSourceId": 66,
+      "code": "NP-LL642",
+      "name": "Chingad",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 642
+    },
+    {
+      "sourceId": 643,
+      "districtSourceId": 66,
+      "code": "NP-LL643",
+      "name": "Gurbhakot",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 643
+    },
+    {
+      "sourceId": 644,
+      "districtSourceId": 66,
+      "code": "NP-LL644",
+      "name": "Birendranagar",
+      "type": "MUNICIPALITY",
+      "wardCount": 16,
+      "sortOrder": 644
+    },
+    {
+      "sourceId": 645,
+      "districtSourceId": 66,
+      "code": "NP-LL645",
+      "name": "Bheriganga",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 645
+    },
+    {
+      "sourceId": 646,
+      "districtSourceId": 66,
+      "code": "NP-LL646",
+      "name": "Panchapuri",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 646
+    },
+    {
+      "sourceId": 647,
+      "districtSourceId": 66,
+      "code": "NP-LL647",
+      "name": "Lekbeshi",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 647
+    },
+    {
+      "sourceId": 648,
+      "districtSourceId": 67,
+      "code": "NP-LL648",
+      "name": "Dullu",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 648
+    },
+    {
+      "sourceId": 649,
+      "districtSourceId": 67,
+      "code": "NP-LL649",
+      "name": "Gurans",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 649
+    },
+    {
+      "sourceId": 650,
+      "districtSourceId": 67,
+      "code": "NP-LL650",
+      "name": "Bhairabi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 650
+    },
+    {
+      "sourceId": 651,
+      "districtSourceId": 67,
+      "code": "NP-LL651",
+      "name": "Naumule",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 651
+    },
+    {
+      "sourceId": 652,
+      "districtSourceId": 67,
+      "code": "NP-LL652",
+      "name": "Mahabu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 652
+    },
+    {
+      "sourceId": 653,
+      "districtSourceId": 67,
+      "code": "NP-LL653",
+      "name": "Thantikandh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 653
+    },
+    {
+      "sourceId": 654,
+      "districtSourceId": 67,
+      "code": "NP-LL654",
+      "name": "Bhagawatimai",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 654
+    },
+    {
+      "sourceId": 655,
+      "districtSourceId": 67,
+      "code": "NP-LL655",
+      "name": "Dungeshwar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 655
+    },
+    {
+      "sourceId": 656,
+      "districtSourceId": 67,
+      "code": "NP-LL656",
+      "name": "Aathabis",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 656
+    },
+    {
+      "sourceId": 657,
+      "districtSourceId": 67,
+      "code": "NP-LL657",
+      "name": "Narayan",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 657
+    },
+    {
+      "sourceId": 658,
+      "districtSourceId": 67,
+      "code": "NP-LL658",
+      "name": "Chamunda Bindrasaini",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 658
+    },
+    {
+      "sourceId": 659,
+      "districtSourceId": 68,
+      "code": "NP-LL659",
+      "name": "Chhedagad",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 659
+    },
+    {
+      "sourceId": 660,
+      "districtSourceId": 68,
+      "code": "NP-LL660",
+      "name": "Bheri",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 660
+    },
+    {
+      "sourceId": 661,
+      "districtSourceId": 68,
+      "code": "NP-LL661",
+      "name": "Nalgad",
+      "type": "MUNICIPALITY",
+      "wardCount": 13,
+      "sortOrder": 661
+    },
+    {
+      "sourceId": 662,
+      "districtSourceId": 68,
+      "code": "NP-LL662",
+      "name": "Junichande",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 662
+    },
+    {
+      "sourceId": 663,
+      "districtSourceId": 68,
+      "code": "NP-LL663",
+      "name": "Kuse",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 663
+    },
+    {
+      "sourceId": 664,
+      "districtSourceId": 68,
+      "code": "NP-LL664",
+      "name": "Barekot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 664
+    },
+    {
+      "sourceId": 665,
+      "districtSourceId": 68,
+      "code": "NP-LL665",
+      "name": "Shivalaya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 665
+    },
+    {
+      "sourceId": 666,
+      "districtSourceId": 69,
+      "code": "NP-LL666",
+      "name": "Mahakali",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 666
+    },
+    {
+      "sourceId": 667,
+      "districtSourceId": 69,
+      "code": "NP-LL667",
+      "name": "Shailyashikhar",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 667
+    },
+    {
+      "sourceId": 668,
+      "districtSourceId": 69,
+      "code": "NP-LL668",
+      "name": "Naugad",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 668
+    },
+    {
+      "sourceId": 669,
+      "districtSourceId": 69,
+      "code": "NP-LL669",
+      "name": "Malikarjun",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 669
+    },
+    {
+      "sourceId": 670,
+      "districtSourceId": 69,
+      "code": "NP-LL670",
+      "name": "Marma",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 670
+    },
+    {
+      "sourceId": 671,
+      "districtSourceId": 69,
+      "code": "NP-LL671",
+      "name": "Lekam",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 671
+    },
+    {
+      "sourceId": 672,
+      "districtSourceId": 69,
+      "code": "NP-LL672",
+      "name": "Duhun",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 672
+    },
+    {
+      "sourceId": 673,
+      "districtSourceId": 69,
+      "code": "NP-LL673",
+      "name": "Vyans",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 673
+    },
+    {
+      "sourceId": 674,
+      "districtSourceId": 69,
+      "code": "NP-LL674",
+      "name": "Apihimal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 674
+    },
+    {
+      "sourceId": 675,
+      "districtSourceId": 70,
+      "code": "NP-LL675",
+      "name": "Jayaprithvi",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 675
+    },
+    {
+      "sourceId": 676,
+      "districtSourceId": 70,
+      "code": "NP-LL676",
+      "name": "Bungal",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 676
+    },
+    {
+      "sourceId": 677,
+      "districtSourceId": 70,
+      "code": "NP-LL677",
+      "name": "Kedarsyu",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 677
+    },
+    {
+      "sourceId": 678,
+      "districtSourceId": 70,
+      "code": "NP-LL678",
+      "name": "Thalara",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 678
+    },
+    {
+      "sourceId": 679,
+      "districtSourceId": 70,
+      "code": "NP-LL679",
+      "name": "Bitthadchir",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 679
+    },
+    {
+      "sourceId": 680,
+      "districtSourceId": 70,
+      "code": "NP-LL680",
+      "name": "Chhabis Pathibhera",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 680
+    },
+    {
+      "sourceId": 681,
+      "districtSourceId": 70,
+      "code": "NP-LL681",
+      "name": "Khaptadchhanna",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 681
+    },
+    {
+      "sourceId": 682,
+      "districtSourceId": 70,
+      "code": "NP-LL682",
+      "name": "Masta",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 682
+    },
+    {
+      "sourceId": 683,
+      "districtSourceId": 70,
+      "code": "NP-LL683",
+      "name": "Durgathali",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 683
+    },
+    {
+      "sourceId": 684,
+      "districtSourceId": 70,
+      "code": "NP-LL684",
+      "name": "Talkot",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 684
+    },
+    {
+      "sourceId": 685,
+      "districtSourceId": 70,
+      "code": "NP-LL685",
+      "name": "Surma",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 685
+    },
+    {
+      "sourceId": 686,
+      "districtSourceId": 70,
+      "code": "NP-LL686",
+      "name": "Saipal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 686
+    },
+    {
+      "sourceId": 687,
+      "districtSourceId": 71,
+      "code": "NP-LL687",
+      "name": "Badimalika",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 687
+    },
+    {
+      "sourceId": 688,
+      "districtSourceId": 71,
+      "code": "NP-LL688",
+      "name": "Triveni",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 688
+    },
+    {
+      "sourceId": 689,
+      "districtSourceId": 71,
+      "code": "NP-LL689",
+      "name": "Budhiganga",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 689
+    },
+    {
+      "sourceId": 690,
+      "districtSourceId": 71,
+      "code": "NP-LL690",
+      "name": "Budhinanda",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 690
+    },
+    {
+      "sourceId": 691,
+      "districtSourceId": 71,
+      "code": "NP-LL691",
+      "name": "Khaptad Chhededaha",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 691
+    },
+    {
+      "sourceId": 692,
+      "districtSourceId": 71,
+      "code": "NP-LL692",
+      "name": "Swami Kartik Khapar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 692
+    },
+    {
+      "sourceId": 693,
+      "districtSourceId": 71,
+      "code": "NP-LL693",
+      "name": "Jagannath",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 693
+    },
+    {
+      "sourceId": 694,
+      "districtSourceId": 71,
+      "code": "NP-LL694",
+      "name": "Himali",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 694
+    },
+    {
+      "sourceId": 695,
+      "districtSourceId": 71,
+      "code": "NP-LL695",
+      "name": "Gaumul",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 695
+    },
+    {
+      "sourceId": 696,
+      "districtSourceId": 72,
+      "code": "NP-LL696",
+      "name": "Dashrathchanda",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 696
+    },
+    {
+      "sourceId": 697,
+      "districtSourceId": 72,
+      "code": "NP-LL697",
+      "name": "Patan",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 697
+    },
+    {
+      "sourceId": 698,
+      "districtSourceId": 72,
+      "code": "NP-LL698",
+      "name": "Melauli",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 698
+    },
+    {
+      "sourceId": 699,
+      "districtSourceId": 72,
+      "code": "NP-LL699",
+      "name": "Purchaudi",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 699
+    },
+    {
+      "sourceId": 700,
+      "districtSourceId": 72,
+      "code": "NP-LL700",
+      "name": "Dogdakedar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 700
+    },
+    {
+      "sourceId": 701,
+      "districtSourceId": 72,
+      "code": "NP-LL701",
+      "name": "Dilashaini",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 701
+    },
+    {
+      "sourceId": 702,
+      "districtSourceId": 72,
+      "code": "NP-LL702",
+      "name": "Sigas",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 702
+    },
+    {
+      "sourceId": 703,
+      "districtSourceId": 72,
+      "code": "NP-LL703",
+      "name": "Pancheshwar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 703
+    },
+    {
+      "sourceId": 704,
+      "districtSourceId": 72,
+      "code": "NP-LL704",
+      "name": "Surnaya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 704
+    },
+    {
+      "sourceId": 705,
+      "districtSourceId": 72,
+      "code": "NP-LL705",
+      "name": "Shivanath",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 705
+    },
+    {
+      "sourceId": 706,
+      "districtSourceId": 73,
+      "code": "NP-LL706",
+      "name": "Dipayal Silgadhi",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 706
+    },
+    {
+      "sourceId": 707,
+      "districtSourceId": 73,
+      "code": "NP-LL707",
+      "name": "Shikhar",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 707
+    },
+    {
+      "sourceId": 708,
+      "districtSourceId": 73,
+      "code": "NP-LL708",
+      "name": "Aadarsha",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 708
+    },
+    {
+      "sourceId": 709,
+      "districtSourceId": 73,
+      "code": "NP-LL709",
+      "name": "Purbichauki",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 709
+    },
+    {
+      "sourceId": 710,
+      "districtSourceId": 73,
+      "code": "NP-LL710",
+      "name": "K.I.Singh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 710
+    },
+    {
+      "sourceId": 711,
+      "districtSourceId": 73,
+      "code": "NP-LL711",
+      "name": "Jorayal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 711
+    },
+    {
+      "sourceId": 712,
+      "districtSourceId": 73,
+      "code": "NP-LL712",
+      "name": "Sayal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 712
+    },
+    {
+      "sourceId": 713,
+      "districtSourceId": 73,
+      "code": "NP-LL713",
+      "name": "Bogatan-Phudsil",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 713
+    },
+    {
+      "sourceId": 714,
+      "districtSourceId": 73,
+      "code": "NP-LL714",
+      "name": "Badikedar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 714
+    },
+    {
+      "sourceId": 715,
+      "districtSourceId": 74,
+      "code": "NP-LL715",
+      "name": "Ramaroshan",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 715
+    },
+    {
+      "sourceId": 716,
+      "districtSourceId": 74,
+      "code": "NP-LL716",
+      "name": "Chaurpati",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 716
+    },
+    {
+      "sourceId": 717,
+      "districtSourceId": 74,
+      "code": "NP-LL717",
+      "name": "Turmakhand",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 717
+    },
+    {
+      "sourceId": 718,
+      "districtSourceId": 74,
+      "code": "NP-LL718",
+      "name": "Mellekh",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 718
+    },
+    {
+      "sourceId": 719,
+      "districtSourceId": 74,
+      "code": "NP-LL719",
+      "name": "Dhakari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 719
+    },
+    {
+      "sourceId": 720,
+      "districtSourceId": 74,
+      "code": "NP-LL720",
+      "name": "Bannigadi Jayagad",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 720
+    },
+    {
+      "sourceId": 721,
+      "districtSourceId": 74,
+      "code": "NP-LL721",
+      "name": "Mangalsen",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 721
+    },
+    {
+      "sourceId": 722,
+      "districtSourceId": 74,
+      "code": "NP-LL722",
+      "name": "Kamalbazar",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 722
+    },
+    {
+      "sourceId": 723,
+      "districtSourceId": 74,
+      "code": "NP-LL723",
+      "name": "Sanfebagar",
+      "type": "MUNICIPALITY",
+      "wardCount": 14,
+      "sortOrder": 723
+    },
+    {
+      "sourceId": 724,
+      "districtSourceId": 74,
+      "code": "NP-LL724",
+      "name": "Panchadewal Binayak",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 724
+    },
+    {
+      "sourceId": 725,
+      "districtSourceId": 75,
+      "code": "NP-LL725",
+      "name": "Navadurga",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 725
+    },
+    {
+      "sourceId": 726,
+      "districtSourceId": 75,
+      "code": "NP-LL726",
+      "name": "Aalitaal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 8,
+      "sortOrder": 726
+    },
+    {
+      "sourceId": 727,
+      "districtSourceId": 75,
+      "code": "NP-LL727",
+      "name": "Ganyapadhura",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 727
+    },
+    {
+      "sourceId": 728,
+      "districtSourceId": 75,
+      "code": "NP-LL728",
+      "name": "Bhageshwar",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 728
+    },
+    {
+      "sourceId": 729,
+      "districtSourceId": 75,
+      "code": "NP-LL729",
+      "name": "Ajaymeru",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 729
+    },
+    {
+      "sourceId": 730,
+      "districtSourceId": 75,
+      "code": "NP-LL730",
+      "name": "Amargadhi",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 730
+    },
+    {
+      "sourceId": 731,
+      "districtSourceId": 75,
+      "code": "NP-LL731",
+      "name": "Parshuram",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 731
+    },
+    {
+      "sourceId": 732,
+      "districtSourceId": 76,
+      "code": "NP-LL732",
+      "name": "Bhimdatta",
+      "type": "MUNICIPALITY",
+      "wardCount": 19,
+      "sortOrder": 732
+    },
+    {
+      "sourceId": 733,
+      "districtSourceId": 76,
+      "code": "NP-LL733",
+      "name": "Punarbas",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 733
+    },
+    {
+      "sourceId": 734,
+      "districtSourceId": 76,
+      "code": "NP-LL734",
+      "name": "Bedkot",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 734
+    },
+    {
+      "sourceId": 735,
+      "districtSourceId": 76,
+      "code": "NP-LL735",
+      "name": "Mahakali",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 735
+    },
+    {
+      "sourceId": 736,
+      "districtSourceId": 76,
+      "code": "NP-LL736",
+      "name": "Shuklaphanta",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 736
+    },
+    {
+      "sourceId": 737,
+      "districtSourceId": 76,
+      "code": "NP-LL737",
+      "name": "Belauri",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 737
+    },
+    {
+      "sourceId": 738,
+      "districtSourceId": 76,
+      "code": "NP-LL738",
+      "name": "Krishnapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 738
+    },
+    {
+      "sourceId": 739,
+      "districtSourceId": 76,
+      "code": "NP-LL739",
+      "name": "Laljhadi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 739
+    },
+    {
+      "sourceId": 740,
+      "districtSourceId": 76,
+      "code": "NP-LL740",
+      "name": "Beldandi",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 5,
+      "sortOrder": 740
+    },
+    {
+      "sourceId": 741,
+      "districtSourceId": 77,
+      "code": "NP-LL741",
+      "name": "Janaki",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 741
+    },
+    {
+      "sourceId": 742,
+      "districtSourceId": 77,
+      "code": "NP-LL742",
+      "name": "Kailari",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 742
+    },
+    {
+      "sourceId": 743,
+      "districtSourceId": 77,
+      "code": "NP-LL743",
+      "name": "Joshipur",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 743
+    },
+    {
+      "sourceId": 744,
+      "districtSourceId": 77,
+      "code": "NP-LL744",
+      "name": "Bardagoriya",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 744
+    },
+    {
+      "sourceId": 745,
+      "districtSourceId": 77,
+      "code": "NP-LL745",
+      "name": "Mohanyal",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 7,
+      "sortOrder": 745
+    },
+    {
+      "sourceId": 746,
+      "districtSourceId": 77,
+      "code": "NP-LL746",
+      "name": "Chure",
+      "type": "RURAL_MUNICIPALITY",
+      "wardCount": 6,
+      "sortOrder": 746
+    },
+    {
+      "sourceId": 747,
+      "districtSourceId": 77,
+      "code": "NP-LL747",
+      "name": "Tikapur",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 747
+    },
+    {
+      "sourceId": 748,
+      "districtSourceId": 77,
+      "code": "NP-LL748",
+      "name": "Ghodaghodi",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 748
+    },
+    {
+      "sourceId": 749,
+      "districtSourceId": 77,
+      "code": "NP-LL749",
+      "name": "Lamkichuha",
+      "type": "MUNICIPALITY",
+      "wardCount": 10,
+      "sortOrder": 749
+    },
+    {
+      "sourceId": 750,
+      "districtSourceId": 77,
+      "code": "NP-LL750",
+      "name": "Bhajni",
+      "type": "MUNICIPALITY",
+      "wardCount": 9,
+      "sortOrder": 750
+    },
+    {
+      "sourceId": 751,
+      "districtSourceId": 77,
+      "code": "NP-LL751",
+      "name": "Godawari",
+      "type": "MUNICIPALITY",
+      "wardCount": 12,
+      "sortOrder": 751
+    },
+    {
+      "sourceId": 752,
+      "districtSourceId": 77,
+      "code": "NP-LL752",
+      "name": "Gauriganga",
+      "type": "MUNICIPALITY",
+      "wardCount": 11,
+      "sortOrder": 752
+    },
+    {
+      "sourceId": 753,
+      "districtSourceId": 77,
+      "code": "NP-LL753",
+      "name": "Dhangadhi",
+      "type": "SUB_METROPOLITAN_CITY",
+      "wardCount": 19,
+      "sortOrder": 753
+    }
+  ]
+}

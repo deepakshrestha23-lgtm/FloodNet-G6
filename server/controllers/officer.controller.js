@@ -2,7 +2,7 @@ const officerService = require('../services/officer.service');
 const evidenceService = require('../services/evidence.service');
 
 async function listReports(request, response) {
-  const result = await officerService.listReports(request.queueQuery);
+  const result = await officerService.listReports(request.user, request.queueQuery);
 
   response.status(200).json({
     success: true,
@@ -19,7 +19,7 @@ async function listReports(request, response) {
 }
 
 async function getReport(request, response) {
-  const dossier = await officerService.getReport(request.params.id);
+  const dossier = await officerService.getReport(request.user, request.params.id);
 
   response.status(200).json({
     success: true,
@@ -30,6 +30,7 @@ async function getReport(request, response) {
 
 async function evidenceUrl(request, response) {
   const result = await evidenceService.getDownloadUrlForOfficer(
+    request.user.id,
     request.params.id,
     request.params.evidenceId
   );
@@ -52,7 +53,7 @@ async function reviewReport(request, response) {
 }
 
 async function listAlerts(request, response) {
-  const result = await officerService.listAlerts(request.alertQuery);
+  const result = await officerService.listAlerts(request.user, request.alertQuery);
 
   response.status(200).json({
     success: true,
@@ -69,7 +70,7 @@ async function listAlerts(request, response) {
 }
 
 async function getAlert(request, response) {
-  const alert = await officerService.getAlert(request.params.id);
+  const alert = await officerService.getAlert(request.user, request.params.id);
 
   response.status(200).json({
     success: true,
@@ -110,8 +111,8 @@ function transitionHandler(transitionName, message) {
   };
 }
 
-async function dashboard(_request, response) {
-  const data = await officerService.getDashboard();
+async function dashboard(request, response) {
+  const data = await officerService.getDashboard(request.user, request.geographyQuery);
 
   response.status(200).json({
     success: true,

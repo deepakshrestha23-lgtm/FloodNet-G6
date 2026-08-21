@@ -1,4 +1,10 @@
 const { pool } = require('../db/pool');
+const {
+  entityPredicate,
+  alertPredicate,
+  geographyPredicate,
+  alertGeographyPredicate
+} = require('./jurisdiction.repository');
 
 function getPool() {
   if (!pool) {
@@ -12,7 +18,15 @@ function getPool() {
  * Every figure below is aggregated in SQL from live records. No dashboard value
  * is stored, cached or hardcoded.
  */
-async function getOfficerDashboard() {
+async function getOfficerDashboard(officerId, geographyQuery = {}) {
+  const geographyParameters = [
+    officerId,
+    geographyQuery.provinceId || null,
+    geographyQuery.districtId || null,
+    geographyQuery.localLevelId || null,
+    geographyQuery.wardId || null
+  ];
+
   const summaryResult = await getPool().query(
     `
       SELECT
@@ -25,18 +39,24 @@ async function getOfficerDashboard() {
           WHERE status = 'VERIFIED' AND updated_at >= DATE_TRUNC('day', NOW())
         )::INTEGER AS verified_today,
         COUNT(*)::INTEGER AS total_reports
-      FROM flood_reports
-    `
+      FROM flood_reports fr
+      WHERE ${entityPredicate('fr', 1)}
+        AND ${geographyPredicate('fr')}
+    `,
+    geographyParameters
   );
 
   const activeAlertsResult = await getPool().query(
     `
       SELECT COUNT(*)::INTEGER AS active_alerts
-      FROM flood_alerts
-      WHERE status = 'PUBLISHED'
+      FROM flood_alerts a
+      WHERE ${alertPredicate('a', 1)}
+        AND ${alertGeographyPredicate('a')}
+        AND a.status = 'PUBLISHED'
         AND valid_from <= NOW()
         AND expires_at > NOW()
-    `
+    `,
+    geographyParameters
   );
 
   const byZoneResult = await getPool().query(
@@ -49,28 +69,37 @@ async function getOfficerDashboard() {
         COUNT(fr.id) FILTER (WHERE fr.status = 'VERIFIED')::INTEGER AS verified
       FROM flood_zones z
       LEFT JOIN flood_reports fr ON fr.zone_id = z.id
+        AND ${entityPredicate('fr', 1)}
+        AND ${geographyPredicate('fr')}
       WHERE z.is_active = TRUE
       GROUP BY z.id
       ORDER BY total DESC, z.name ASC
-    `
+    `,
+    geographyParameters
   );
 
   const bySeverityResult = await getPool().query(
     `
       SELECT observed_severity, COUNT(*)::INTEGER AS total
-      FROM flood_reports
+      FROM flood_reports fr
+      WHERE ${entityPredicate('fr', 1)}
+        AND ${geographyPredicate('fr')}
       GROUP BY observed_severity
       ORDER BY total DESC
-    `
+    `,
+    geographyParameters
   );
 
   const byStatusResult = await getPool().query(
     `
       SELECT status, COUNT(*)::INTEGER AS total
-      FROM flood_reports
+      FROM flood_reports fr
+      WHERE ${entityPredicate('fr', 1)}
+        AND ${geographyPredicate('fr')}
       GROUP BY status
       ORDER BY total DESC
-    `
+    `,
+    geographyParameters
   );
 
   // Fourteen-day trend with zero-filled days so the chart has no gaps.
@@ -87,9 +116,12 @@ async function getOfficerDashboard() {
       ) AS day
       LEFT JOIN flood_reports fr
         ON DATE_TRUNC('day', fr.created_at) = day
+        AND ${entityPredicate('fr', 1)}
+        AND ${geographyPredicate('fr')}
       GROUP BY day
       ORDER BY day ASC
-    `
+    `,
+    geographyParameters
   );
 
   const summary = summaryResult.rows[0];
@@ -132,7 +164,15 @@ async function getOfficerDashboard() {
  * Occupancy percentage is computed from live capacity values, guarding against
  * division by zero for a centre recorded with zero capacity.
  */
-async function getEvacuationDashboard() {
+async function getEvacuationDashboard(officerId, geographyQuery = {}) {
+  const geographyParameters = [
+    officerId,
+    geographyQuery.provinceId || null,
+    geographyQuery.districtId || null,
+    geographyQuery.localLevelId || null,
+    geographyQuery.wardId || null
+  ];
+
   const summaryResult = await getPool().query(
     `
       SELECT
@@ -144,9 +184,12 @@ async function getEvacuationDashboard() {
         COALESCE(SUM(maximum_capacity), 0)::INTEGER AS total_capacity,
         COALESCE(SUM(current_occupancy), 0)::INTEGER AS total_occupancy,
         COALESCE(SUM(available_space), 0)::INTEGER AS total_available
-      FROM evacuation_centres
-      WHERE is_active = TRUE
-    `
+      FROM evacuation_centres ec
+      WHERE ec.is_active = TRUE
+        AND ${entityPredicate('ec', 1)}
+        AND ${geographyPredicate('ec')}
+    `,
+    geographyParameters
   );
 
   const byZoneResult = await getPool().query(
@@ -160,10 +203,13 @@ async function getEvacuationDashboard() {
         COALESCE(SUM(ec.available_space), 0)::INTEGER AS available
       FROM flood_zones z
       LEFT JOIN evacuation_centres ec ON ec.zone_id = z.id AND ec.is_active = TRUE
+        AND ${entityPredicate('ec', 1)}
+        AND ${geographyPredicate('ec')}
       WHERE z.is_active = TRUE
       GROUP BY z.id
       ORDER BY z.name ASC
-    `
+    `,
+    geographyParameters
   );
 
   const summary = summaryResult.rows[0];

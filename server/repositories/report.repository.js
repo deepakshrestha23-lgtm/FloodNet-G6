@@ -14,6 +14,13 @@ const reportSelect = `
     fr.report_ref,
     fr.resident_id,
     fr.zone_id,
+    fr.ward_id,
+    fr.locality,
+    fr.nearest_landmark,
+    fr.latitude,
+    fr.longitude,
+    fr.flood_type,
+    fr.people_at_risk,
     fr.location_description,
     fr.observed_severity,
     fr.road_condition,
@@ -24,9 +31,25 @@ const reportSelect = `
     fr.updated_at,
     z.code AS zone_code,
     z.name AS zone_name,
-    z.locality AS zone_locality
+    z.locality AS zone_locality,
+    w.ward_number,
+    w.name AS ward_name,
+    ll.id AS local_level_id,
+    ll.code AS local_level_code,
+    ll.name AS local_level_name,
+    ll.type AS local_level_type,
+    d.id AS district_id,
+    d.code AS district_code,
+    d.name AS district_name,
+    p.id AS province_id,
+    p.code AS province_code,
+    p.name AS province_name
   FROM flood_reports fr
-  INNER JOIN flood_zones z ON z.id = fr.zone_id
+  LEFT JOIN flood_zones z ON z.id = fr.zone_id
+  LEFT JOIN geo_wards w ON w.id = fr.ward_id
+  LEFT JOIN geo_local_levels ll ON ll.id = w.local_level_id
+  LEFT JOIN geo_districts d ON d.id = ll.district_id
+  LEFT JOIN geo_provinces p ON p.id = d.province_id
 `;
 
 function mapReport(row) {
@@ -36,12 +59,29 @@ function mapReport(row) {
     id: row.id,
     reportReference: row.report_ref,
     residentId: row.resident_id,
-    zone: {
+    zone: row.zone_id ? {
       id: row.zone_id,
       code: row.zone_code,
       name: row.zone_name,
       locality: row.zone_locality
-    },
+    } : null,
+    geography: row.ward_id ? {
+      province: { id: row.province_id, code: row.province_code, name: row.province_name },
+      district: { id: row.district_id, code: row.district_code, name: row.district_name },
+      localLevel: {
+        id: row.local_level_id,
+        code: row.local_level_code,
+        name: row.local_level_name,
+        type: row.local_level_type
+      },
+      ward: { id: row.ward_id, number: row.ward_number, name: row.ward_name }
+    } : null,
+    locality: row.locality,
+    nearestLandmark: row.nearest_landmark,
+    latitude: row.latitude === null ? null : Number(row.latitude),
+    longitude: row.longitude === null ? null : Number(row.longitude),
+    floodType: row.flood_type,
+    peopleAtRisk: row.people_at_risk,
     locationDescription: row.location_description,
     observedSeverity: row.observed_severity,
     roadCondition: row.road_condition,
@@ -57,6 +97,13 @@ async function createReport({
   reportReference,
   residentId,
   zoneId,
+  wardId,
+  locality,
+  nearestLandmark,
+  latitude,
+  longitude,
+  floodType,
+  peopleAtRisk,
   locationDescription,
   observedSeverity,
   roadCondition,
@@ -74,19 +121,33 @@ async function createReport({
           report_ref,
           resident_id,
           zone_id,
+          ward_id,
+          locality,
+          nearest_landmark,
+          latitude,
+          longitude,
+          flood_type,
+          people_at_risk,
           location_description,
           observed_severity,
           road_condition,
           incident_description,
           observed_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
         RETURNING id
       `,
       [
         reportReference,
         residentId,
         zoneId,
+        wardId,
+        locality,
+        nearestLandmark,
+        latitude,
+        longitude,
+        floodType,
+        peopleAtRisk,
         locationDescription,
         observedSeverity,
         roadCondition,
@@ -212,6 +273,12 @@ async function updateReportForMoreInformation({
   reportId,
   residentId,
   locationDescription,
+  locality,
+  nearestLandmark,
+  latitude,
+  longitude,
+  floodType,
+  peopleAtRisk,
   observedSeverity,
   roadCondition,
   incidentDescription,
@@ -226,10 +293,16 @@ async function updateReportForMoreInformation({
       `
         UPDATE flood_reports
         SET location_description = $3,
-            observed_severity = $4,
-            road_condition = $5,
-            incident_description = $6,
-            observed_at = $7,
+            locality = $4,
+            nearest_landmark = $5,
+            latitude = $6,
+            longitude = $7,
+            flood_type = $8,
+            people_at_risk = $9,
+            observed_severity = $10,
+            road_condition = $11,
+            incident_description = $12,
+            observed_at = $13,
             status = 'PENDING_REVIEW',
             updated_at = NOW()
         WHERE id = $1
@@ -241,6 +314,12 @@ async function updateReportForMoreInformation({
         reportId,
         residentId,
         locationDescription,
+        locality,
+        nearestLandmark,
+        latitude,
+        longitude,
+        floodType,
+        peopleAtRisk,
         observedSeverity,
         roadCondition,
         incidentDescription,

@@ -11,7 +11,8 @@ import DataTable from '../../components/common/DataTable';
 import Pagination from '../../components/common/Pagination';
 import StatusBadge from '../../components/common/StatusBadge';
 import { REPORT_STATUS, OBSERVED_SEVERITY, toOptions } from '../../utils/enums';
-import { formatDateTime, formatRelative } from '../../utils/formatters';
+import { describeArea, formatDateTime, formatRelative } from '../../utils/formatters';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 const PAGE_SIZE = 20;
 
@@ -20,9 +21,20 @@ function ReviewQueuePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [zones, setZones] = useState([]);
 
+  const geography = useMemo(() => ({
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || ''
+  }), [searchParams]);
+
   const filters = useMemo(() => ({
     status: searchParams.get('status') || '',
     zoneId: searchParams.get('zoneId') || '',
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || '',
     severity: searchParams.get('severity') || '',
     from: searchParams.get('from') || '',
     to: searchParams.get('to') || '',
@@ -60,6 +72,16 @@ function ReviewQueuePage() {
 
   function resetFilters() {
     setSearchParams(new URLSearchParams());
+  }
+
+  function updateGeography(nextGeography) {
+    const next = new URLSearchParams(searchParams);
+    ['provinceId', 'districtId', 'localLevelId', 'wardId'].forEach((field) => {
+      if (nextGeography[field]) next.set(field, nextGeography[field]);
+      else next.delete(field);
+    });
+    next.delete('offset');
+    setSearchParams(next);
   }
 
   function changePage(nextOffset) {
@@ -117,8 +139,8 @@ function ReviewQueuePage() {
       header: 'Zone',
       render: (row) => (
         <div>
-          <span className="d-block">{row.zone.name}</span>
-          <span className="small text-secondary">{row.zone.locality || row.zone.code}</span>
+          <span className="d-block">{describeArea(row)}</span>
+          <span className="small text-secondary">{row.zone?.locality || row.zone?.code || row.locationDescription}</span>
         </div>
       )
     },
@@ -183,6 +205,14 @@ function ReviewQueuePage() {
         onChange={updateFilter}
         onReset={resetFilters}
       />
+
+      <section className="panel-card p-3 rounded-4 mb-3">
+        <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div><h2 className="h6 fw-semibold mb-1">Administrative location</h2><p className="small text-secondary mb-0">Filter reports using the official Nepal hierarchy.</p></div>
+          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => updateGeography(EMPTY_GEOGRAPHY)}>Clear location</button>
+        </div>
+        <div className="mt-3 mb-0"><GeographySelector value={geography} onChange={updateGeography} required={false} /></div>
+      </section>
 
       {loading && <LoadingState label="Loading reports..." />}
       {error && <ErrorState message={error.message} details={error.details} onRetry={reload} />}

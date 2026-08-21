@@ -16,7 +16,8 @@ import FilterBar from '../../components/common/FilterBar';
 import StatusBadge from '../../components/common/StatusBadge';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import { CENTRE_STATUS, toOptions } from '../../utils/enums';
-import { formatDateTime, formatNumber } from '../../utils/formatters';
+import { describeArea, formatDateTime, formatNumber } from '../../utils/formatters';
+import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
 
 /**
  * Occupancy is edited inline per centre, because during an incident an officer
@@ -84,7 +85,7 @@ function CentreCard({ centre, onSaved, onArchiveRequest }) {
         <div>
           <h3 className="h6 fw-semibold mb-1">{centre.name}</h3>
           <p className="small text-secondary mb-0">
-            {centre.zone.name} <span className="text-body-tertiary">({centre.zone.code})</span>
+            {describeArea(centre)} {centre.zone?.code && <span className="text-body-tertiary">({centre.zone.code})</span>}
           </p>
         </div>
         <StatusBadge map={CENTRE_STATUS} value={centre.operationalStatus} />
@@ -199,9 +200,20 @@ function CentreListPage() {
   const [archiving, setArchiving] = useState(false);
   const [archiveError, setArchiveError] = useState(null);
 
+  const geography = useMemo(() => ({
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || ''
+  }), [searchParams]);
+
   const filters = useMemo(() => ({
     zoneId: searchParams.get('zoneId') || '',
-    status: searchParams.get('status') || ''
+    status: searchParams.get('status') || '',
+    provinceId: searchParams.get('provinceId') || '',
+    districtId: searchParams.get('districtId') || '',
+    localLevelId: searchParams.get('localLevelId') || '',
+    wardId: searchParams.get('wardId') || ''
   }), [searchParams]);
 
   const loader = useCallback(() => fetchCentres(filters), [filters]);
@@ -216,6 +228,15 @@ function CentreListPage() {
   function updateFilter(name, value) {
     const next = new URLSearchParams(searchParams);
     if (value) next.set(name, value); else next.delete(name);
+    setSearchParams(next);
+  }
+
+  function updateGeography(nextGeography) {
+    const next = new URLSearchParams(searchParams);
+    ['provinceId', 'districtId', 'localLevelId', 'wardId'].forEach((field) => {
+      if (nextGeography[field]) next.set(field, nextGeography[field]);
+      else next.delete(field);
+    });
     setSearchParams(next);
   }
 
@@ -259,6 +280,14 @@ function CentreListPage() {
         onChange={updateFilter}
         onReset={() => setSearchParams(new URLSearchParams())}
       />
+
+      <section className="panel-card p-3 rounded-4 mb-3">
+        <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div><h2 className="h6 fw-semibold mb-1">Administrative location</h2><p className="small text-secondary mb-0">Filter centres by the official Nepal hierarchy.</p></div>
+          <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => updateGeography(EMPTY_GEOGRAPHY)}>Clear location</button>
+        </div>
+        <div className="mt-3 mb-0"><GeographySelector value={geography} onChange={updateGeography} required={false} /></div>
+      </section>
 
       {loading && <LoadingState label="Loading centres..." />}
       {error && <ErrorState message={error.message} details={error.details} onRetry={reload} />}

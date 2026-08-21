@@ -1,5 +1,6 @@
 const { pool } = require('../db/pool');
 const { insertAuditLog } = require('../utils/audit');
+const { geographyPredicate } = require('./jurisdiction.repository');
 
 function getPool() {
   if (!pool) {
@@ -25,6 +26,22 @@ const centreSelect = `
     z.id AS zone_id,
     z.code AS zone_code,
     z.name AS zone_name,
+    ec.ward_id,
+    ec.locality,
+    ec.nearest_landmark,
+    ec.latitude,
+    ec.longitude,
+    w.ward_number,
+    w.name AS ward_name,
+    ll.id AS local_level_id,
+    ll.code AS local_level_code,
+    ll.name AS local_level_name,
+    d.id AS district_id,
+    d.code AS district_code,
+    d.name AS district_name,
+    gp.id AS province_id,
+    gp.code AS province_code,
+    gp.name AS province_name,
     COALESCE(
       JSON_AGG(
         DISTINCT JSONB_BUILD_OBJECT(
@@ -34,7 +51,11 @@ const centreSelect = `
       '[]'::JSON
     ) AS facilities
   FROM evacuation_centres ec
-  INNER JOIN flood_zones z ON z.id = ec.zone_id
+  LEFT JOIN flood_zones z ON z.id = ec.zone_id
+  LEFT JOIN geo_wards w ON w.id = ec.ward_id
+  LEFT JOIN geo_local_levels ll ON ll.id = w.local_level_id
+  LEFT JOIN geo_districts d ON d.id = ll.district_id
+  LEFT JOIN geo_provinces gp ON gp.id = d.province_id
   LEFT JOIN centre_facilities cf ON cf.centre_id = ec.id
   LEFT JOIN centre_facility_types cft ON cft.id = cf.facility_type_id
 `;
@@ -52,11 +73,21 @@ function mapCentre(row) {
     availableSpace: row.available_space,
     operationalStatus: row.operational_status,
     isActive: row.is_active,
-    zone: {
+    zone: row.zone_id ? {
       id: row.zone_id,
       code: row.zone_code,
       name: row.zone_name
-    },
+    } : null,
+    geography: row.ward_id ? {
+      province: { id: row.province_id, code: row.province_code, name: row.province_name },
+      district: { id: row.district_id, code: row.district_code, name: row.district_name },
+      localLevel: { id: row.local_level_id, code: row.local_level_code, name: row.local_level_name },
+      ward: { id: row.ward_id, number: row.ward_number, name: row.ward_name }
+    } : null,
+    locality: row.locality,
+    nearestLandmark: row.nearest_landmark,
+    latitude: row.latitude === null ? null : Number(row.latitude),
+    longitude: row.longitude === null ? null : Number(row.longitude),
     facilities: row.facilities,
     createdAt: row.created_at,
     updatedAt: row.updated_at
@@ -65,24 +96,38 @@ function mapCentre(row) {
 
 async function findCentreById(centreId) {
   const result = await getPool().query(
-    `${centreSelect} WHERE ec.id = $1 GROUP BY ec.id, z.id`,
+    `${centreSelect} WHERE ec.id = $1 GROUP BY ec.id, z.id, w.id, ll.id, d.id, gp.id`,
     [centreId]
   );
 
   return mapCentre(result.rows[0]);
 }
 
-async function listCentres({ zoneId, status, includeArchived }) {
+async function listCentres({ zoneId, status, includeArchived, provinceId, districtId, localLevelId, wardId }) {
   const result = await getPool().query(
     `
       ${centreSelect}
       WHERE ($1::UUID IS NULL OR ec.zone_id = $1)
         AND ($2::VARCHAR IS NULL OR ec.operational_status = $2)
         AND ($3::BOOLEAN IS TRUE OR ec.is_active = TRUE)
-      GROUP BY ec.id, z.id
-      ORDER BY z.name ASC, ec.name ASC
+        AND ${geographyPredicate('ec', {
+          provinceParameter: 4,
+          districtParameter: 5,
+          localLevelParameter: 6,
+          wardParameter: 7
+        })}
+      GROUP BY ec.id, z.id, w.id, ll.id, d.id, gp.id
+      ORDER BY COALESCE(gp.name, '') ASC, COALESCE(d.name, '') ASC, ec.name ASC
     `,
-    [zoneId || null, status || null, Boolean(includeArchived)]
+    [
+      zoneId || null,
+      status || null,
+      Boolean(includeArchived),
+      provinceId || null,
+      districtId || null,
+      localLevelId || null,
+      wardId || null
+    ]
   );
 
   return result.rows.map(mapCentre);
@@ -105,6 +150,11 @@ async function replaceFacilities(client, centreId, facilities) {
 async function createCentre({
   actorId,
   zoneId,
+  wardId,
+  locality,
+  nearestLandmark,
+  latitude,
+  longitude,
   name,
   locationDescription,
   contactPhone,
@@ -121,14 +171,20 @@ async function createCentre({
     const result = await client.query(
       `
         INSERT INTO evacuation_centres (
-          zone_id, name, location_description, contact_phone,
+          zone_id, ward_id, locality, nearest_landmark, latitude, longitude,
+          name, location_description, contact_phone,
           maximum_capacity, current_occupancy, operational_status, updated_by
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
         RETURNING id
       `,
       [
         zoneId,
+        wardId,
+        locality,
+        nearestLandmark,
+        latitude,
+        longitude,
         name,
         locationDescription,
         contactPhone,
@@ -164,6 +220,11 @@ async function updateCentre({
   centreId,
   actorId,
   zoneId,
+  wardId,
+  locality,
+  nearestLandmark,
+  latitude,
+  longitude,
   name,
   locationDescription,
   contactPhone,
@@ -180,12 +241,17 @@ async function updateCentre({
       `
         UPDATE evacuation_centres
         SET zone_id = $2,
-            name = $3,
-            location_description = $4,
-            contact_phone = $5,
-            maximum_capacity = $6,
-            operational_status = $7,
-            updated_by = $8,
+            ward_id = $3,
+            locality = $4,
+            nearest_landmark = $5,
+            latitude = $6,
+            longitude = $7,
+            name = $8,
+            location_description = $9,
+            contact_phone = $10,
+            maximum_capacity = $11,
+            operational_status = $12,
+            updated_by = $13,
             updated_at = NOW()
         WHERE id = $1 AND is_active = TRUE
         RETURNING id
@@ -193,6 +259,11 @@ async function updateCentre({
       [
         centreId,
         zoneId,
+        wardId,
+        locality,
+        nearestLandmark,
+        latitude,
+        longitude,
         name,
         locationDescription,
         contactPhone,

@@ -6,12 +6,18 @@ VALUES
   ('ADMINISTRATOR', 'System Administrator')
 ON CONFLICT (code) DO NOTHING;
 
-INSERT INTO flood_zones (code, name, locality, description)
+INSERT INTO flood_zones (code, name, locality, description, zone_type, is_demo_data)
 VALUES
-  ('ZONE-A', 'Riverbank North', 'North District', 'Northern riverbank communities'),
-  ('ZONE-B', 'Central Lowlands', 'Central District', 'Central low-lying communities'),
-  ('ZONE-C', 'South Valley', 'South District', 'Southern valley communities')
-ON CONFLICT (code) DO NOTHING;
+  ('ZONE-A', 'Riverbank North — DEMO DATA', 'Demo operational area', 'Fictional demonstration river corridor. Not an official administrative boundary.', 'RIVER_CORRIDOR', TRUE),
+  ('ZONE-B', 'Central Lowlands — DEMO DATA', 'Demo operational area', 'Fictional demonstration floodplain. Not an official administrative boundary.', 'FLOODPLAIN', TRUE),
+  ('ZONE-C', 'South Valley — DEMO DATA', 'Demo operational area', 'Fictional demonstration flood area. Not an official administrative boundary.', 'FLASH_FLOOD_AREA', TRUE)
+ON CONFLICT (code) DO UPDATE SET
+  name = EXCLUDED.name,
+  locality = EXCLUDED.locality,
+  description = EXCLUDED.description,
+  zone_type = EXCLUDED.zone_type,
+  is_demo_data = EXCLUDED.is_demo_data,
+  updated_at = NOW();
 
 INSERT INTO centre_facility_types (code, display_name)
 VALUES
