@@ -14,6 +14,20 @@
  */
 export const NEPAL_BOUNDS = { minLat: 26.0, maxLat: 30.7, minLon: 79.8, maxLon: 88.5 };
 
+/**
+ * Browser GPS is restricted to secure contexts. Localhost is treated as a
+ * secure context by browsers, while a deployed HTTP address is not.
+ *
+ * Keeping this check in one place lets every location control explain the
+ * deployment limitation consistently without affecting pasted or manual
+ * coordinates.
+ */
+export function getGeolocationAvailability() {
+  if (typeof navigator === 'undefined' || !navigator.geolocation) return 'unsupported';
+  if (typeof window === 'undefined' || window.isSecureContext !== true) return 'insecure';
+  return 'available';
+}
+
 const DECIMAL_PAIR = /^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,;]?\s+?\s*(-?\d{1,3}(?:\.\d+)?)\s*$/;
 const DECIMAL_PAIR_COMMA = /^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/;
 /* Google and Apple map links carry the position after an @ or a q= parameter. */

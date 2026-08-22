@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import Icon from './Icon';
-import { parseCoordinates, swapWouldFixNepal, isOutsideNepal } from '../../utils/coordinates';
+import {
+  parseCoordinates,
+  swapWouldFixNepal,
+  isOutsideNepal,
+  getGeolocationAvailability
+} from '../../utils/coordinates';
 
 /**
  * Optional GPS position, entered the way people actually have one to hand.
@@ -56,8 +61,13 @@ function CoordinateField({
   function useMyLocation() {
     setLocationError('');
 
-    if (!navigator.geolocation) {
+    const geolocationAvailability = getGeolocationAvailability();
+    if (geolocationAvailability === 'unsupported') {
       setLocationError('This browser cannot read a location. Paste one from a map instead.');
+      return;
+    }
+    if (geolocationAvailability === 'insecure') {
+      setLocationError('Device location requires HTTPS. This deployed site is currently HTTP. Paste coordinates from Google Maps or enter latitude and longitude manually.');
       return;
     }
 
@@ -119,6 +129,8 @@ function CoordinateField({
           </button>
         )}
       </div>
+
+      {locationError && <p className="form-text text-danger mb-3" role="alert">{locationError}</p>}
 
       <div className="mb-3">
         <label className="form-label small fw-semibold" htmlFor="coordinate-paste">

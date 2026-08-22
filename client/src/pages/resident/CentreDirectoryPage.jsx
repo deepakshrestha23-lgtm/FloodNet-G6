@@ -15,6 +15,7 @@ import LocationFilter from '../../components/geography/LocationFilter';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
 import Icon from '../../components/common/Icon';
 import { CENTRE_STATUS, toOptions } from '../../utils/enums';
+import { getGeolocationAvailability } from '../../utils/coordinates';
 
 /**
  * Shared by residents and public visitors. It renders only what the public
@@ -96,8 +97,13 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
     : '';
 
   function useCurrentLocation() {
-    if (!navigator.geolocation) {
+    const geolocationAvailability = getGeolocationAvailability();
+    if (geolocationAvailability === 'unsupported') {
       notify({ tone: 'warning', title: 'Location unavailable', message: 'This browser cannot read your position. Use the administrative filters instead.', icon: 'warning' });
+      return;
+    }
+    if (geolocationAvailability === 'insecure') {
+      notify({ tone: 'warning', title: 'HTTPS required for GPS', message: 'This deployed address is HTTP, so the browser blocks device location. Use the district and local-level filters for now.', icon: 'warning', duration: 8000 });
       return;
     }
 
