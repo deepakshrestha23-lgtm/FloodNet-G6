@@ -1,5 +1,5 @@
-# Prompts for AWS Academy Learner Lab credentials and writes them to the default
-# AWS profile.
+# Prompts for AWS Academy Learner Lab credentials and writes them to the
+# FloodNet AWS profile.
 #
 # The lab issues temporary credentials that expire when the session ends, so this
 # has to be repeated at the start of each working session. `aws configure` is not
@@ -8,6 +8,7 @@
 # Usage:  npm run aws:login       (or)   powershell -File scripts/set-aws-credentials.ps1
 
 $ErrorActionPreference = 'Stop'
+$profileName = 'floodnet'
 
 function ConvertFrom-SecureText {
     param([System.Security.SecureString] $Secure)
@@ -53,7 +54,7 @@ $credentialsPath = Join-Path $awsDirectory 'credentials'
 $configPath = Join-Path $awsDirectory 'config'
 
 $credentials = @"
-[default]
+[$profileName]
 aws_access_key_id=$accessKeyId
 aws_secret_access_key=$secretAccessKey
 aws_session_token=$sessionToken
@@ -62,7 +63,7 @@ aws_session_token=$sessionToken
 Set-Content -Path $credentialsPath -Value $credentials -Encoding ascii
 
 if (-not (Test-Path $configPath)) {
-    Set-Content -Path $configPath -Value "[default]`nregion=us-east-1`noutput=json" -Encoding ascii
+    Set-Content -Path $configPath -Value "[profile $profileName]`nregion=us-east-1`noutput=json" -Encoding ascii
 }
 
 # Lengths only, so a truncated paste is obvious without revealing any secret.
@@ -77,5 +78,5 @@ if ($sessionToken.Length -lt 100) {
 }
 
 Write-Host ""
-Write-Host "Now verify with:  npm run aws:check" -ForegroundColor Cyan
+Write-Host "Now verify with:  aws sts get-caller-identity --profile $profileName" -ForegroundColor Cyan
 Write-Host ""
