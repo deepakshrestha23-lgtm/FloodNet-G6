@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useFeedback } from '../context/FeedbackContext';
 import BrandMark from '../components/brand/BrandMark';
 import Icon from '../components/common/Icon';
 
@@ -20,7 +22,10 @@ const EMERGENCY_NUMBERS = [
 ];
 
 function PublicLayout({ children }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const { notify } = useFeedback();
+  const navigate = useNavigate();
+  const [signingOut, setSigningOut] = useState(false);
 
   const dashboardPath = {
     RESIDENT: '/resident',
@@ -28,6 +33,25 @@ function PublicLayout({ children }) {
     EVACUATION_OFFICER: '/evacuation',
     ADMINISTRATOR: '/admin'
   }[user?.role?.code] || '/resident';
+
+  async function handleLogout() {
+    if (signingOut) return;
+    setSigningOut(true);
+
+    try {
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (requestError) {
+      notify({
+        tone: 'danger',
+        title: 'Sign-out failed',
+        message: requestError.message || 'We could not sign you out. Please try again.',
+        icon: 'warning'
+      });
+    } finally {
+      setSigningOut(false);
+    }
+  }
 
   return (
     <div className="public-shell">
@@ -47,10 +71,21 @@ function PublicLayout({ children }) {
             <Link className="public-nav-link d-none d-md-inline-flex" to="/centres">Evacuation centres</Link>
 
             {isAuthenticated ? (
-              <Link className="btn btn-light btn-sm" to={dashboardPath}>
-                My dashboard
-                <Icon name="arrowRight" size={15} />
-              </Link>
+              <>
+                <Link className="btn btn-light btn-sm" to={dashboardPath}>
+                  My dashboard
+                  <Icon name="arrowRight" size={15} />
+                </Link>
+                <button
+                  type="button"
+                  className="btn btn-outline-light btn-sm"
+                  onClick={handleLogout}
+                  disabled={signingOut}
+                >
+                  <Icon name="logout" size={15} />
+                  <span className="d-none d-sm-inline">{signingOut ? 'Signing out...' : 'Sign out'}</span>
+                </button>
+              </>
             ) : (
               <>
                 <Link className="btn btn-outline-light btn-sm d-none d-sm-inline-flex" to="/register">

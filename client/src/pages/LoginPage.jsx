@@ -12,6 +12,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const justRegistered = location.state?.registered === true;
@@ -74,16 +75,27 @@ function LoginPage() {
 
         <div className="mb-4">
           <label className="form-label fw-semibold" htmlFor="login-password">Password</label>
-          <input
-            id="login-password"
-            className="form-control"
-            type="password"
-            autoComplete="current-password"
-            placeholder="••••••••"
-            required
-            value={form.password}
-            onChange={(event) => setForm({ ...form, password: event.target.value })}
-          />
+          <div className="password-control">
+            <input
+              id="login-password"
+              className="form-control password-control-input"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              placeholder="••••••••"
+              required
+              value={form.password}
+              onChange={(event) => setForm({ ...form, password: event.target.value })}
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword((visible) => !visible)}
+            >
+              <Icon name={showPassword ? 'eyeOff' : 'eye'} size={18} />
+            </button>
+          </div>
         </div>
 
         <button className="btn btn-primary btn-lg w-100" type="submit" disabled={submitting}>

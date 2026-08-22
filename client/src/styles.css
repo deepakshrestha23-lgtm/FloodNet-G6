@@ -2112,6 +2112,32 @@ a.fn-facility-chip:focus-visible {
   letter-spacing: 0.02em;
 }
 
+.password-control { position: relative; }
+.password-control-input { padding-right: 3rem; }
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.45rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: var(--fn-ink-faint);
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  background: var(--fn-surface-2);
+  color: var(--fn-cyan-600);
+  outline: none;
+}
+
 /* ---------------------------------------------------------- action feedback
    Short-lived outcomes sit above the app chrome instead of pushing page
    content down. Persistent context, validation and load errors remain in the
