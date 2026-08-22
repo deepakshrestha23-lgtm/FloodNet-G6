@@ -52,6 +52,10 @@ const publicOriginUsesHttps = env.clientOrigin.startsWith('https://');
 
 app.use(helmet({
   strictTransportSecurity: publicOriginUsesHttps,
+  // MapTiler validates this origin-restricted browser key from the request
+  // origin/referrer. Send only the origin cross-site, never the full route or
+  // query string, so map tiles work without weakening application privacy.
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
