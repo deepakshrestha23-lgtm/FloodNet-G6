@@ -2138,6 +2138,104 @@ a.fn-facility-chip:focus-visible {
   outline: none;
 }
 
+/* ------------------------------------------------------- interactive maps */
+
+.fn-map {
+  overflow: hidden;
+  border: 1px solid var(--fn-border-strong);
+  border-radius: var(--fn-radius);
+  background: #e8f1f5;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.fn-map-canvas {
+  z-index: 0;
+  width: 100%;
+  height: var(--fn-map-height, 20rem);
+  min-height: 15rem;
+  font-family: inherit;
+  background: #e8f1f5;
+}
+
+.fn-map-canvas .leaflet-control-attribution {
+  font-size: 0.65rem;
+}
+
+.fn-map-canvas .leaflet-popup-content {
+  min-width: 10rem;
+  margin: 0.8rem 1rem;
+  color: var(--fn-ink);
+  line-height: 1.4;
+}
+
+.fn-map-instruction {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.75rem;
+  color: var(--fn-ink-soft);
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 1px solid var(--fn-border);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.fn-map-loading,
+.fn-map-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--fn-map-height, 20rem);
+  padding: 1.5rem;
+  color: var(--fn-ink-soft);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)),
+    repeating-linear-gradient(45deg, #dceaf0 0, #dceaf0 1px, transparent 1px, transparent 18px);
+  border: 1px dashed var(--fn-border-strong);
+  border-radius: var(--fn-radius);
+  text-align: left;
+}
+
+.fn-map-fallback {
+  gap: 0.9rem;
+}
+
+.fn-map-fallback-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 3rem;
+  height: 3rem;
+  color: var(--fn-cyan-600);
+  background: rgba(6, 182, 212, 0.1);
+  border-radius: 0.9rem;
+}
+
+.fn-map-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 7rem;
+  padding: 1rem;
+  color: var(--fn-ink-faint);
+  background: var(--fn-surface-2);
+  border: 1px dashed var(--fn-border-strong);
+  border-radius: var(--fn-radius);
+  text-align: center;
+}
+
+@media (max-width: 575.98px) {
+  .fn-map-canvas {
+    height: min(var(--fn-map-height, 20rem), 19rem);
+  }
+
+  .fn-map-fallback {
+    align-items: flex-start;
+    min-height: 12rem;
+  }
+}
+
 /* ---------------------------------------------------------- action feedback
    Short-lived outcomes sit above the app chrome instead of pushing page
    content down. Persistent context, validation and load errors remain in the

@@ -23,6 +23,12 @@ Operational officers receive a server-side jurisdiction assignment. Express
 applies that scope to report, alert, centre, evidence and dashboard queries;
 React selectors only choose filters and never grant access.
 
+Leaflet is a presentation layer over this model. MapTiler supplies the
+OpenStreetMap-based tiles, while FloodNet supplies the authorized markers from
+its existing APIs. Reports are never added to a public map, alerts remain
+administrative-area targets rather than misleading point markers, and the
+selected ward remains canonical when a resident chooses a more precise point.
+
 ## Task 2
 
 ```text

@@ -19,6 +19,7 @@ import ConfirmationModal from '../../components/common/ConfirmationModal';
 import { CENTRE_STATUS, toOptions } from '../../utils/enums';
 import { describeArea, formatNumber } from '../../utils/formatters';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
+import FloodMap from '../../components/map/FloodMap';
 
 /**
  * Occupancy is edited inline per centre, because during an incident an officer
@@ -208,6 +209,19 @@ function CentreListPage() {
   const loader = useCallback(() => fetchCentres(filters), [filters]);
   const { data, loading, error, reload } = useApiResource(loader);
 
+  const centreMarkers = useMemo(() => (data?.centres || []).map((centre) => ({
+    id: centre.id,
+    latitude: centre.latitude,
+    longitude: centre.longitude,
+    title: centre.name,
+    description: centre.locationDescription,
+    detail: `${centre.availableSpace.toLocaleString()} spaces available`,
+    tone: centre.operationalStatus === 'CLOSED'
+      ? 'secondary'
+      : centre.availableSpace === 0 ? 'danger'
+        : centre.operationalStatus === 'NEAR_CAPACITY' ? 'warning' : 'success'
+  })), [data]);
+
   useEffect(() => {
     fetchZones()
       .then((payload) => setZones(payload.data.zones))
@@ -294,13 +308,26 @@ function CentreListPage() {
             }
           />
         ) : (
-          <div className="row g-3">
-            {data.centres.map((centre) => (
-              <div className="col-12 col-md-6 col-xl-4" key={centre.id}>
-                <CentreCard centre={centre} onSaved={reload} onArchiveRequest={setArchiveTarget} />
-              </div>
-            ))}
-          </div>
+          <>
+            <section className="panel-card p-3 p-md-4 rounded-4 mb-4">
+              <h2 className="h6 fw-semibold mb-1">Operational map</h2>
+              <p className="small text-secondary mb-3">
+                Review centre positions and live availability within your current filters.
+              </p>
+              <FloodMap
+                ariaLabel="Operational map of evacuation centres"
+                height="24rem"
+                markers={centreMarkers}
+              />
+            </section>
+            <div className="row g-3">
+              {data.centres.map((centre) => (
+                <div className="col-12 col-md-6 col-xl-4" key={centre.id}>
+                  <CentreCard centre={centre} onSaved={reload} onArchiveRequest={setArchiveTarget} />
+                </div>
+              ))}
+            </div>
+          </>
         )
       )}
 

@@ -14,6 +14,7 @@ import AreaScopeNotice from '../../components/common/AreaScopeNotice';
 import LocationFilter from '../../components/geography/LocationFilter';
 import DashboardStatCard from '../../components/common/DashboardStatCard';
 import Icon from '../../components/common/Icon';
+import FloodMap from '../../components/map/FloodMap';
 import { CENTRE_STATUS, toOptions } from '../../utils/enums';
 import { getGeolocationAvailability } from '../../utils/coordinates';
 
@@ -140,6 +141,19 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
     available: accumulator.available + centre.availableSpace
   }), { capacity: 0, available: 0 }), [centres]);
 
+  const centreMarkers = useMemo(() => centres.map((centre) => ({
+    id: centre.id,
+    latitude: centre.latitude,
+    longitude: centre.longitude,
+    title: centre.name,
+    description: centre.locationDescription,
+    detail: `${centre.availableSpace.toLocaleString()} spaces available`,
+    tone: centre.operationalStatus === 'CLOSED'
+      ? 'secondary'
+      : centre.availableSpace === 0 ? 'danger'
+        : centre.operationalStatus === 'NEAR_CAPACITY' ? 'warning' : 'success'
+  })), [centres]);
+
   function updateFilter(name, value) {
     const next = new URLSearchParams(searchParams);
     if (value) next.set(name, value); else next.delete(name);
@@ -226,6 +240,28 @@ function CentreDirectoryPage({ eyebrow = 'Resident' }) {
             onShowAll={showAllOfNepal}
             noun="centre"
           />
+
+          {centres.length > 0 && (
+            <section className="panel-card p-3 p-md-4 rounded-4 mb-4">
+              <div className="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+                <div>
+                  <h2 className="h6 fw-semibold mb-1">Centres on the map</h2>
+                  <p className="small text-secondary mb-0">
+                    Markers show centres that have exact coordinates. Always confirm road conditions before travelling.
+                  </p>
+                </div>
+                <span className="small text-secondary">
+                  {centreMarkers.filter((marker) => Number.isFinite(marker.latitude) && Number.isFinite(marker.longitude)).length} mapped
+                </span>
+              </div>
+              <FloodMap
+                ariaLabel="Map of evacuation centres matching the current filters"
+                height="24rem"
+                markers={centreMarkers}
+                center={proximity || undefined}
+              />
+            </section>
+          )}
 
           {centres.length === 0 ? (
             <EmptyState

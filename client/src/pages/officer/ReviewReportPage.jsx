@@ -7,6 +7,8 @@ import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import StatusBadge from '../../components/common/StatusBadge';
+import FloodMap from '../../components/map/FloodMap';
+import { hasValidCoordinates, openStreetMapUrl } from '../../config/map';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import {
   REPORT_STATUS,
@@ -163,6 +165,7 @@ function ReviewReportPage() {
 
   const { report, statusHistory, reviews, evidence } = data;
   const isReviewable = ['PENDING_REVIEW', 'MORE_INFORMATION_REQUIRED', 'VERIFIED'].includes(report.status);
+  const hasReportCoordinates = hasValidCoordinates(report.latitude, report.longitude);
 
   return (
     <>
@@ -215,10 +218,10 @@ function ReviewReportPage() {
                 {report.nearestLandmark || <span className="text-secondary">Not provided</span>}
               </DetailRow>
               <DetailRow label="Reported coordinates">
-                {report.latitude !== null && report.latitude !== undefined
+                {hasReportCoordinates
                   ? (
                     <a
-                      href={`https://www.openstreetmap.org/?mlat=${report.latitude}&mlon=${report.longitude}#map=16/${report.latitude}/${report.longitude}`}
+                      href={openStreetMapUrl(report.latitude, report.longitude)}
                       target="_blank"
                       rel="noreferrer noopener"
                     >
@@ -236,6 +239,28 @@ function ReviewReportPage() {
                 <dd className="mb-0 preserve-lines">{report.incidentDescription}</dd>
               </div>
             </dl>
+
+            {hasReportCoordinates && (
+              <div className="mt-4">
+                <h3 className="h6 fw-semibold mb-1">Incident map</h3>
+                <p className="small text-secondary mb-2">
+                  Use this point alongside the official ward, resident description and evidence during review.
+                </p>
+                <FloodMap
+                  ariaLabel={`Officer map for report ${report.reportReference}`}
+                  height="22rem"
+                  markers={[{
+                    id: report.id,
+                    latitude: report.latitude,
+                    longitude: report.longitude,
+                    title: report.reportReference,
+                    description: report.locationDescription,
+                    detail: describeArea(report),
+                    tone: report.peopleAtRisk > 0 ? 'danger' : 'warning'
+                  }]}
+                />
+              </div>
+            )}
           </section>
 
           <section className="panel-card p-3 p-md-4 rounded-4 mb-3">

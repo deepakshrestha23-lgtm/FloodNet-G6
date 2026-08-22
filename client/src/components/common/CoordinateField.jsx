@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Icon from './Icon';
+import FloodMap from '../map/FloodMap';
+import { hasValidCoordinates } from '../../config/map';
 import {
   parseCoordinates,
   swapWouldFixNepal,
@@ -37,6 +39,7 @@ function CoordinateField({
     (latitude !== '' && latitude !== null) !== (longitude !== '' && longitude !== null);
   const suspectTransposed = hasValue && swapWouldFixNepal(latitude, longitude);
   const outsideNepal = hasValue && !suspectTransposed && isOutsideNepal(latitude, longitude);
+  const hasCoordinatePair = hasValidCoordinates(latitude, longitude);
 
   function set(nextLatitude, nextLongitude) {
     onChange({
@@ -163,6 +166,38 @@ function CoordinateField({
         <p className="form-text mb-0">
           In Google Maps, long-press the place and copy the numbers it shows.
         </p>
+      </div>
+
+      <div className="mb-3">
+        <div className="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-2">
+          <div>
+            <h3 className="h6 fw-semibold mb-1">Choose on map</h3>
+            <p className="small text-secondary mb-0">
+              Use the map for precision; your selected ward remains the official administrative location.
+            </p>
+          </div>
+          {hasCoordinatePair && (
+            <span className="small text-secondary font-monospace">
+              {Number(latitude).toFixed(6)}, {Number(longitude).toFixed(6)}
+            </span>
+          )}
+        </div>
+        <FloodMap
+          ariaLabel="Choose exact GPS coordinates"
+          height="18rem"
+          center={hasCoordinatePair ? { latitude, longitude } : undefined}
+          markers={hasCoordinatePair ? [{
+            id: 'selected-position',
+            latitude,
+            longitude,
+            title: 'Selected position',
+            description: 'This exact point will be saved with the record.'
+          }] : []}
+          onSelect={disabled ? undefined : ({ latitude: nextLatitude, longitude: nextLongitude }) => {
+            setLocationError('');
+            set(nextLatitude.toFixed(6), nextLongitude.toFixed(6));
+          }}
+        />
       </div>
 
       <div className="row g-3">

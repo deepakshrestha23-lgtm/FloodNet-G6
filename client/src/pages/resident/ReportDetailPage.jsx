@@ -8,6 +8,8 @@ import PageHeader from '../../components/common/PageHeader';
 import LoadingState from '../../components/common/LoadingState';
 import ErrorState from '../../components/common/ErrorState';
 import StatusBadge from '../../components/common/StatusBadge';
+import FloodMap from '../../components/map/FloodMap';
+import { hasValidCoordinates } from '../../config/map';
 import {
   REPORT_STATUS,
   OBSERVED_SEVERITY,
@@ -76,6 +78,7 @@ function ReportDetailPage() {
 
   const { report, statusHistory, reviews, evidence } = data;
   const canEdit = report.status === 'MORE_INFORMATION_REQUIRED';
+  const hasReportCoordinates = hasValidCoordinates(report.latitude, report.longitude);
 
   return (
     <>
@@ -139,6 +142,32 @@ function ReportDetailPage() {
                 <dd className="mb-0 preserve-lines">{report.incidentDescription}</dd>
               </div>
             </dl>
+
+            {hasReportCoordinates && (
+              <div className="mt-4">
+                <div className="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-2">
+                  <div>
+                    <h3 className="h6 fw-semibold mb-1">Reported location</h3>
+                    <p className="small text-secondary mb-0">The exact position saved with your report.</p>
+                  </div>
+                  <span className="small text-secondary font-monospace">
+                    {Number(report.latitude).toFixed(5)}, {Number(report.longitude).toFixed(5)}
+                  </span>
+                </div>
+                <FloodMap
+                  ariaLabel={`Map showing location of report ${report.reportReference}`}
+                  height="19rem"
+                  markers={[{
+                    id: report.id,
+                    latitude: report.latitude,
+                    longitude: report.longitude,
+                    title: report.reportReference,
+                    description: report.locationDescription,
+                    tone: 'warning'
+                  }]}
+                />
+              </div>
+            )}
           </section>
 
           <section className="panel-card p-3 p-md-4 rounded-4">
