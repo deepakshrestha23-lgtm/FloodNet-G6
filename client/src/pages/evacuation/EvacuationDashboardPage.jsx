@@ -11,8 +11,11 @@ import ChartCard from '../../components/chart/ChartCard';
 import DataTable from '../../components/common/DataTable';
 import { formatNumber, formatPercent } from '../../utils/formatters';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
+import AssignedJurisdictionCard from '../../components/common/AssignedJurisdictionCard';
+import { useAuth } from '../../context/AuthContext';
 
 function EvacuationDashboardPage() {
+  const { user } = useAuth();
   const [geography, setGeography] = useState(EMPTY_GEOGRAPHY);
   const loader = useCallback(() => fetchCentreDashboard(geography), [geography]);
   const { data, loading, error, reload } = useApiResource(loader);
@@ -115,6 +118,8 @@ function EvacuationDashboardPage() {
           </>
         }
       />
+
+      <AssignedJurisdictionCard jurisdiction={user?.jurisdiction} />
 
       <section className="panel-card p-3 p-md-4 rounded-4 mb-4">
         <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">

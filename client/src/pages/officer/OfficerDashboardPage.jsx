@@ -11,10 +11,13 @@ import ChartCard from '../../components/chart/ChartCard';
 import { REPORT_STATUS, OBSERVED_SEVERITY, describe } from '../../utils/enums';
 import { formatDate } from '../../utils/formatters';
 import GeographySelector, { EMPTY_GEOGRAPHY } from '../../components/geography/GeographySelector';
+import AssignedJurisdictionCard from '../../components/common/AssignedJurisdictionCard';
+import { useAuth } from '../../context/AuthContext';
 
 const CHART_COLOURS = ['#0891b2', '#0f9d6f', '#e8820c', '#dc2743', '#7c5cf0', '#64748b'];
 
 function OfficerDashboardPage() {
+  const { user } = useAuth();
   const [geography, setGeography] = useState(EMPTY_GEOGRAPHY);
   const loader = useCallback(() => fetchDashboard(geography), [geography]);
   const { data, loading, error, reload } = useApiResource(loader);
@@ -141,6 +144,8 @@ function OfficerDashboardPage() {
           </>
         }
       />
+
+      <AssignedJurisdictionCard jurisdiction={user?.jurisdiction} />
 
       <section className="panel-card p-3 p-md-4 rounded-4 mb-4">
         <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">

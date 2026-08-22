@@ -47,6 +47,16 @@ test('a resident can register and then sign in', async () => {
   assert.equal(signedIn.user.role.code, 'RESIDENT');
 });
 
+test('operational users receive their administrator-assigned jurisdiction', async () => {
+  const monitoringOfficer = await signIn('officer@test.local');
+  const evacuationOfficer = await signIn('evacuation@test.local');
+
+  assert.equal(monitoringOfficer.user.jurisdiction.scopeLevel, 'NATIONAL');
+  assert.equal(evacuationOfficer.user.jurisdiction.scopeLevel, 'NATIONAL');
+  assert.equal(monitoringOfficer.user.jurisdiction.province, null);
+  assert.equal(evacuationOfficer.user.jurisdiction.ward, null);
+});
+
 test('registration rejects a weak password', async () => {
   const result = await request(createClient(), 'POST', '/api/auth/register', {
     email: `weak-${Date.now()}@test.local`,

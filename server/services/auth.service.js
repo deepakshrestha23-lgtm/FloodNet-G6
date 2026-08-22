@@ -25,6 +25,7 @@ function toPublicUser(user) {
       displayName: user.roleDisplayName
     },
     profile: user.profile,
+    jurisdiction: user.jurisdiction,
     createdAt: user.createdAt,
     lastLoginAt: user.lastLoginAt
   };

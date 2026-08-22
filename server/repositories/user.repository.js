@@ -31,7 +31,20 @@ const userSelect = `
     hd.id AS home_district_id,
     hd.name AS home_district_name,
     hp.id AS home_province_id,
-    hp.name AS home_province_name
+    hp.name AS home_province_name,
+    uj.scope_level,
+    jp.id AS jurisdiction_province_id,
+    jp.code AS jurisdiction_province_code,
+    jp.name AS jurisdiction_province_name,
+    jd.id AS jurisdiction_district_id,
+    jd.code AS jurisdiction_district_code,
+    jd.name AS jurisdiction_district_name,
+    jll.id AS jurisdiction_local_level_id,
+    jll.code AS jurisdiction_local_level_code,
+    jll.name AS jurisdiction_local_level_name,
+    jw.id AS jurisdiction_ward_id,
+    jw.ward_number AS jurisdiction_ward_number,
+    jw.name AS jurisdiction_ward_name
   FROM users u
   INNER JOIN roles r ON r.id = u.role_id
   LEFT JOIN user_profiles p ON p.user_id = u.id
@@ -39,6 +52,11 @@ const userSelect = `
   LEFT JOIN geo_local_levels hll ON hll.id = hw.local_level_id
   LEFT JOIN geo_districts hd ON hd.id = hll.district_id
   LEFT JOIN geo_provinces hp ON hp.id = hd.province_id
+  LEFT JOIN user_jurisdictions uj ON uj.user_id = u.id
+  LEFT JOIN geo_wards jw ON jw.id = uj.ward_id
+  LEFT JOIN geo_local_levels jll ON jll.id = COALESCE(uj.local_level_id, jw.local_level_id)
+  LEFT JOIN geo_districts jd ON jd.id = COALESCE(uj.district_id, jll.district_id)
+  LEFT JOIN geo_provinces jp ON jp.id = COALESCE(uj.province_id, jd.province_id)
 `;
 
 function mapUser(row) {
@@ -70,7 +88,14 @@ function mapUser(row) {
         district: { id: row.home_district_id, name: row.home_district_name },
         province: { id: row.home_province_id, name: row.home_province_name }
       } : null
-    }
+    },
+    jurisdiction: row.scope_level ? {
+      scopeLevel: row.scope_level,
+      province: row.jurisdiction_province_id ? { id: row.jurisdiction_province_id, code: row.jurisdiction_province_code, name: row.jurisdiction_province_name } : null,
+      district: row.jurisdiction_district_id ? { id: row.jurisdiction_district_id, code: row.jurisdiction_district_code, name: row.jurisdiction_district_name } : null,
+      localLevel: row.jurisdiction_local_level_id ? { id: row.jurisdiction_local_level_id, code: row.jurisdiction_local_level_code, name: row.jurisdiction_local_level_name } : null,
+      ward: row.jurisdiction_ward_id ? { id: row.jurisdiction_ward_id, number: row.jurisdiction_ward_number, name: row.jurisdiction_ward_name } : null
+    } : null
   };
 }
 
