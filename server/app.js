@@ -37,14 +37,24 @@ const evidenceOrigins = env.evidenceBucketName
     ]
   : [];
 
+// The current Elastic Beanstalk staging endpoint is HTTP-only. Helmet's
+// default CSP includes `upgrade-insecure-requests`, which would make a
+// browser request the React assets over HTTPS and leave the page blank when
+// HTTPS is not configured yet. Keep HTTPS enforcement and HSTS aligned with
+// the configured public origin so the policy becomes strict automatically
+// when the application is later placed behind an HTTPS endpoint.
+const publicOriginUsesHttps = env.clientOrigin.startsWith('https://');
+
 app.use(helmet({
+  strictTransportSecurity: publicOriginUsesHttps,
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
       'img-src': ["'self'", 'data:', ...evidenceOrigins],
       // connect-src covers the Task 2 browser-to-S3 presigned upload without
       // changing the Task 1 upload path, which still goes through Express.
-      'connect-src': ["'self'", ...evidenceOrigins]
+      'connect-src': ["'self'", ...evidenceOrigins],
+      'upgrade-insecure-requests': publicOriginUsesHttps ? [] : null
     }
   }
 }));
