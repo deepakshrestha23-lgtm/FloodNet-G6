@@ -37,6 +37,11 @@ const evidenceOrigins = env.evidenceBucketName
     ]
   : [];
 
+// Leaflet loads the MapTiler basemap as cross-origin image tiles. The browser
+// key is intentionally public and origin-restricted in MapTiler, but the
+// application's CSP must also allow the tile host explicitly.
+const mapTileOrigin = 'https://api.maptiler.com';
+
 // The current Elastic Beanstalk staging endpoint is HTTP-only. Helmet's
 // default CSP includes `upgrade-insecure-requests`, which would make a
 // browser request the React assets over HTTPS and leave the page blank when
@@ -50,7 +55,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
-      'img-src': ["'self'", 'data:', ...evidenceOrigins],
+      'img-src': ["'self'", 'data:', mapTileOrigin, ...evidenceOrigins],
       // connect-src covers the Task 2 browser-to-S3 presigned upload without
       // changing the Task 1 upload path, which still goes through Express.
       'connect-src': ["'self'", ...evidenceOrigins],
