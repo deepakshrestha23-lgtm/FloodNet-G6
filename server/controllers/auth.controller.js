@@ -6,9 +6,13 @@ const {
 } = require('../utils/jwt');
 
 const REFRESH_COOKIE_NAME = 'floodnet_refresh_token';
+// The staging endpoint currently uses HTTP. A Secure cookie is ignored by
+// browsers on HTTP, which would make every page refresh appear to log the user
+// out. Once CLIENT_ORIGIN is changed to HTTPS, the cookie becomes Secure again.
+const useSecureRefreshCookie = env.clientOrigin.startsWith('https://');
 const refreshCookieOptions = {
   httpOnly: true,
-  secure: env.nodeEnv === 'production',
+  secure: useSecureRefreshCookie,
   sameSite: 'lax',
   path: '/api/auth',
   maxAge: REFRESH_TOKEN_MAX_AGE_MS
@@ -21,7 +25,7 @@ function setRefreshCookie(response, token) {
 function clearRefreshCookie(response) {
   response.clearCookie(REFRESH_COOKIE_NAME, {
     httpOnly: true,
-    secure: env.nodeEnv === 'production',
+    secure: useSecureRefreshCookie,
     sameSite: 'lax',
     path: '/api/auth'
   });
