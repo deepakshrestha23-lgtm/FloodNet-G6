@@ -17,6 +17,7 @@
     "db:seed": "node server/db/run-seeds.js",
     "build:geography": "node scripts/build-nepal-geography-data.js",
     "db:bootstrap-admin": "node server/db/bootstrap-admin.js",
+    "db:reset-admin-password": "node server/db/reset-admin-password.js",
     "build:deploy": "npm run build && echo Client build ready in client/dist",
     "aws:check": "node server/db/aws-preflight.js",
     "test": "node --test --test-concurrency=1 tests/*.test.js",
